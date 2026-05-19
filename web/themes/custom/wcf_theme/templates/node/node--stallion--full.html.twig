@@ -69,10 +69,10 @@
       </section>
     {% endif %}
 
-    {% if content.field_tags %}
-      <section class="stallion__section stallion__section--tags" aria-labelledby="stallion-tags-heading">
-        <h2 id="stallion-tags-heading" class="stallion__section-title">{{ 'Tags'|t }}</h2>
-        {{ content.field_tags }}
+    {% if content.field_category %}
+      <section class="stallion__section stallion__section--categories" aria-labelledby="stallion-categories-heading">
+        <h2 id="stallion-categories-heading" class="stallion__section-title">{{ 'Categories'|t }}</h2>
+        {{ content.field_category }}
       </section>
     {% endif %}
   </div>

@@ -1,0 +1,9 @@
+uuid: b8c4e2f1-6a3d-4e91-9f0c-1d7e5b2a4c83
+langcode: en
+status: true
+dependencies: {  }
+name: Categories
+vid: categories
+description: 'Governed editorial categories for horse and related content. Terms are managed centrally; editors select from the approved list only.'
+weight: 0
+new_revision: false

@@ -1,0 +1,13 @@
+uuid: 573728de-6a56-498b-878a-796413192756
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: content
+label: Content
+path: stallions
+weight: 0
+plugin: node_search
+configuration:
+  rankings: {  }

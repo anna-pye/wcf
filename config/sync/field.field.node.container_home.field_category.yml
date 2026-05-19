@@ -1,0 +1,28 @@
+uuid: e1f7b5c4-9d6a-4ba4-c3f2-4a0b8e5d7f16
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_category
+    - node.type.container_home
+    - taxonomy.vocabulary.categories
+id: node.container_home.field_category
+field_name: field_category
+entity_type: node
+bundle: container_home
+label: Category
+description: 'Governed editorial categories only. Select from the approved list; new categories cannot be created here.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      categories: categories
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+field_type: entity_reference

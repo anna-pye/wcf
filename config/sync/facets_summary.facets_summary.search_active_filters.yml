@@ -29,9 +29,9 @@ facets:
     separator: ', '
     show_count: false
     weight: 0
-  tags:
+  categories:
     checked: true
-    label: Tag
+    label: Category
     separator: ', '
     show_count: false
     weight: 1

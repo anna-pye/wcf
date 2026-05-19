@@ -7,7 +7,7 @@ dependencies:
     - field.field.node.article.body
     - field.field.node.article.comment
     - field.field.node.article.field_image
-    - field.field.node.article.field_tags
+    - field.field.node.article.field_category
     - node.type.article
   module:
     - user
@@ -18,11 +18,17 @@ targetEntityType: node
 bundle: article
 mode: rss
 content:
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
   links:
     weight: 100
     region: content
 hidden:
   body: true
   comment: true
+  field_category: true
   field_image: true
-  field_tags: true
+  search_api_excerpt: true
