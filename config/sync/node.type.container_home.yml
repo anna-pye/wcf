@@ -1,0 +1,11 @@
+uuid: c2fee306-afa6-4a76-9586-73d75247d307
+langcode: en
+status: true
+dependencies: {  }
+name: 'Container Home'
+type: container_home
+description: 'Showcase container home listings for migration from compliant_container_homes.'
+help: 'Save drafts while working. Submit for review when ready for an editor. Published content is visible on the public site. Use the Content health report under Content for maintenance.'
+new_revision: true
+preview_mode: 1
+display_submitted: false

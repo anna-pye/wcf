@@ -1,0 +1,337 @@
+uuid: 40a9462d-5455-4a71-af3d-ec5c797c357f
+langcode: en
+status: true
+dependencies:
+  config:
+    - media.type.image
+  module:
+    - media
+    - user
+id: media_governance
+label: 'Media governance'
+module: media
+description: 'Operational media maintenance: alt text, file size, usage.'
+tag: wcf
+base_table: media_field_data
+base_field: mid
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Media governance'
+      fields:
+        name:
+          id: name
+          table: media_field_data
+          field: name
+          entity_type: media
+          entity_field: name
+          plugin_id: field
+          label: Name
+          settings:
+            link_to_entity: true
+        bundle:
+          id: bundle
+          table: media_field_data
+          field: bundle
+          entity_type: media
+          entity_field: bundle
+          plugin_id: field
+          label: Type
+        changed:
+          id: changed
+          table: media_field_data
+          field: changed
+          entity_type: media
+          entity_field: changed
+          plugin_id: field
+          label: Updated
+          type: timestamp
+          settings:
+            date_format: short
+        operations:
+          id: operations
+          table: media
+          field: operations
+          entity_type: media
+          plugin_id: entity_operations
+          label: Operations
+      pager:
+        type: full
+        options:
+          items_per_page: 50
+      access:
+        type: perm
+        options:
+          perm: 'access media overview'
+      cache:
+        type: tag
+        options: {  }
+      filters:
+        bundle:
+          id: bundle
+          table: media_field_data
+          field: bundle
+          entity_type: media
+          entity_field: bundle
+          plugin_id: bundle
+          value:
+            image: image
+          group: 1
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags: {  }
+  page_missing_alt:
+    id: page_missing_alt
+    display_title: 'Missing alt text'
+    display_plugin: page
+    position: 1
+    display_options:
+      fields:
+        name:
+          id: name
+          table: media_field_data
+          field: name
+          entity_type: media
+          entity_field: name
+          plugin_id: field
+          label: Name
+          settings:
+            link_to_entity: true
+        bundle:
+          id: bundle
+          table: media_field_data
+          field: bundle
+          entity_type: media
+          entity_field: bundle
+          plugin_id: field
+          label: Type
+        changed:
+          id: changed
+          table: media_field_data
+          field: changed
+          entity_type: media
+          entity_field: changed
+          plugin_id: field
+          label: Updated
+          type: timestamp
+          settings:
+            date_format: short
+        operations:
+          id: operations
+          table: media
+          field: operations
+          entity_type: media
+          plugin_id: entity_operations
+          label: Operations
+        field_media_image_alt:
+          id: field_media_image_alt
+          table: media__field_media_image
+          field: field_media_image_alt
+          relationship: field_media_image_target_id
+          plugin_id: field
+          label: 'Alt text'
+      filters:
+        bundle:
+          id: bundle
+          table: media_field_data
+          field: bundle
+          entity_type: media
+          entity_field: bundle
+          plugin_id: bundle
+          value:
+            image: image
+          group: 1
+        field_media_image_alt:
+          id: field_media_image_alt
+          table: media__field_media_image
+          field: field_media_image_alt
+          relationship: field_media_image_target_id
+          plugin_id: string
+          operator: empty
+          value: ''
+          group: 1
+      relationships:
+        field_media_image_target_id:
+          id: field_media_image_target_id
+          table: media__field_media_image
+          field: field_media_image_target_id
+          plugin_id: standard
+          required: true
+      display_extenders: {  }
+      path: admin/content/media/missing-alt
+      menu:
+        type: tab
+        title: 'Missing alt text'
+        weight: 20
+        parent: entity.media.collection
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags: {  }
+  page_oversized:
+    id: page_oversized
+    display_title: 'Oversized images'
+    display_plugin: page
+    position: 2
+    display_options:
+      fields:
+        name:
+          id: name
+          table: media_field_data
+          field: name
+          entity_type: media
+          entity_field: name
+          plugin_id: field
+          label: Name
+          settings:
+            link_to_entity: true
+        bundle:
+          id: bundle
+          table: media_field_data
+          field: bundle
+          entity_type: media
+          entity_field: bundle
+          plugin_id: field
+          label: Type
+        changed:
+          id: changed
+          table: media_field_data
+          field: changed
+          entity_type: media
+          entity_field: changed
+          plugin_id: field
+          label: Updated
+          type: timestamp
+          settings:
+            date_format: short
+        operations:
+          id: operations
+          table: media
+          field: operations
+          entity_type: media
+          plugin_id: entity_operations
+          label: Operations
+        filesize:
+          id: filesize
+          table: file_managed
+          field: filesize
+          relationship: file_managed
+          plugin_id: field
+          label: 'File size'
+          type: file_size
+      filters:
+        bundle:
+          id: bundle
+          table: media_field_data
+          field: bundle
+          entity_type: media
+          entity_field: bundle
+          plugin_id: bundle
+          value:
+            image: image
+          group: 1
+        filesize:
+          id: filesize
+          table: file_managed
+          field: filesize
+          relationship: file_managed
+          plugin_id: numeric
+          operator: '>'
+          value:
+            min: ''
+            max: ''
+            value: '512000'
+          group: 1
+      relationships:
+        field_media_image_target_id:
+          id: field_media_image_target_id
+          table: media__field_media_image
+          field: field_media_image_target_id
+          plugin_id: standard
+          required: true
+        file_managed:
+          id: file_managed
+          table: file_managed
+          field: fid
+          relationship: field_media_image_target_id
+          plugin_id: standard
+          required: true
+      display_extenders: {  }
+      path: admin/content/media/oversized
+      menu:
+        type: tab
+        title: 'Oversized images'
+        weight: 21
+        parent: entity.media.collection
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags: {  }
+  page_unused:
+    id: page_unused
+    display_title: 'Potentially unused'
+    display_plugin: page
+    position: 3
+    display_options:
+      filters:
+        bundle:
+          id: bundle
+          table: media_field_data
+          field: bundle
+          entity_type: media
+          entity_field: bundle
+          plugin_id: bundle
+          value:
+            image: image
+          group: 1
+        field_main_image_target_id:
+          id: field_main_image_target_id
+          table: node__field_main_image
+          field: field_main_image_target_id
+          relationship: node__field_main_image
+          plugin_id: numeric
+          operator: empty
+          value:
+            min: ''
+            max: ''
+          group: 1
+      relationships:
+        node__field_main_image:
+          id: node__field_main_image
+          table: node__field_main_image
+          field: field_main_image_target_id
+          plugin_id: standard
+          required: false
+      display_extenders: {  }
+      path: admin/content/media/unused
+      menu:
+        type: tab
+        title: 'Potentially unused'
+        weight: 22
+        parent: entity.media.collection
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url.query_args
+        - user.permissions
+      tags: {  }

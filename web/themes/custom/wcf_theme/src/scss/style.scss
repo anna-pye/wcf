@@ -1,0 +1,36 @@
+// Winning Colours Farm — main stylesheet entry.
+@use 'abstracts/variables';
+
+@use 'utilities/visually-hidden';
+
+@use 'layout/page';
+
+@use 'components/hero-slide';
+@use 'components/hero-slider';
+@use 'components/stallion-card';
+@use 'components/testimonial-card';
+@use 'components/feature-card';
+@use 'components/featured-stallions';
+@use 'components/featured-content';
+
+@use 'pages/front';
+@use 'pages/stallion';
+@use 'pages/stallion-listing';
+@use 'pages/site-search';
+
+// Base document styles.
+body {
+  margin: 0;
+  font-family: variables.$font-family-base;
+  font-size: variables.$font-size-base;
+  line-height: variables.$line-height-base;
+  color: variables.$color-text;
+}
+
+.button {
+  cursor: pointer;
+}
+
+.button--primary {
+  // Styled via .hero-slide__cta
+}

@@ -1,0 +1,17 @@
+uuid: c5d97f94-99a7-466f-bd68-377f3a743029
+langcode: en
+status: true
+dependencies:
+  module:
+    - content_moderation
+third_party_settings:
+  content_moderation:
+    enabled: true
+    workflow: editorial
+name: Stallion
+type: stallion
+description: 'Horse and stallion business profiles. Modern replacement for legacy product/stallion content.'
+help: 'Save drafts while working. Submit for review when ready for an editor. Published content is visible on the public site. Use the Content health report under Content for maintenance.'
+new_revision: true
+preview_mode: 1
+display_submitted: false

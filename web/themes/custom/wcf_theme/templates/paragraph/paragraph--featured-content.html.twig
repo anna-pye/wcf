@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Featured content paragraph — surfaces a cached View listing by content type.
+ */
+#}
+{% include '@wcf_theme/components/featured-content-section.html.twig' with {
+  title: featured_content_title,
+  description: content.field_description,
+  listing: featured_content_listing,
+  section_id: 'featured-content-' ~ paragraph.id(),
+} only %}

@@ -1,0 +1,70 @@
+id: wcf_d7_node_page
+label: 'WCF D7 page nodes'
+audit: true
+migration_tags:
+  - WCF
+  - Drupal 7
+  - Content
+source:
+  plugin: d7_node
+  node_type: page
+process:
+  type:
+    plugin: default_value
+    default_value: page
+  nid: nid
+  vid: vid
+  langcode:
+    plugin: default_value
+    default_value: en
+  title: title
+  uid:
+    plugin: static_map
+    source: node_uid
+    map:
+      1: 1
+      321: 1
+    default_value: 1
+  status: status
+  created: created
+  changed: changed
+  promote: promote
+  sticky: sticky
+  revision_uid:
+    plugin: static_map
+    source: revision_uid
+    map:
+      1: 1
+      321: 1
+    default_value: 1
+  revision_timestamp: timestamp
+  body:
+    plugin: sub_process
+    source: body
+    process:
+      value: value
+      summary: summary
+      format:
+        plugin: static_map
+        source: format
+        map:
+          filtered_html: basic_html
+          full_html: full_html
+          plain_text: plain_text
+        default_value: basic_html
+  path/alias:
+    plugin: wcf_d7_node_path_alias
+    source: nid
+  path/pathauto:
+    plugin: default_value
+    default_value: 0
+  path/langcode:
+    plugin: default_value
+    default_value: en
+destination:
+  plugin: entity:node
+  default_bundle: page
+migration_dependencies:
+  optional:
+    - wcf_d7_taxonomy_term_tags
+    - wcf_d7_media_image

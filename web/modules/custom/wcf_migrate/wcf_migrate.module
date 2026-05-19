@@ -1,0 +1,28 @@
+<?php
+
+/**
+ * @file
+ * WCF controlled migration framework hooks.
+ */
+
+use Drupal\Core\Site\Settings;
+
+/**
+ * Implements hook_migration_plugins_alter().
+ */
+function wcf_migrate_migration_plugins_alter(array &$migrations): void {
+  $base_path = Settings::get('migrate_file_public_path');
+  if (!$base_path) {
+    return;
+  }
+  $base_path = rtrim($base_path, '/');
+  foreach ($migrations as $id => &$migration) {
+    if (!str_starts_with($id, 'wcf_')) {
+      continue;
+    }
+    if (isset($migration['source']['constants']['source_base_path'])
+      && $migration['source']['constants']['source_base_path'] === '') {
+      $migration['source']['constants']['source_base_path'] = $base_path;
+    }
+  }
+}

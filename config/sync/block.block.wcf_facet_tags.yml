@@ -1,0 +1,30 @@
+uuid: 67ac889e-2a60-4ca7-b904-8754af199cd3
+langcode: en
+status: true
+dependencies:
+  config:
+    - facets.facet.tags
+  module:
+    - facets
+    - system
+  theme:
+    - wcf_theme
+id: wcf_facet_tags
+theme: wcf_theme
+region: sidebar_first
+weight: 1
+provider: null
+plugin: 'facet_block:tags'
+settings:
+  id: 'facet_block:tags'
+  label: ''
+  label_display: visible
+  provider: facets
+  context_mapping: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: |-
+      /search
+      /search*

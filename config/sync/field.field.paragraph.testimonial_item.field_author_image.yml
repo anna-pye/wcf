@@ -1,0 +1,27 @@
+uuid: a9bf39bb-8632-498d-8cf1-0ee869c11da1
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_author_image
+    - media.type.image
+    - paragraphs.paragraphs_type.testimonial_item
+id: paragraph.testimonial_item.field_author_image
+field_name: field_author_image
+entity_type: paragraph
+bundle: testimonial_item
+label: 'Author image'
+description: 'Optional portrait from the Media Library.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

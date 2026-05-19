@@ -1,0 +1,11 @@
+{
+  "name": "wcf_theme",
+  "private": true,
+  "scripts": {
+    "build": "sass src/scss/style.scss css/style.css --style=compressed --no-source-map",
+    "watch": "sass src/scss/style.scss css/style.css --watch"
+  },
+  "devDependencies": {
+    "sass": "^1.77.0"
+  }
+}

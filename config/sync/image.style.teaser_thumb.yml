@@ -1,0 +1,15 @@
+uuid: 309ce3fe-e0b9-4fa1-80c0-1838996dcc67
+langcode: en
+status: true
+dependencies: {  }
+name: teaser_thumb
+label: 'Teaser thumbnail (300)'
+effects:
+  ccc33a1e-6f21-4b5b-97dd-3fc41acedb6d:
+    uuid: ccc33a1e-6f21-4b5b-97dd-3fc41acedb6d
+    id: image_scale
+    weight: 0
+    data:
+      width: 300
+      height: null
+      upscale: false

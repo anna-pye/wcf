@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * Featured stallions section component.
+ *
+ * Variables:
+ * - title: Section heading.
+ * - description: Supporting text render array or string.
+ * - listing: Render array for embedded stallions View (preprocessed).
+ * - section_id: Unique id for aria-labelledby.
+ */
+#}
+<section class="featured-stallions"{% if section_id %} aria-labelledby="{{ section_id }}-heading"{% endif %}>
+  <div class="featured-stallions__header">
+    {% if title %}
+      <h2{% if section_id %} id="{{ section_id }}-heading"{% endif %} class="featured-stallions__title">{{ title }}</h2>
+    {% endif %}
+    {% if description %}
+      <div class="featured-stallions__description">
+        {{ description }}
+      </div>
+    {% endif %}
+  </div>
+  {% if listing %}
+    <div class="featured-stallions__listing">
+      {{ listing }}
+    </div>
+  {% endif %}
+</section>

@@ -1,0 +1,10 @@
+uuid: 60ef3604-6c9e-4b37-aa29-a004f60e08c4
+langcode: en
+status: true
+dependencies: {  }
+id: testimonial_item
+label: Testimonial
+icon_uuid: null
+icon_default: null
+description: 'Customer or client testimonial quote with attribution.'
+behavior_plugins: {  }

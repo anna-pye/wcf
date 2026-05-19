@@ -1,0 +1,287 @@
+<?php
+
+/**
+ * @file
+ * Theme hooks for Winning Colours Farm.
+ */
+
+declare(strict_types=1);
+
+use Drupal\node\NodeInterface;
+use Drupal\paragraphs\ParagraphInterface;
+use Drupal\views\ViewExecutable;
+use Drupal\views\Views;
+
+/**
+ * Builds an accessible CTA link render array from paragraph CTA fields.
+ *
+ * @return array<string, mixed>|null
+ *   Link render array or NULL when no valid URL.
+ */
+function wcf_theme_build_paragraph_cta_link(ParagraphInterface $paragraph): ?array {
+  if ($paragraph->get('field_cta_url')->isEmpty()) {
+    return NULL;
+  }
+
+  $link_item = $paragraph->get('field_cta_url')->first();
+  if ($link_item === NULL) {
+    return NULL;
+  }
+
+  $url = $link_item->getUrl();
+  if ($url->isRouted() && !$url->access()) {
+    return NULL;
+  }
+
+  $cta_text = $paragraph->get('field_cta_text')->value;
+  if ($cta_text === NULL || $cta_text === '') {
+    $cta_text = $link_item->title ?: (string) t('Learn more');
+  }
+
+  return [
+    '#type' => 'link',
+    '#title' => $cta_text,
+    '#url' => $url,
+    '#attributes' => [
+      'class' => ['feature-card__cta', 'button', 'button--primary'],
+    ],
+  ];
+}
+
+/**
+ * Builds a cacheable stallions View render array.
+ *
+ * @return array<string, mixed>|null
+ *   View render array or NULL when the view is unavailable.
+ */
+function wcf_theme_build_stallions_view_renderable(string $display_id, ?int $items_per_page = NULL): ?array {
+  $view = Views::getView('stallions');
+  if (!$view instanceof ViewExecutable) {
+    return NULL;
+  }
+
+  $view->setDisplay($display_id);
+  if ($items_per_page !== NULL) {
+    $view->setItemsPerPage($items_per_page);
+  }
+
+  $build = $view->buildRenderable($display_id, []);
+  return $build === [] ? NULL : $build;
+}
+
+/**
+ * Builds a cacheable featured content View render array filtered by bundle.
+ *
+ * @return array<string, mixed>|null
+ *   View render array or NULL when the view is unavailable.
+ */
+function wcf_theme_build_featured_content_view_renderable(string $content_type, int $items_per_page): ?array {
+  $display_id = 'block_' . $content_type;
+  $view = Views::getView('featured_content');
+  if (!$view instanceof ViewExecutable) {
+    return NULL;
+  }
+  $displays = $view->storage->get('display');
+  if (!isset($displays[$display_id])) {
+    return NULL;
+  }
+  $view->setDisplay($display_id);
+
+  $view->setItemsPerPage($items_per_page);
+  $build = $view->buildRenderable($display_id, []);
+  return $build === [] ? NULL : $build;
+}
+
+/**
+ * Returns a list field label for display.
+ */
+function wcf_theme_list_field_label(NodeInterface $node, string $field_name): ?string {
+  if ($node->get($field_name)->isEmpty()) {
+    return NULL;
+  }
+  $item = $node->get($field_name)->first();
+  if ($item === NULL) {
+    return NULL;
+  }
+  $definition = $node->getFieldDefinition($field_name);
+  $allowed = $definition->getSetting('allowed_values') ?? [];
+  $value = $item->value;
+  return $allowed[$value] ?? $value;
+}
+
+/**
+ * Implements hook_preprocess_paragraph__hero_slide().
+ */
+function wcf_theme_preprocess_paragraph__hero_slide(array &$variables): void {
+  $paragraph = $variables['paragraph'] ?? NULL;
+  if (!$paragraph instanceof ParagraphInterface) {
+    return;
+  }
+
+  $cta = wcf_theme_build_paragraph_cta_link($paragraph);
+  if ($cta !== NULL) {
+    $cta['#attributes']['class'] = ['hero-slide__cta', 'button', 'button--primary'];
+    $variables['cta_link'] = $cta;
+  }
+}
+
+/**
+ * Implements hook_preprocess_paragraph__feature_card().
+ */
+function wcf_theme_preprocess_paragraph__feature_card(array &$variables): void {
+  $paragraph = $variables['paragraph'] ?? NULL;
+  if (!$paragraph instanceof ParagraphInterface) {
+    return;
+  }
+
+  $variables['feature_card_title'] = $paragraph->get('field_title')->value;
+  $variables['cta_link'] = wcf_theme_build_paragraph_cta_link($paragraph);
+}
+
+/**
+ * Implements hook_preprocess_paragraph__featured_content().
+ */
+function wcf_theme_preprocess_paragraph__featured_content(array &$variables): void {
+  $paragraph = $variables['paragraph'] ?? NULL;
+  if (!$paragraph instanceof ParagraphInterface) {
+    return;
+  }
+
+  $content_type = $paragraph->get('field_content_type')->value;
+  if ($content_type === NULL || $content_type === '') {
+    return;
+  }
+
+  $limit_raw = $paragraph->get('field_item_limit')->value;
+  $limit = $limit_raw !== NULL && $limit_raw !== '' ? (int) $limit_raw : 3;
+  $limit = max(1, min(12, $limit));
+
+  $variables['featured_content_title'] = $paragraph->get('field_title')->value;
+  $variables['featured_content_listing'] = wcf_theme_build_featured_content_view_renderable($content_type, $limit);
+}
+
+/**
+ * Implements hook_preprocess_paragraph__featured_stallions().
+ */
+function wcf_theme_preprocess_paragraph__featured_stallions(array &$variables): void {
+  $paragraph = $variables['paragraph'] ?? NULL;
+  if (!$paragraph instanceof ParagraphInterface) {
+    return;
+  }
+
+  $count_raw = $paragraph->get('field_featured_count')->value;
+  $count = $count_raw !== NULL && $count_raw !== '' ? (int) $count_raw : 3;
+  $count = max(1, min(12, $count));
+
+  $variables['featured_stallions_title'] = $paragraph->get('field_title')->value;
+  $variables['featured_stallions_listing'] = wcf_theme_build_stallions_view_renderable('block_featured', $count);
+}
+
+/**
+ * Implements hook_preprocess_paragraph__testimonial_item().
+ */
+function wcf_theme_preprocess_paragraph__testimonial_item(array &$variables): void {
+  $paragraph = $variables['paragraph'] ?? NULL;
+  if (!$paragraph instanceof ParagraphInterface) {
+    return;
+  }
+
+  $quote_raw = $paragraph->get('field_quote')->value;
+  $variables['testimonial_quote'] = $quote_raw !== NULL ? strip_tags($quote_raw) : NULL;
+  $variables['testimonial_author_name'] = $paragraph->get('field_author_name')->value;
+  $variables['testimonial_author_role'] = $paragraph->get('field_author_role')->value;
+}
+
+/**
+ * Implements hook_preprocess_node__stallion().
+ */
+function wcf_theme_preprocess_node__stallion(array &$variables): void {
+  $node = $variables['node'] ?? NULL;
+  if (!$node instanceof NodeInterface) {
+    return;
+  }
+
+  $variables['stallion_status_label'] = wcf_theme_list_field_label($node, 'field_status');
+  $variables['stallion_featured'] = (bool) $node->get('field_featured')->value;
+}
+
+/**
+ * Implements hook_preprocess_field__node__field_hero_slides().
+ */
+function wcf_theme_preprocess_field__node__field_hero_slides(array &$variables): void {
+  if (empty($variables['items'])) {
+    return;
+  }
+
+  $variables['#attached']['library'][] = 'wcf_theme/hero-slider';
+  $variables['hero_slide_count'] = count($variables['items']);
+}
+
+/**
+ * Implements hook_preprocess_node__homepage().
+ */
+function wcf_theme_preprocess_node__homepage(array &$variables): void {
+  $variables['#attached']['library'][] = 'wcf_theme/global';
+}
+
+/**
+ * Implements hook_preprocess_views_view__stallions().
+ */
+function wcf_theme_preprocess_views_view__stallions(array &$variables): void {
+  $variables['attributes']['class'][] = 'stallion-listing';
+}
+
+/**
+ * Implements hook_preprocess_views_view__search_stallions().
+ */
+function wcf_theme_preprocess_views_view__search_stallions(array &$variables): void {
+  $variables['attributes']['class'][] = 'stallion-listing';
+  $variables['attributes']['class'][] = 'site-search';
+  $variables['#attached']['library'][] = 'wcf_theme/site-search';
+  if (!empty($variables['header'])) {
+    $variables['title'] = t('Search');
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function wcf_theme_preprocess_page__search(array &$variables): void {
+  $variables['attributes']['class'][] = 'page--search';
+}
+
+/**
+ * Implements hook_form_alter().
+ */
+function wcf_theme_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, string $form_id): void {
+  if (str_starts_with($form_id, 'node_') && str_ends_with($form_id, '_form')) {
+    if (isset($form['revision_log'])) {
+      $form['revision_log']['#description'] = t('Describe what changed in this revision. This helps editors track editorial updates.');
+    }
+    if (isset($form['moderation_state'])) {
+      $form['moderation_state']['#description'] = t('Draft: work in progress. In review: ready for an editor. Published: live on the site.');
+    }
+  }
+
+  if ($form_id === 'views_exposed_form' && isset($form['#id']) && str_contains((string) $form['#id'], 'search-stallions')) {
+    $form['#attributes']['class'][] = 'site-search__form';
+    $form['#attributes']['role'] = 'search';
+    $form['#attributes']['aria-label'] = t('Keyword search');
+    if (isset($form['keywords'])) {
+      $form['keywords']['#attributes']['placeholder'] = t('Search by keyword');
+      $form['keywords']['#title_display'] = 'before';
+    }
+    if (isset($form['actions']['reset'])) {
+      $form['actions']['reset']['#attributes']['class'][] = 'site-search__reset';
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_page().
+ */
+function wcf_theme_preprocess_page(array &$variables): void {
+  if (!empty($variables['is_front'])) {
+    $variables['#attached']['library'][] = 'wcf_theme/global';
+  }
+}

@@ -1,0 +1,15 @@
+uuid: 9f6f6df3-1c8b-4e27-8f5f-df1f1d1d823e
+langcode: en
+status: true
+dependencies:
+  module:
+    - search_api_db
+id: wcf_database
+name: 'WCF database'
+description: 'Database search backend for Winning Colours Farm.'
+backend: search_api_db
+backend_config:
+  database: 'default:default'
+  min_chars: 3
+  matching: words
+  phrase: bigram

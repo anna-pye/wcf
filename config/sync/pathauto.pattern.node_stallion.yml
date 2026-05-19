@@ -1,0 +1,23 @@
+uuid: e84b66e7-c6f6-4660-92b5-4c35ea556f84
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.stallion
+  module:
+    - node
+id: node_stallion
+label: 'Content Stallion'
+type: 'canonical_entities:node'
+pattern: '/stallions/[node:title]'
+selection_criteria:
+  a465532b-2fb7-4ce4-aa95-053940ee76c6:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      stallion: stallion
+selection_logic: and
+weight: -5
+relationships: {  }

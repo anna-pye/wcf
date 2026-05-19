@@ -1,0 +1,21 @@
+uuid: ff9c0b5b-85f0-457f-87e8-c6de294a0244
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_cta_phone
+    - node.type.stallion
+  module:
+    - telephone
+id: node.stallion.field_cta_phone
+field_name: field_cta_phone
+entity_type: node
+bundle: stallion
+label: 'Enquiry phone'
+description: 'Click-to-call number shown on the stallion profile.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: telephone

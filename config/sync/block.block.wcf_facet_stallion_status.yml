@@ -1,0 +1,30 @@
+uuid: 8430c876-18ad-4859-85ab-2af7294069cf
+langcode: en
+status: true
+dependencies:
+  config:
+    - facets.facet.stallion_status
+  module:
+    - facets
+    - system
+  theme:
+    - wcf_theme
+id: wcf_facet_stallion_status
+theme: wcf_theme
+region: sidebar_first
+weight: 0
+provider: null
+plugin: 'facet_block:stallion_status'
+settings:
+  id: 'facet_block:stallion_status'
+  label: ''
+  label_display: visible
+  provider: facets
+  context_mapping: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: |-
+      /search
+      /search*

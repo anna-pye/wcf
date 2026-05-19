@@ -1,0 +1,23 @@
+uuid: 7fb7fd30-7390-4ba0-850b-8fe96cfad4d6
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.page
+  module:
+    - node
+id: node_page
+label: 'Content Basic page'
+type: 'canonical_entities:node'
+pattern: '/[node:title]'
+selection_criteria:
+  764cbddb-26cb-4c9b-a046-01e95bcaa4ab:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      page: page
+selection_logic: and
+weight: -5
+relationships: {  }

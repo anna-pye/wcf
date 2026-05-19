@@ -1,0 +1,22 @@
+uuid: 623a6bdf-14a4-4e2b-b699-4fea47ca369f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_quote
+    - paragraphs.paragraphs_type.testimonial_item
+  module:
+    - text
+id: paragraph.testimonial_item.field_quote
+field_name: field_quote
+entity_type: paragraph
+bundle: testimonial_item
+label: Quote
+description: 'The testimonial text. Use plain language; avoid HTML.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

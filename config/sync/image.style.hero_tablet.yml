@@ -1,0 +1,21 @@
+uuid: aff4d29c-ae3a-445d-9a50-529646bde2e4
+langcode: en
+status: true
+dependencies: {  }
+name: hero_tablet
+label: 'Hero tablet (1200)'
+effects:
+  e5f6a7b8-c9d0-1234-ef01-345678901234:
+    uuid: e5f6a7b8-c9d0-1234-ef01-345678901234
+    id: image_scale
+    weight: 0
+    data:
+      width: 1200
+      height: null
+      upscale: false
+  f6a7b8c9-d0e1-2345-f012-456789012345:
+    uuid: f6a7b8c9-d0e1-2345-f012-456789012345
+    id: image_convert_avif
+    weight: 1
+    data:
+      extension: webp

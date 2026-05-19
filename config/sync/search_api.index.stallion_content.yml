@@ -1,0 +1,205 @@
+uuid: 9257f172-facb-42cf-9e76-055b7ff22d55
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - field.storage.node.field_featured
+    - field.storage.node.field_status
+    - field.storage.node.field_tags
+    - search_api.server.wcf_database
+  module:
+    - node
+id: stallion_content
+name: 'Stallion content'
+description: 'Published stallion, container home, and article content for site search.'
+read_only: false
+field_settings:
+  body:
+    label: Body
+    datasource_id: 'entity:node'
+    property_path: body
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  created:
+    label: Created
+    datasource_id: 'entity:node'
+    property_path: created
+    type: date
+    dependencies:
+      module:
+        - node
+  featured:
+    label: Featured
+    datasource_id: 'entity:node'
+    property_path: field_featured
+    type: boolean
+    dependencies:
+      config:
+        - field.storage.node.field_featured
+  node_grants:
+    label: 'Node access information'
+    property_path: search_api_node_grants
+    type: string
+    indexed_locked: true
+    type_locked: true
+    hidden: true
+  node_status:
+    label: Published
+    datasource_id: 'entity:node'
+    property_path: status
+    type: boolean
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+  status:
+    label: 'Stallion status'
+    datasource_id: 'entity:node'
+    property_path: field_status
+    type: string
+    dependencies:
+      config:
+        - field.storage.node.field_status
+  summary:
+    label: Summary
+    datasource_id: 'entity:node'
+    property_path: 'body:summary'
+    type: text
+    dependencies:
+      config:
+        - field.storage.node.body
+  tags:
+    label: Tags
+    datasource_id: 'entity:node'
+    property_path: field_tags
+    type: integer
+    dependencies:
+      config:
+        - field.storage.node.field_tags
+  title:
+    label: Title
+    datasource_id: 'entity:node'
+    property_path: title
+    type: text
+    boost: 8.0
+    dependencies:
+      module:
+        - node
+  type:
+    label: 'Content type'
+    datasource_id: 'entity:node'
+    property_path: type
+    type: string
+    dependencies:
+      module:
+        - node
+  uid:
+    label: 'Entity reference'
+    datasource_id: 'entity:node'
+    property_path: uid
+    type: integer
+    indexed_locked: true
+    type_locked: true
+    dependencies:
+      module:
+        - node
+datasource_settings:
+  'entity:node':
+    bundles:
+      default: false
+      selected:
+        - article
+        - container_home
+        - stallion
+    languages:
+      default: true
+      selected: {  }
+processor_settings:
+  add_url:
+    weights:
+      preprocess_index: -30
+    status: true
+  aggregated_field:
+    weights:
+      add_properties: 20
+    status: true
+  content_access:
+    weights:
+      preprocess_index: -6
+      preprocess_query: -4
+    status: true
+  custom_value: {  }
+  entity_status:
+    weights:
+      preprocess_index: -10
+    status: true
+  entity_type: {  }
+  html_filter:
+    weights:
+      preprocess_index: -3
+      preprocess_query: -6
+    all_fields: false
+    fields:
+      - body
+      - summary
+      - title
+    title: true
+    alt: true
+    tags:
+      b: 2.0
+      em: 1.5
+      h1: 5.0
+      h2: 3.0
+      h3: 2.0
+      strong: 2.0
+      u: 1.5
+    status: true
+  ignorecase:
+    weights:
+      preprocess_index: -5
+      preprocess_query: -8
+    all_fields: false
+    fields:
+      - body
+      - summary
+      - title
+    status: true
+  language_with_fallback: {  }
+  rendered_item: {  }
+  tokenizer:
+    weights:
+      preprocess_index: -2
+      preprocess_query: -5
+    all_fields: false
+    fields:
+      - body
+      - summary
+      - title
+    spaces: ''
+    ignored: ._-
+    overlap_cjk: 1
+    minimum_word_size: '3'
+    status: true
+  transliteration:
+    weights:
+      preprocess_index: -4
+      preprocess_query: -7
+    all_fields: false
+    fields:
+      - body
+      - summary
+      - title
+    status: true
+tracker_settings:
+  default:
+    indexing_order: fifo
+options:
+  cron_limit: 50
+  delete_on_fail: true
+  index_directly: true
+  track_changes_in_references: true
+server: wcf_database

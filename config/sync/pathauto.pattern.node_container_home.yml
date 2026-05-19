@@ -1,0 +1,23 @@
+uuid: 4693ace9-05fc-43af-81b2-ddf4c1b90b2b
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.container_home
+  module:
+    - node
+id: node_container_home
+label: 'Content Container Home'
+type: 'canonical_entities:node'
+pattern: '/container-homes/[node:title]'
+selection_criteria:
+  fa77d3ee-7636-4dc1-9ab4-1b3ae6a2c8ff:
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      container_home: container_home
+selection_logic: and
+weight: -5
+relationships: {  }

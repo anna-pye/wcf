@@ -1,0 +1,33 @@
+uuid: f5ac9a3a-ad74-462c-a13a-a039b36049f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.featured_stallions.field_description
+    - field.field.paragraph.featured_stallions.field_featured_count
+    - field.field.paragraph.featured_stallions.field_title
+    - paragraphs.paragraphs_type.featured_stallions
+  module:
+    - text
+id: paragraph.featured_stallions.default
+targetEntityType: paragraph
+bundle: featured_stallions
+mode: default
+content:
+  field_description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_featured_count: true

@@ -1,0 +1,50 @@
+uuid: ce976505-7350-4282-b072-bc5dffde2ced
+langcode: en
+status: true
+dependencies:
+  config:
+    - search_api.index.stallion_content
+    - views.view.search_stallions
+  module:
+    - search_api
+id: stallion_status
+name: 'Stallion status'
+weight: 0
+min_count: 1
+missing: false
+missing_label: others
+url_alias: stallion_status
+facet_source_id: 'search_api:views_page__search_stallions__page_1'
+field_identifier: status
+query_operator: or
+hard_limit: null
+exclude: false
+use_hierarchy: false
+keep_hierarchy_parents_active: false
+hierarchy:
+  type: taxonomy
+  config: {  }
+expand_hierarchy: false
+enable_parent_when_child_gets_disabled: true
+widget:
+  type: links
+  config:
+    show_numbers: true
+    soft_limit: 0
+empty_behavior:
+  behavior: none
+only_visible_when_facet_source_is_visible: true
+show_only_one_result: false
+show_title: true
+processor_configs:
+  url_processor_handler:
+    processor_id: url_processor_handler
+    weights:
+      pre_query: -10
+      build: -10
+    settings: {  }
+  list_item:
+    processor_id: list_item
+    weights:
+      build: 5
+    settings: {  }

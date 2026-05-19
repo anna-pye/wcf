@@ -1,0 +1,227 @@
+uuid: e0433883-ba11-4e8b-9fd5-4557ddc3aa71
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.card
+  module:
+    - node
+    - user
+id: featured_content
+label: 'Featured content'
+module: node
+description: 'Reusable listings for featured content paragraphs.'
+tag: wcf
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Featured content'
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 3
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+      style:
+        type: html_list
+        options:
+          type: ul
+          wrapper_class: stallion-listing__results
+          class: stallion-listing__grid
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: card
+      css_class: 'stallion-listing featured-content-listing'
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  block_article:
+    id: block_article
+    display_title: Article
+    display_plugin: block
+    position: 2
+    display_options:
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 3
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+      style:
+        type: html_list
+        options:
+          type: ul
+          wrapper_class: stallion-listing__results
+          class: stallion-listing__grid
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: teaser
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  block_container_home:
+    id: block_container_home
+    display_title: 'Container home'
+    display_plugin: block
+    position: 3
+    display_options:
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 3
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+      style:
+        type: html_list
+        options:
+          type: ul
+          wrapper_class: stallion-listing__results
+          class: stallion-listing__grid
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: teaser
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  block_stallion:
+    id: block_stallion
+    display_title: Stallion
+    display_plugin: block
+    position: 1
+    display_options:
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 3
+      cache:
+        type: tag
+        options: {  }
+      sorts:
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+      style:
+        type: html_list
+        options:
+          type: ul
+          wrapper_class: stallion-listing__results
+          class: stallion-listing__grid
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: card
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

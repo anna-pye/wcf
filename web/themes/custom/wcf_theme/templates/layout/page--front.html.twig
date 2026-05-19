@@ -1,0 +1,30 @@
+{#
+/**
+ * @file
+ * Front page layout — hero-first, minimal chrome.
+ */
+#}
+<div class="layout-container layout-container--front">
+  <header class="site-header site-header--front" role="banner">
+    {{ page.header }}
+    {% if page.primary_menu or page.secondary_menu %}
+      <div class="site-header__menus">
+        {{ page.primary_menu }}
+        {{ page.secondary_menu }}
+      </div>
+    {% endif %}
+  </header>
+
+  <main id="main-content" class="site-main site-main--front" role="main">
+    {{ page.highlighted }}
+    <div class="layout-content layout-content--front">
+      {{ page.content }}
+    </div>
+  </main>
+
+  {% if page.footer %}
+    <footer class="site-footer" role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+</div>

@@ -1,0 +1,44 @@
+{#
+/**
+ * @file
+ * Hero slides field — accessible carousel wrapper.
+ */
+#}
+{% if items %}
+  <section
+    class="hero-slider"
+    aria-roledescription="{{ 'carousel'|t }}"
+    aria-label="{{ 'Homepage hero'|t }}"
+    data-hero-slider
+    tabindex="0"
+  >
+    <p class="visually-hidden" data-hero-slider-status aria-live="polite"></p>
+
+    <div class="hero-slider__track" data-hero-slider-track data-active-index="0">
+      {% for item in items %}
+        {{ item.content }}
+      {% endfor %}
+    </div>
+
+    {% if hero_slide_count > 1 %}
+      <div class="hero-slider__controls" aria-label="{{ 'Hero slide controls'|t }}">
+        <button
+          type="button"
+          class="hero-slider__control hero-slider__control--prev"
+          data-hero-slider-prev
+          aria-label="{{ 'Previous slide'|t }}"
+        >
+          <span aria-hidden="true">&larr;</span>
+        </button>
+        <button
+          type="button"
+          class="hero-slider__control hero-slider__control--next"
+          data-hero-slider-next
+          aria-label="{{ 'Next slide'|t }}"
+        >
+          <span aria-hidden="true">&rarr;</span>
+        </button>
+      </div>
+    {% endif %}
+  </section>
+{% endif %}

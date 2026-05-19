@@ -1,0 +1,27 @@
+{#
+/**
+ * @file
+ * Featured content section component.
+ *
+ * Variables:
+ * - title: Section heading.
+ * - description: Optional description render array.
+ * - listing: View render array.
+ * - section_id: Unique section id for landmarks.
+ */
+#}
+<section class="featured-content" id="{{ section_id }}" aria-labelledby="{{ section_id }}-title">
+  {% if title %}
+    <h2 class="featured-content__title" id="{{ section_id }}-title">{{ title }}</h2>
+  {% endif %}
+  {% if description %}
+    <div class="featured-content__description">
+      {{ description }}
+    </div>
+  {% endif %}
+  {% if listing %}
+    <div class="featured-content__listing" aria-label="{{ 'Featured listings'|t }}">
+      {{ listing }}
+    </div>
+  {% endif %}
+</section>

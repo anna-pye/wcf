@@ -1,0 +1,11 @@
+uuid: d9458477-11e5-4048-820d-19bab3245bb1
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+id: media.teaser
+label: Teaser
+description: 'Small teaser media rendering.'
+targetEntityType: media
+cache: true

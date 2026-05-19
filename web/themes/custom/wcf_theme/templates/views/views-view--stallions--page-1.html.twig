@@ -1,0 +1,13 @@
+{#
+/**
+ * @file
+ * Stallions listing page — semantic layout with accessible filters.
+ */
+#}
+{% include '@wcf_theme/components/stallion-listing.html.twig' with {
+  title: view.getTitle()|default('Stallions'|t),
+  exposed: exposed,
+  listing: rows,
+  pager: pager,
+  empty: empty,
+} only %}

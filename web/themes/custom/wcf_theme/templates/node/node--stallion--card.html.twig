@@ -1,0 +1,15 @@
+{#
+/**
+ * @file
+ * Stallion card view mode — delegates to stallion-card component.
+ */
+#}
+{% include '@wcf_theme/components/stallion-card.html.twig' with {
+  node: node,
+  url: url,
+  title: label,
+  image: content.field_main_image,
+  summary: content.body,
+  status: stallion_status_label,
+  featured: stallion_featured,
+} only %}

@@ -1,0 +1,15 @@
+uuid: f075f4df-10a0-44a5-babb-bcfdbefc5740
+langcode: en
+status: true
+dependencies: {  }
+name: card_mobile
+label: 'Card mobile (400)'
+effects:
+  ed2b8a5d-da84-4cef-9c09-3abf09eece6b:
+    uuid: ed2b8a5d-da84-4cef-9c09-3abf09eece6b
+    id: image_scale
+    weight: 0
+    data:
+      width: 400
+      height: null
+      upscale: false

@@ -1,0 +1,15 @@
+_core:
+  default_config_hash: ijfbzDTN4CbE7Sr-6ubWzy_t1vH4OtU1doNCLssVz-4
+langcode: en
+uuid: 2d74cf82-a6ae-4ce7-a27b-c361e63efdb2
+name: WCF
+mail: anna_pye@icloud.com
+slogan: ''
+page:
+  403: ''
+  404: ''
+  front: /node/38
+admin_compact_mode: false
+weight_select_max: 100
+default_langcode: en
+mail_notification: null

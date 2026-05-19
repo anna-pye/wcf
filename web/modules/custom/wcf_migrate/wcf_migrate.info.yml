@@ -1,0 +1,16 @@
+name: 'WCF Migrate'
+type: module
+description: 'Controlled Drupal 7 to Drupal 11 migrations for WCF rebuild (taxonomy, files, media, pages, container homes).'
+package: Migration
+core_version_requirement: ^11
+dependencies:
+  - drupal:migrate
+  - drupal:migrate_drupal
+  - drupal:migrate_plus
+  - drupal:migrate_tools
+  - drupal:file
+  - drupal:image
+  - drupal:media
+  - drupal:node
+  - drupal:taxonomy
+  - drupal:path

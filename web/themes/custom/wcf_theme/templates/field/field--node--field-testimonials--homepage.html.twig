@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * Homepage testimonials field wrapper.
+ */
+#}
+{% if items %}
+  <section class="testimonials-section" aria-labelledby="testimonials-heading">
+    <h2 id="testimonials-heading" class="testimonials-section__heading visually-hidden">{{ 'Testimonials'|t }}</h2>
+    <div class="testimonials-section__grid">
+      {% for item in items %}
+        {{ item.content }}
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}

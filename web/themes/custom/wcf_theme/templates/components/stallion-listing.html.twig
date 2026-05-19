@@ -1,0 +1,37 @@
+{#
+/**
+ * @file
+ * Stallion listing page wrapper for Views output.
+ *
+ * Variables:
+ * - title: Page title.
+ * - exposed: Exposed filters render array.
+ * - listing: Main View content render array.
+ * - pager: Optional pager render array.
+ * - empty: Optional empty-state render array.
+ */
+#}
+<div class="stallion-listing-page">
+  {% if title %}
+    <header class="stallion-listing-page__header">
+      <h1 class="stallion-listing-page__title">{{ title }}</h1>
+    </header>
+  {% endif %}
+  {% if exposed %}
+    <div class="stallion-listing-page__filters" role="search" aria-label="{{ 'Filter stallions'|t }}">
+      {{ exposed }}
+    </div>
+  {% endif %}
+  {% if listing %}
+    <div class="stallion-listing-page__results">
+      {{ listing }}
+      {% if pager %}
+        {{ pager }}
+      {% endif %}
+    </div>
+  {% elseif empty %}
+    <div class="stallion-listing-page__results">
+      {{ empty }}
+    </div>
+  {% endif %}
+</div>

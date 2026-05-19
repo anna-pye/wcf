@@ -1,0 +1,18 @@
+@use '../abstracts/variables' as *;
+
+.homepage {
+  margin: 0;
+}
+
+.homepage__content {
+  width: 100%;
+}
+
+.site-main--front {
+  padding-top: 0;
+}
+
+.site-header--front {
+  position: relative;
+  z-index: 2;
+}

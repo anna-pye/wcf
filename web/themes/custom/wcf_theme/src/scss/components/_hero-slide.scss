@@ -1,0 +1,92 @@
+@use '../abstracts/variables' as *;
+
+.hero-slide {
+  position: relative;
+  min-height: $hero-min-height-mobile;
+  display: grid;
+  grid-template-areas: 'stack';
+  overflow: hidden;
+
+  @media (min-width: $breakpoint-md) {
+    min-height: $hero-min-height-desktop;
+  }
+}
+
+.hero-slide__media,
+.hero-slide__overlay {
+  grid-area: stack;
+}
+
+.hero-slide__media {
+  img,
+  picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.hero-slide__overlay {
+  display: flex;
+  align-items: flex-end;
+  background: linear-gradient(
+    to top,
+    $color-overlay 0%,
+    transparent 55%
+  );
+  color: $color-text-inverse;
+  padding: $spacing-lg $spacing-sm;
+}
+
+.hero-slide__inner {
+  max-width: $content-max-width;
+  width: 100%;
+  margin-inline: auto;
+}
+
+.hero-slide__title {
+  margin: 0 0 $spacing-sm;
+  font-size: clamp(1.5rem, 4vw, 2.75rem);
+  line-height: 1.15;
+  font-weight: 700;
+}
+
+.hero-slide__description {
+  font-size: clamp(1rem, 2.5vw, 1.25rem);
+  line-height: $line-height-base;
+  max-width: 40rem;
+  margin-bottom: $spacing-md;
+
+  p:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.hero-slide__actions {
+  margin-top: $spacing-sm;
+}
+
+.hero-slide__cta {
+  display: inline-block;
+  padding: $spacing-xs $spacing-md;
+  background: $color-primary;
+  color: $color-text-inverse;
+  text-decoration: none;
+  border-radius: 0.25rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+
+  &:hover,
+  &:focus {
+    background: $color-primary-hover;
+    color: $color-text-inverse;
+    outline: 2px solid $color-text-inverse;
+    outline-offset: 2px;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-text-inverse;
+    outline-offset: 3px;
+  }
+}

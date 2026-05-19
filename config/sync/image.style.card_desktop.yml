@@ -1,0 +1,15 @@
+uuid: da8f565a-0b5e-40cf-9ee0-1f2d11be0e12
+langcode: en
+status: true
+dependencies: {  }
+name: card_desktop
+label: 'Card desktop (600)'
+effects:
+  46da5027-140e-4bdf-9206-07d1998987b4:
+    uuid: 46da5027-140e-4bdf-9206-07d1998987b4
+    id: image_scale
+    weight: 0
+    data:
+      width: 600
+      height: null
+      upscale: false

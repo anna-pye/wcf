@@ -1,0 +1,35 @@
+id: wcf_d7_media_image
+label: 'WCF D7 image files to media'
+audit: true
+migration_tags:
+  - WCF
+  - Drupal 7
+  - Media
+source:
+  plugin: wcf_d7_image_file
+  scheme: public
+  constants:
+    source_base_path: ''
+process:
+  bundle:
+    plugin: default_value
+    default_value: image
+  name: filename
+  uid:
+    plugin: default_value
+    default_value: 1
+  created: timestamp
+  changed: timestamp
+  field_media_image/target_id:
+    plugin: migration_lookup
+    migration: wcf_d7_file
+    source: fid
+    no_stub: true
+  field_media_image/alt: alt
+  field_media_image/title: title
+destination:
+  plugin: entity:media
+  default_bundle: image
+migration_dependencies:
+  required:
+    - wcf_d7_file

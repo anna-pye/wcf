@@ -1,0 +1,43 @@
+id: wcf_d7_file
+label: 'WCF D7 public image files'
+audit: true
+migration_tags:
+  - WCF
+  - Drupal 7
+  - Files
+source:
+  plugin: wcf_d7_image_file
+  scheme: public
+  constants:
+    source_base_path: ''
+process:
+  fid: fid
+  filename: filename
+  source_full_path:
+    -
+      plugin: concat
+      delimiter: /
+      source:
+        - constants/source_base_path
+        - filepath
+    -
+      plugin: urlencode
+  uri:
+    plugin: file_copy
+    source:
+      - '@source_full_path'
+      - uri
+    file_exists: use existing
+  filemime: filemime
+  status: status
+  created: timestamp
+  changed: timestamp
+  uid:
+    plugin: static_map
+    source: uid
+    map:
+      1: 1
+      321: 1
+    default_value: 1
+destination:
+  plugin: entity:file

@@ -1,0 +1,22 @@
+// Brand and layout tokens.
+$color-text: #1a1a1a;
+$color-text-inverse: #ffffff;
+$color-primary: #2d5016;
+$color-primary-hover: #1f3810;
+$color-overlay: rgba(0, 0, 0, 0.45);
+
+$font-family-base: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+$font-size-base: 1rem;
+$line-height-base: 1.5;
+
+$spacing-xs: 0.5rem;
+$spacing-sm: 1rem;
+$spacing-md: 1.5rem;
+$spacing-lg: 2.5rem;
+$spacing-xl: 4rem;
+
+$hero-min-height-mobile: 22rem;
+$hero-min-height-desktop: 32rem;
+$content-max-width: 72rem;
+$breakpoint-md: 48rem;
+$breakpoint-lg: 75rem;

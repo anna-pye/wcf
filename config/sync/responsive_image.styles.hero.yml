@@ -1,0 +1,25 @@
+uuid: 92e390a3-275e-43b3-b126-cc0bf1393d10
+langcode: en
+status: true
+dependencies:
+  config:
+    - image.style.hero_desktop
+    - image.style.hero_mobile
+    - image.style.hero_tablet
+  module:
+    - responsive_image
+id: hero
+label: Hero
+image_style_mappings:
+  -
+    image_mapping_type: sizes
+    image_mapping:
+      sizes: '(min-width: 1200px) 100vw, (min-width: 768px) 100vw, 100vw'
+      sizes_image_styles:
+        - hero_desktop
+        - hero_tablet
+        - hero_mobile
+    breakpoint_id: responsive_image.viewport_sizing
+    multiplier: 1x
+breakpoint_group: responsive_image
+fallback_image_style: hero_mobile

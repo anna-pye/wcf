@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Reusable testimonial card component.
+ *
+ * Variables:
+ * - quote: Quote text (plain).
+ * - author_name: Attribution name.
+ * - author_role: Optional role or affiliation.
+ * - author_image: Render array for author portrait.
+ */
+#}
+<blockquote class="testimonial-card">
+  {% if quote %}
+    <p class="testimonial-card__quote">{{ quote }}</p>
+  {% endif %}
+  <footer class="testimonial-card__footer">
+    {% if author_image %}
+      <div class="testimonial-card__avatar">
+        {{ author_image }}
+      </div>
+    {% endif %}
+    <cite class="testimonial-card__cite">
+      {% if author_name %}
+        <span class="testimonial-card__name">{{ author_name }}</span>
+      {% endif %}
+      {% if author_role %}
+        <span class="testimonial-card__role">{{ author_role }}</span>
+      {% endif %}
+    </cite>
+  </footer>
+</blockquote>

@@ -1,0 +1,27 @@
+uuid: 31f14bbd-d222-41ea-b8a4-f540bbfe9889
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_image
+    - media.type.image
+    - paragraphs.paragraphs_type.feature_card
+id: paragraph.feature_card.field_image
+field_name: field_image
+entity_type: paragraph
+bundle: feature_card
+label: Image
+description: 'Feature image from the Media Library.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

@@ -1,0 +1,37 @@
+uuid: af6d4aa8-ae66-4002-a44c-8cf9afeab4cf
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_feature_cards
+    - node.type.homepage
+    - paragraphs.paragraphs_type.feature_card
+  module:
+    - entity_reference_revisions
+id: node.homepage.field_feature_cards
+field_name: field_feature_cards
+entity_type: node
+bundle: homepage
+label: 'Feature cards'
+description: 'Promotional feature strips for services or highlights.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      feature_card: feature_card
+    negate: 0
+    target_bundles_drag_drop:
+      feature_card:
+        weight: 0
+        enabled: true
+      hero_slide:
+        weight: 1
+        enabled: false
+      testimonial_item:
+        weight: 2
+        enabled: false
+field_type: entity_reference_revisions

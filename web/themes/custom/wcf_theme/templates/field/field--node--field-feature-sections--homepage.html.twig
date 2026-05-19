@@ -1,0 +1,13 @@
+{#
+/**
+ * @file
+ * Homepage feature sections field wrapper — ordered editorial composition.
+ */
+#}
+{% if items %}
+  <section class="homepage-feature-sections" aria-label="{{ 'Homepage sections'|t }}">
+    {% for item in items %}
+      {{ item.content }}
+    {% endfor %}
+  </section>
+{% endif %}

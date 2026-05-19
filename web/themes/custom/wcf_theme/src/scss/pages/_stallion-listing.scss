@@ -1,0 +1,70 @@
+@use '../abstracts/variables' as *;
+
+.stallion-listing-page {
+  max-width: $content-max-width;
+  margin-inline: auto;
+  padding: $spacing-lg $spacing-sm;
+}
+
+.stallion-listing-page__header {
+  margin-bottom: $spacing-md;
+}
+
+.stallion-listing-page__title {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+
+.stallion-listing-page__filters {
+  margin-bottom: $spacing-md;
+  padding: $spacing-sm;
+  background: rgba(0, 0, 0, 0.03);
+  border-radius: 0.25rem;
+
+  .form-item {
+    margin-bottom: $spacing-xs;
+  }
+
+  label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  select {
+    width: 100%;
+    max-width: 20rem;
+    padding: 0.5rem;
+    font-size: 1rem;
+  }
+
+  .form-actions {
+    margin-top: $spacing-sm;
+  }
+}
+
+.stallion-listing,
+.stallion-listing-page__results {
+  .stallion-listing__grid {
+    display: grid;
+    gap: $spacing-md;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    @media (min-width: $breakpoint-md) {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+.stallion-listing-page__results {
+  .pager {
+    margin-top: $spacing-lg;
+  }
+}

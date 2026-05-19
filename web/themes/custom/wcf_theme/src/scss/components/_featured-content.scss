@@ -1,0 +1,20 @@
+// Featured content paragraph section.
+@use '../abstracts/variables' as *;
+
+.featured-content {
+  margin-block: $spacing-lg;
+  padding-inline: $spacing-sm;
+
+  &__title {
+    margin-block: 0 $spacing-sm;
+  }
+
+  &__description {
+    margin-block-end: $spacing-md;
+    max-width: 42rem;
+  }
+
+  &__listing {
+    margin-block-start: $spacing-sm;
+  }
+}

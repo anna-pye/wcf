@@ -1,0 +1,52 @@
+uuid: d3611699-ac8e-49c4-9a3b-0c4cb55170ef
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.homepage.field_feature_cards
+    - field.field.node.homepage.field_feature_sections
+    - field.field.node.homepage.field_hero_slides
+    - field.field.node.homepage.field_testimonials
+    - node.type.homepage
+  module:
+    - entity_reference_revisions
+    - user
+id: node.homepage.default
+targetEntityType: node
+bundle: homepage
+mode: default
+content:
+  field_feature_sections:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 9
+    region: content
+  field_hero_slides:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_testimonials:
+    type: entity_reference_revisions_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: ''
+    third_party_settings: {  }
+    weight: 10
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_feature_cards: true

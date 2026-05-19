@@ -1,0 +1,24 @@
+uuid: a073be6a-9e2c-4956-9256-d0be7b1be74f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.stallion
+  module:
+    - text
+id: node.stallion.body
+field_name: body
+entity_type: node
+bundle: stallion
+label: Body
+description: 'Main profile copy. The summary is used in listings and SEO.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+  allowed_formats: {  }
+field_type: text_with_summary

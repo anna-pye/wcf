@@ -1,0 +1,45 @@
+uuid: 8ad3d42c-eb40-49b7-9124-309f75a279f9
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.feature_card.field_cta_text
+    - field.field.paragraph.feature_card.field_cta_url
+    - field.field.paragraph.feature_card.field_description
+    - field.field.paragraph.feature_card.field_image
+    - field.field.paragraph.feature_card.field_title
+    - paragraphs.paragraphs_type.feature_card
+  module:
+    - text
+id: paragraph.feature_card.default
+targetEntityType: paragraph
+bundle: feature_card
+mode: default
+content:
+  field_description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_image:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: card
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_title:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  field_cta_text: true
+  field_cta_url: true

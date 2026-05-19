@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Featured stallions paragraph — delegates to featured-stallions-section component.
+ */
+#}
+{% include '@wcf_theme/components/featured-stallions-section.html.twig' with {
+  title: featured_stallions_title,
+  description: content.field_description,
+  listing: featured_stallions_listing,
+  section_id: 'featured-stallions-' ~ paragraph.id(),
+} only %}

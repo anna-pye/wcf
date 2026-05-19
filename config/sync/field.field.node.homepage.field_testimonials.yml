@@ -1,0 +1,37 @@
+uuid: a244d0a0-f736-40bb-bd72-26ac9a459210
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_testimonials
+    - node.type.homepage
+    - paragraphs.paragraphs_type.testimonial_item
+  module:
+    - entity_reference_revisions
+id: node.homepage.field_testimonials
+field_name: field_testimonials
+entity_type: node
+bundle: homepage
+label: Testimonials
+description: 'Customer testimonials displayed on the homepage.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      testimonial_item: testimonial_item
+    negate: 0
+    target_bundles_drag_drop:
+      feature_card:
+        weight: 2
+        enabled: false
+      hero_slide:
+        weight: 1
+        enabled: false
+      testimonial_item:
+        weight: 0
+        enabled: true
+field_type: entity_reference_revisions

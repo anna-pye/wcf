@@ -1,0 +1,30 @@
+uuid: 20cd6634-5005-491b-acc3-d5aed9dd3a87
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_status
+field_name: field_status
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: active
+      label: Active
+    -
+      value: sold
+      label: Sold
+    -
+      value: retired
+      label: Retired
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

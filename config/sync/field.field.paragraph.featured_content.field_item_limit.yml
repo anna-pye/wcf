@@ -1,0 +1,25 @@
+uuid: 946ab720-3743-40cd-8e39-9f21097964ea
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_item_limit
+    - paragraphs.paragraphs_type.featured_content
+id: paragraph.featured_content.field_item_limit
+field_name: field_item_limit
+entity_type: paragraph
+bundle: featured_content
+label: 'Item limit'
+description: 'Number of items to show (1–12).'
+required: true
+translatable: true
+default_value:
+  -
+    value: 3
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

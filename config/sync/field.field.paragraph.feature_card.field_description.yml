@@ -1,0 +1,22 @@
+uuid: fd13537b-76e6-41f3-bfe7-582a96badfbc
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_description
+    - paragraphs.paragraphs_type.feature_card
+  module:
+    - text
+id: paragraph.feature_card.field_description
+field_name: field_description
+entity_type: paragraph
+bundle: feature_card
+label: Description
+description: 'Short supporting text.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  allowed_formats: {  }
+field_type: text_long

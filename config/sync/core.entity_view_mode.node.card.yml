@@ -1,0 +1,11 @@
+uuid: c9b99b2b-37c2-4cff-9010-56394f6008d5
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.card
+label: Card
+description: 'Compact card layout for listings.'
+targetEntityType: node
+cache: true

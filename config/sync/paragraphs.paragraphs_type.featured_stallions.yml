@@ -1,0 +1,10 @@
+uuid: 9dc6eb27-53a1-43dc-8ffc-e6f225577c98
+langcode: en
+status: true
+dependencies: {  }
+id: featured_stallions
+label: 'Featured stallions'
+icon_uuid: null
+icon_default: null
+description: 'Section that embeds the Featured Stallions listing block.'
+behavior_plugins: {  }

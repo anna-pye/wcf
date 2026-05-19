@@ -1,0 +1,11 @@
+{#
+/**
+ * @file
+ * Featured stallions block display — card grid only, no exposed filters.
+ */
+#}
+{% if rows %}
+  <div{{ attributes.addClass(classes) }}>
+    {{ rows }}
+  </div>
+{% endif %}

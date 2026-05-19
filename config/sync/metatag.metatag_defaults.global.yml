@@ -1,0 +1,20 @@
+uuid: 9a53b296-ada9-4cdd-aa39-ec167f5053df
+langcode: en
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: sL588ui1E_8-2c_UupwyYxcqX2OVyMFp3HTLbbFqvPc
+id: global
+label: Global
+tags:
+  canonical_url: '[current-page:url]'
+  title: '[current-page:title] | [site:name]'
+  description: '[site:slogan]'
+  og_site_name: '[site:name]'
+  og_title: '[current-page:title]'
+  og_description: '[site:slogan]'
+  og_url: '[current-page:url:absolute]'
+  og_type: website
+  twitter_cards_type: summary_large_image
+  twitter_cards_title: '[current-page:title]'
+  twitter_cards_description: '[site:slogan]'

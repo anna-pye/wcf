@@ -1,0 +1,259 @@
+uuid: ad3f0115-485f-49b4-abfa-65ad6ff7c5e0
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.card
+    - node.type.stallion
+    - system.menu.main
+    - taxonomy.vocabulary.tags
+  module:
+    - node
+    - options
+    - taxonomy
+    - user
+id: stallions
+label: Stallions
+module: node
+description: 'Stallion discovery listing with card rendering.'
+tag: wcf
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: Stallions
+      pager:
+        type: full
+        options:
+          offset: 0
+          pagination_heading_level: h2
+          items_per_page: 12
+          tags:
+            next: 'Next ›'
+            previous: '‹ Previous'
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Apply
+          reset_button: true
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          expose_sort_order: false
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          plugin_id: text_custom
+          empty: true
+          content: '<p>No stallions match your filters.</p>'
+      sorts:
+        field_featured_value:
+          id: field_featured_value
+          table: node__field_featured
+          field: field_featured_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          exposed: false
+        created:
+          id: created
+          table: node_field_data
+          field: created
+          entity_type: node
+          entity_field: created
+          plugin_id: date
+          order: DESC
+          exposed: false
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            stallion: stallion
+          group: 1
+        field_status_value:
+          id: field_status_value
+          table: node__field_status
+          field: field_status_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: list_field
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_status_value_op
+            label: Status
+            description: ''
+            use_operator: false
+            operator: field_status_value_op
+            identifier: stallion_status
+            required: false
+            remember: false
+            multiple: false
+          is_grouped: false
+        field_tags_target_id:
+          id: field_tags_target_id
+          table: node__field_tags
+          field: field_tags_target_id
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: taxonomy_index_tid
+          operator: or
+          value: {  }
+          group: 1
+          exposed: true
+          expose:
+            operator_id: field_tags_target_id_op
+            label: Tag
+            description: ''
+            use_operator: false
+            operator: field_tags_target_id_op
+            identifier: stallion_tag
+            required: false
+            remember: false
+            multiple: false
+          is_grouped: false
+          vid: tags
+          type: select
+          limit: true
+      style:
+        type: html_list
+        options:
+          type: ul
+          wrapper_class: stallion-listing__results
+          class: stallion-listing__grid
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: card
+      css_class: stallion-listing
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  block_featured:
+    id: block_featured
+    display_title: 'Featured Stallions'
+    display_plugin: block
+    position: 3
+    display_options:
+      title: 'Featured Stallions'
+      pager:
+        type: some
+        options:
+          offset: 0
+          items_per_page: 3
+      exposed_form:
+        type: basic
+        options: {  }
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            stallion: stallion
+          group: 1
+        field_featured_value:
+          id: field_featured_value
+          table: node__field_featured
+          field: field_featured_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: boolean
+          operator: '='
+          value: '1'
+          group: 1
+          exposed: false
+      style:
+        type: html_list
+        options:
+          type: ul
+          wrapper_class: stallion-listing__results
+          class: stallion-listing__grid
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: card
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_1:
+    id: page_1
+    display_title: Page
+    display_plugin: page
+    position: 2
+    display_options:
+      display_extenders: {  }
+      path: stallions
+      menu:
+        type: normal
+        title: Stallions
+        weight: 5
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

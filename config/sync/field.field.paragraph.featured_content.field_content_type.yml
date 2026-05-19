@@ -1,0 +1,21 @@
+uuid: f5faed5a-5810-409b-b9ff-ae8958bcd873
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_content_type
+    - paragraphs.paragraphs_type.featured_content
+  module:
+    - options
+id: paragraph.featured_content.field_content_type
+field_name: field_content_type
+entity_type: paragraph
+bundle: featured_content
+label: 'Content type'
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: list_string

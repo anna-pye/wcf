@@ -1,0 +1,31 @@
+uuid: 6a4db1a2-e638-482f-a553-b5a101c70a30
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_hero_slides
+    - node.type.homepage
+    - paragraphs.paragraphs_type.hero_slide
+  module:
+    - entity_reference_revisions
+id: node.homepage.field_hero_slides
+field_name: field_hero_slides
+entity_type: node
+bundle: homepage
+label: 'Hero slides'
+description: 'Ordered hero carousel slides. Drag to reorder.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:paragraph'
+  handler_settings:
+    target_bundles:
+      hero_slide: hero_slide
+    negate: 0
+    target_bundles_drag_drop:
+      hero_slide:
+        weight: 0
+        enabled: true
+field_type: entity_reference_revisions

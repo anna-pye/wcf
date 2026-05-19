@@ -1,0 +1,25 @@
+uuid: 9522a7fe-092c-4e88-a0be-a594f2844f33
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.paragraph.field_featured_count
+    - paragraphs.paragraphs_type.featured_stallions
+id: paragraph.featured_stallions.field_featured_count
+field_name: field_featured_count
+entity_type: paragraph
+bundle: featured_stallions
+label: 'Number to show'
+description: 'How many featured stallions to display (1–12).'
+required: true
+translatable: true
+default_value:
+  -
+    value: 3
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

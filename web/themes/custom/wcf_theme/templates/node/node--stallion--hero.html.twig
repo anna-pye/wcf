@@ -1,0 +1,39 @@
+{#
+/**
+ * @file
+ * Stallion hero view mode.
+ */
+#}
+{%
+  set classes = [
+    'node',
+    'node--type-stallion',
+    'node--view-mode-hero',
+    'stallion-hero',
+  ]
+%}
+<article{{ attributes.addClass(classes) }}>
+  {% if content.field_main_image %}
+    <div class="stallion-hero__media">
+      {{ content.field_main_image }}
+    </div>
+  {% endif %}
+  <div class="stallion-hero__overlay">
+    <div class="stallion-hero__inner">
+      <h1 class="stallion-hero__title">{{ label }}</h1>
+      {% if stallion_status_label %}
+        <span class="stallion-hero__status stallion-hero__status--{{ stallion_status_label|clean_class }}">{{ stallion_status_label }}</span>
+      {% endif %}
+      {% if content.body %}
+        <div class="stallion-hero__summary">
+          {{ content.body }}
+        </div>
+      {% endif %}
+      {% if content.field_cta_phone %}
+        <div class="stallion-hero__phone">
+          {{ content.field_cta_phone }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</article>

@@ -1,0 +1,20 @@
+uuid: e76a5754-6c4f-49a2-903b-c847f152ebd1
+langcode: en
+status: true
+dependencies:
+  module:
+    - paragraphs
+id: paragraph.field_featured_count
+field_name: field_featured_count
+entity_type: paragraph
+type: integer
+settings:
+  unsigned: false
+  size: normal
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

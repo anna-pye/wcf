@@ -1,0 +1,11 @@
+uuid: 2b819cf8-7ba8-4ab6-83a0-240726f0a631
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+id: media.card
+label: Card
+description: 'Card-sized media rendering.'
+targetEntityType: media
+cache: true

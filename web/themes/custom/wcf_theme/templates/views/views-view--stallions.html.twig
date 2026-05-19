@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Stallions View wrapper — listing grid and exposed filters.
+ */
+#}
+{% if rows %}
+  <div{{ attributes.addClass(classes) }}>
+    {% if header %}
+      <header>{{ header }}</header>
+    {% endif %}
+    {{ exposed }}
+    {{ rows }}
+    {{ pager }}
+    {{ footer }}
+  </div>
+{% elseif empty %}
+  <div{{ attributes.addClass(classes) }}>
+    {{ exposed }}
+    {{ empty }}
+  </div>
+{% endif %}

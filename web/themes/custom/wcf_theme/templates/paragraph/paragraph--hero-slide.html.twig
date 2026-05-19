@@ -1,0 +1,44 @@
+{#
+/**
+ * @file
+ * Hero slide paragraph.
+ *
+ * Available variables:
+ * - cta_link: Render array for CTA (preprocessed when URL exists).
+ */
+#}
+{%
+  set classes = [
+    'paragraph',
+    'paragraph--type-' ~ paragraph.bundle|clean_class,
+    'hero-slide',
+  ]
+%}
+{% set title_id = 'hero-slide-title-' ~ paragraph.id() %}
+<div{{ attributes.addClass(classes) }} role="group" aria-roledescription="{{ 'slide'|t }}"{% if content.field_title %} aria-labelledby="{{ title_id }}"{% endif %}>
+  {% if content.field_image %}
+    <div class="hero-slide__media">
+      {{ content.field_image }}
+    </div>
+  {% endif %}
+
+  <div class="hero-slide__overlay">
+    <div class="hero-slide__inner">
+      {% if content.field_title %}
+        <h2 id="{{ title_id }}" class="hero-slide__title">{{ content.field_title }}</h2>
+      {% endif %}
+
+      {% if content.field_description %}
+        <div class="hero-slide__description">
+          {{ content.field_description }}
+        </div>
+      {% endif %}
+
+      {% if cta_link %}
+        <div class="hero-slide__actions">
+          {{ cta_link }}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</div>

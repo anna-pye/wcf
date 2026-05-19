@@ -1,0 +1,11 @@
+uuid: fe8acaa8-b1d5-4140-b1b0-aa49b240554d
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+id: media.hero
+label: Hero
+description: 'Responsive hero image rendering for homepage slides.'
+targetEntityType: media
+cache: true

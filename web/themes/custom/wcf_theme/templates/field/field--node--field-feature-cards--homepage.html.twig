@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * Homepage feature cards field wrapper.
+ */
+#}
+{% if items %}
+  <section class="feature-cards-section" aria-labelledby="feature-cards-heading">
+    <h2 id="feature-cards-heading" class="feature-cards-section__heading visually-hidden">{{ 'Features'|t }}</h2>
+    <div class="feature-cards-section__grid">
+      {% for item in items %}
+        {{ item.content }}
+      {% endfor %}
+    </div>
+  </section>
+{% endif %}

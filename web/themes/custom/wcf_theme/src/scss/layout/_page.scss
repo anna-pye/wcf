@@ -1,0 +1,37 @@
+@use '../abstracts/variables' as *;
+
+.layout-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.site-main {
+  flex: 1 1 auto;
+}
+
+.layout-content {
+  max-width: $content-max-width;
+  margin-inline: auto;
+  padding-inline: $spacing-sm;
+
+  &__primary {
+    min-width: 0;
+  }
+}
+
+.layout-container--front .layout-content--front {
+  max-width: none;
+  padding-inline: 0;
+}
+
+.site-header {
+  padding: $spacing-sm;
+}
+
+.site-header__menus {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-sm;
+  align-items: center;
+}

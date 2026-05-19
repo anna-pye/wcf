@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Feature card paragraph — delegates to feature-card component.
+ */
+#}
+{% include '@wcf_theme/components/feature-card.html.twig' with {
+  title: feature_card_title,
+  description: content.field_description,
+  image: content.field_image,
+  cta_link: cta_link,
+} only %}

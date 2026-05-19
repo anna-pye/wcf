@@ -1,0 +1,17 @@
+uuid: 90084e9c-24e7-4dcf-823c-7d754f13e878
+langcode: en
+status: true
+dependencies:
+  module:
+    - content_moderation
+third_party_settings:
+  content_moderation:
+    enabled: true
+    workflow: editorial
+name: Homepage
+type: homepage
+description: 'Dedicated front page content with hero slides and future homepage sections.'
+help: 'Save drafts while working. Submit for review when ready for an editor. Published content is visible on the public site. Use the Content health report under Content for maintenance.'
+new_revision: true
+preview_mode: 1
+display_submitted: false

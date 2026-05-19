@@ -1,0 +1,21 @@
+uuid: 896535e0-b1e2-4e74-8a87-621ab16d132e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_sold
+    - node.type.container_home
+id: node.container_home.field_sold
+field_name: field_sold
+entity_type: node
+bundle: container_home
+label: Sold
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  on_label: Sold
+  off_label: Available
+field_type: boolean

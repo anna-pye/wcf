@@ -1,0 +1,12 @@
+{#
+/**
+ * @file
+ * Testimonial paragraph — delegates to testimonial-card component.
+ */
+#}
+{% include '@wcf_theme/components/testimonial-card.html.twig' with {
+  quote: testimonial_quote,
+  author_name: testimonial_author_name,
+  author_role: testimonial_author_role,
+  author_image: content.field_author_image,
+} only %}

@@ -1,0 +1,38 @@
+uuid: ef3e440b-b6cc-46d1-883b-64a970138783
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.container_home.body
+    - field.field.node.container_home.field_gallery
+    - field.field.node.container_home.field_main_image
+    - field.field.node.container_home.field_sold
+    - field.field.node.container_home.field_tags
+    - node.type.container_home
+  module:
+    - text
+    - user
+id: node.container_home.teaser
+targetEntityType: node
+bundle: container_home
+mode: teaser
+content:
+  body:
+    type: text_summary_or_trimmed
+    label: hidden
+    settings:
+      trim_length: 600
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_gallery: true
+  field_main_image: true
+  field_sold: true
+  field_tags: true

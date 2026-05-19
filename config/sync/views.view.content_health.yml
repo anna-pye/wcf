@@ -1,0 +1,275 @@
+uuid: e2d7de8b-6068-4014-881e-85ee3e28c573
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - user
+id: content_health
+label: 'Content health'
+module: node
+description: 'Editorial governance: unpublished, missing assets, stale content.'
+tag: wcf
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: 'Content health'
+      fields:
+        title:
+          id: title
+          table: node_field_data
+          field: title
+          entity_type: node
+          entity_field: title
+          plugin_id: field
+          label: Title
+          settings:
+            link_to_entity: true
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: field
+          label: Type
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: field
+          label: Published
+          type: boolean
+          settings:
+            format: custom
+            format_custom_false: Unpublished
+            format_custom_true: Published
+        changed:
+          id: changed
+          table: node_field_data
+          field: changed
+          entity_type: node
+          entity_field: changed
+          plugin_id: field
+          label: Updated
+          type: timestamp
+          settings:
+            date_format: short
+        operations:
+          id: operations
+          table: node
+          field: operations
+          plugin_id: entity_operations
+          label: Operations
+      pager:
+        type: full
+        options:
+          items_per_page: 50
+      exposed_form:
+        type: basic
+        options:
+          submit_button: Filter
+          reset_button: true
+          reset_button_label: Reset
+      access:
+        type: perm
+        options:
+          perm: 'access content overview'
+      cache:
+        type: tag
+        options: {  }
+      empty:
+        area:
+          id: area
+          table: views
+          field: area
+          plugin_id: text
+          empty: true
+          content:
+            value: '<p>No content issues match this filter.</p>'
+            format: basic_html
+      sorts:
+        changed:
+          id: changed
+          table: node_field_data
+          field: changed
+          entity_type: node
+          entity_field: changed
+          plugin_id: date
+          order: ASC
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: All
+          group: 1
+          exposed: true
+          expose:
+            label: 'Published status'
+            identifier: status
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_missing_image:
+    id: page_missing_image
+    display_title: 'Missing images'
+    display_plugin: page
+    position: 2
+    display_options:
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            stallion: stallion
+            container_home: container_home
+          group: 1
+        field_main_image_target_id:
+          id: field_main_image_target_id
+          table: node__field_main_image
+          field: field_main_image_target_id
+          relationship: field_main_image
+          plugin_id: numeric
+          operator: empty
+          value:
+            min: ''
+            max: ''
+          group: 1
+      relationships:
+        field_main_image:
+          id: field_main_image
+          table: node__field_main_image
+          field: field_main_image
+          relationship: none
+          group_type: group
+          admin_label: 'Main image'
+          plugin_id: standard
+          required: false
+      display_extenders: {  }
+      path: admin/content/health/missing-images
+      menu:
+        type: tab
+        title: 'Missing images'
+        weight: 6
+        parent: system.admin_content
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_overview:
+    id: page_overview
+    display_title: Overview
+    display_plugin: page
+    position: 1
+    display_options:
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '0'
+          group: 1
+      display_extenders: {  }
+      path: admin/content/health
+      menu:
+        type: tab
+        title: 'Health overview'
+        weight: 5
+        parent: system.admin_content
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_stale:
+    id: page_stale
+    display_title: 'Stale content'
+    display_plugin: page
+    position: 3
+    display_options:
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+        changed:
+          id: changed
+          table: node_field_data
+          field: changed
+          entity_type: node
+          entity_field: changed
+          plugin_id: date
+          operator: '<'
+          value:
+            value: '-90 days'
+            type: offset
+          group: 1
+      display_extenders: {  }
+      path: admin/content/health/stale
+      menu:
+        type: tab
+        title: 'Stale content'
+        weight: 7
+        parent: system.admin_content
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_content'
+        - 'languages:language_interface'
+        - url
+        - url.query_args
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

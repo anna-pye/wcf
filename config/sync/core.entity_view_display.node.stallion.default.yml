@@ -1,0 +1,98 @@
+uuid: 81c722e9-af05-48aa-962f-515abad48cc0
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.stallion.body
+    - field.field.node.stallion.field_cta_phone
+    - field.field.node.stallion.field_documents
+    - field.field.node.stallion.field_featured
+    - field.field.node.stallion.field_gallery
+    - field.field.node.stallion.field_main_image
+    - field.field.node.stallion.field_status
+    - field.field.node.stallion.field_tags
+    - field.field.node.stallion.field_video
+    - node.type.stallion
+  module:
+    - options
+    - telephone
+    - text
+    - user
+id: node.stallion.default
+targetEntityType: node
+bundle: stallion
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_cta_phone:
+    type: telephone_link
+    label: inline
+    settings:
+      title: ''
+    third_party_settings: {  }
+    weight: 6
+    region: content
+  field_documents:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_gallery:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_main_image:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: hero
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_status:
+    type: list_default
+    label: inline
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  field_tags:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 7
+    region: content
+  field_video:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  field_featured: true

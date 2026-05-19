@@ -1,0 +1,10 @@
+uuid: af29cc8b-ed25-4f5f-bce1-e17837399315
+langcode: en
+status: true
+dependencies: {  }
+id: feature_card
+label: 'Feature card'
+icon_uuid: null
+icon_default: null
+description: 'Promotional feature strip with image, text, and CTA. Replaces legacy showcase/banner strips.'
+behavior_plugins: {  }

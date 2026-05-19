@@ -1,0 +1,91 @@
+@use '../abstracts/variables' as *;
+
+.stallion-card {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.25rem;
+  overflow: hidden;
+  background: #fff;
+  height: 100%;
+}
+
+.stallion-card__link {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  color: inherit;
+  text-decoration: none;
+
+  &:hover,
+  &:focus-visible {
+    .stallion-card__title {
+      color: $color-primary;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+.stallion-card__media {
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+
+  img,
+  picture {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+}
+
+.stallion-card__body {
+  padding: $spacing-sm;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+}
+
+.stallion-card__badge {
+  align-self: flex-start;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: $color-primary;
+}
+
+.stallion-card__title {
+  margin: 0;
+  font-size: 1.125rem;
+  line-height: 1.3;
+}
+
+.stallion-card__summary {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: rgba($color-text, 0.85);
+  flex: 1;
+}
+
+.stallion-card__status {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: capitalize;
+
+  &--sold {
+    color: #8b2635;
+  }
+
+  &--retired {
+    color: #5c5c5c;
+  }
+
+  &--active {
+    color: $color-primary;
+  }
+}

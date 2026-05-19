@@ -1,0 +1,10 @@
+uuid: 15aadb53-35b0-42b2-83ee-dd6307d00348
+langcode: en
+status: true
+dependencies: {  }
+id: featured_content
+label: 'Featured content'
+icon_uuid: null
+icon_default: null
+description: 'Editorial section that surfaces recent content by type via a cached View listing.'
+behavior_plugins: {  }

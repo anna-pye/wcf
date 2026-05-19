@@ -1,0 +1,34 @@
+{#
+/**
+ * @file
+ * Reusable feature card component.
+ *
+ * Variables:
+ * - title: Card headline.
+ * - description: Supporting text render array or string.
+ * - image: Render array for feature image.
+ * - cta_link: Render array for CTA link (preprocessed).
+ */
+#}
+<article class="feature-card">
+  {% if image %}
+    <div class="feature-card__media">
+      {{ image }}
+    </div>
+  {% endif %}
+  <div class="feature-card__body">
+    {% if title %}
+      <h3 class="feature-card__title">{{ title }}</h3>
+    {% endif %}
+    {% if description %}
+      <div class="feature-card__description">
+        {{ description }}
+      </div>
+    {% endif %}
+    {% if cta_link %}
+      <div class="feature-card__actions">
+        {{ cta_link }}
+      </div>
+    {% endif %}
+  </div>
+</article>

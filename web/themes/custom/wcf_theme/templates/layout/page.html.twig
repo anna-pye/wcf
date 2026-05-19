@@ -1,0 +1,41 @@
+{#
+/**
+ * @file
+ * Base page layout for WCF.
+ */
+#}
+<div class="layout-container">
+  <header class="site-header" role="banner">
+    {{ page.header }}
+    {% if page.primary_menu or page.secondary_menu %}
+      <div class="site-header__menus">
+        {{ page.primary_menu }}
+        {{ page.secondary_menu }}
+      </div>
+    {% endif %}
+  </header>
+
+  {{ page.breadcrumb }}
+
+  <main id="main-content" class="site-main" role="main">
+    {{ page.highlighted }}
+    {{ page.help }}
+    <div class="layout-content{% if page.sidebar_first %} layout-content--with-sidebar{% endif %}">
+      {% if page.sidebar_first %}
+        <aside class="layout-sidebar layout-sidebar--first" aria-label="{{ 'Filters'|t }}">
+          {{ page.sidebar_first }}
+        </aside>
+      {% endif %}
+      <div class="layout-content__primary">
+        {{ page.content }}
+      </div>
+    </div>
+    {{ page.sidebar_second }}
+  </main>
+
+  {% if page.footer %}
+    <footer class="site-footer" role="contentinfo">
+      {{ page.footer }}
+    </footer>
+  {% endif %}
+</div>

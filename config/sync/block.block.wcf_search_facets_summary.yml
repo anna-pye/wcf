@@ -1,0 +1,26 @@
+uuid: 39c2df71-15d9-444d-a856-a078a3aee250
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - wcf_theme
+id: wcf_search_facets_summary
+theme: wcf_theme
+region: content
+weight: -20
+provider: null
+plugin: 'facets_summary_block:search_active_filters'
+settings:
+  id: 'facets_summary_block:search_active_filters'
+  label: 'Active filters'
+  label_display: visible
+  provider: facets_summary
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: |-
+      /search
+      /search*

@@ -1,0 +1,28 @@
+uuid: a0f1c86f-e7e7-4fc7-ae18-096d1ef8ef69
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tags
+    - node.type.stallion
+    - taxonomy.vocabulary.tags
+id: node.stallion.field_tags
+field_name: field_tags
+entity_type: node
+bundle: stallion
+label: Tags
+description: 'Optional taxonomy tags for filtering and grouping.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      tags: tags
+    sort:
+      field: name
+      direction: asc
+    auto_create: true
+field_type: entity_reference

@@ -1,0 +1,42 @@
+uuid: ecefd2be-34b9-4ef3-a2a2-091e0bd1d829
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.paragraph.featured_stallions.field_description
+    - field.field.paragraph.featured_stallions.field_featured_count
+    - field.field.paragraph.featured_stallions.field_title
+    - paragraphs.paragraphs_type.featured_stallions
+  module:
+    - text
+id: paragraph.featured_stallions.default
+targetEntityType: paragraph
+bundle: featured_stallions
+mode: default
+content:
+  field_description:
+    type: text_textarea
+    weight: 1
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  field_featured_count:
+    type: number
+    weight: 2
+    region: content
+    settings:
+      placeholder: ''
+    third_party_settings: {  }
+  field_title:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden:
+  created: true
+  status: true

@@ -1,0 +1,68 @@
+@use '../abstracts/variables' as *;
+
+.hero-slider {
+  position: relative;
+  width: 100%;
+}
+
+.hero-slider__track {
+  position: relative;
+  display: grid;
+}
+
+.hero-slider__track .hero-slide {
+  grid-area: 1 / 1;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.4s ease, visibility 0.4s ease;
+  pointer-events: none;
+}
+
+.hero-slider__track .hero-slide.is-active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slider__track .hero-slide {
+    transition: none;
+  }
+}
+
+.hero-slider__controls {
+  position: absolute;
+  inset-inline: 0;
+  bottom: $spacing-md;
+  display: flex;
+  justify-content: center;
+  gap: $spacing-sm;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.hero-slider__control {
+  pointer-events: auto;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 2px solid $color-text-inverse;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.35);
+  color: $color-text-inverse;
+  cursor: pointer;
+  font-size: 1.25rem;
+  line-height: 1;
+
+  &:hover,
+  &:focus {
+    background: rgba(0, 0, 0, 0.6);
+    outline: 2px solid $color-text-inverse;
+    outline-offset: 2px;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-text-inverse;
+    outline-offset: 3px;
+  }
+}

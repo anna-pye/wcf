@@ -1,0 +1,79 @@
+{#
+/**
+ * @file
+ * Stallion full view — semantic profile layout.
+ */
+#}
+{%
+  set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    'node--view-mode-' ~ view_mode|clean_class,
+    'stallion',
+  ]
+%}
+<article{{ attributes.addClass(classes) }}>
+  <header class="stallion__header">
+    {% if content.field_main_image %}
+      <div class="stallion__media">
+        {{ content.field_main_image }}
+      </div>
+    {% endif %}
+    <div class="stallion__intro">
+      <h1 class="stallion__title">{{ label }}</h1>
+      {% if stallion_status_label %}
+        <p class="stallion__status stallion__status--{{ stallion_status_label|clean_class }}">
+          <span class="visually-hidden">{{ 'Status'|t }}: </span>
+          {{ stallion_status_label }}
+        </p>
+      {% endif %}
+      {% if stallion_featured %}
+        <p class="stallion__featured-badge">{{ 'Featured'|t }}</p>
+      {% endif %}
+      {% if content.field_cta_phone %}
+        <div class="stallion__cta">
+          {{ content.field_cta_phone }}
+        </div>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="stallion__content">
+    {% if content.body %}
+      <section class="stallion__section stallion__section--body" aria-labelledby="stallion-body-heading">
+        <h2 id="stallion-body-heading" class="visually-hidden">{{ 'About'|t }}</h2>
+        {{ content.body }}
+      </section>
+    {% endif %}
+
+    {% if content.field_video %}
+      <section class="stallion__section stallion__section--video" aria-labelledby="stallion-video-heading">
+        <h2 id="stallion-video-heading" class="stallion__section-title">{{ 'Video'|t }}</h2>
+        {{ content.field_video }}
+      </section>
+    {% endif %}
+
+    {% if content.field_gallery %}
+      <section class="stallion__section stallion__section--gallery" aria-labelledby="stallion-gallery-heading">
+        <h2 id="stallion-gallery-heading" class="stallion__section-title">{{ 'Gallery'|t }}</h2>
+        <div class="stallion__gallery">
+          {{ content.field_gallery }}
+        </div>
+      </section>
+    {% endif %}
+
+    {% if content.field_documents %}
+      <section class="stallion__section stallion__section--documents" aria-labelledby="stallion-documents-heading">
+        <h2 id="stallion-documents-heading" class="stallion__section-title">{{ 'Documents'|t }}</h2>
+        {{ content.field_documents }}
+      </section>
+    {% endif %}
+
+    {% if content.field_tags %}
+      <section class="stallion__section stallion__section--tags" aria-labelledby="stallion-tags-heading">
+        <h2 id="stallion-tags-heading" class="stallion__section-title">{{ 'Tags'|t }}</h2>
+        {{ content.field_tags }}
+      </section>
+    {% endif %}
+  </div>
+</article>

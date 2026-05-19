@@ -1,0 +1,53 @@
+# macOS
+.DS_Store
+
+# Composer
+/vendor/
+
+# Drupal files
+/web/sites/default/files/
+/web/sites/default/private/
+
+# Drupal settings overrides
+/web/sites//settings.local.php
+/web/sites//services.local.yml
+
+# DDEV
+.ddev/.importdbCommand
+.ddev/db_snapshots
+.ddev/.dbimageBuild
+.ddev/.webimageBuild
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# Node
+node_modules/
+
+# Sass cache
+.sass-cache/
+
+# Temporary
+tmp/
+temp/
+
+# PHPUnit
+phpunit.xml
+
+# Legacy migration assets - local only
+/legacy/sites/default/files/
+
+# Composer-installed contrib code
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+
+# Theme build artifacts
+/web/themes/custom/wcf_theme/css/*.map

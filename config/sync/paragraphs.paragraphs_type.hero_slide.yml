@@ -1,0 +1,10 @@
+uuid: 0cc03e1b-c1c6-476e-a0ed-71716fef049e
+langcode: en
+status: true
+dependencies: {  }
+id: hero_slide
+label: 'Hero slide'
+icon_uuid: null
+icon_default: null
+description: 'Reusable hero carousel slide for Layout Builder integration.'
+behavior_plugins: {  }

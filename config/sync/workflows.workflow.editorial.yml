@@ -1,0 +1,64 @@
+uuid: 3e4e2812-bab5-4724-b388-f2236a1537a7
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.article
+    - node.type.homepage
+    - node.type.stallion
+  module:
+    - content_moderation
+_core:
+  default_config_hash: T7gMMyFbTYLalxpIOnzJebvek2OW0b1RgLVE9I2y228
+id: editorial
+label: Editorial
+type: content_moderation
+type_settings:
+  states:
+    draft:
+      label: Draft
+      weight: -5
+      published: false
+      default_revision: false
+    published:
+      label: Published
+      weight: 5
+      published: true
+      default_revision: true
+    review:
+      label: 'In review'
+      weight: 0
+      published: false
+      default_revision: false
+  transitions:
+    create_new_draft:
+      label: 'Create new draft'
+      from:
+        - published
+      to: draft
+      weight: 3
+    publish:
+      label: Publish
+      from:
+        - review
+        - draft
+      to: published
+      weight: 1
+    send_back:
+      label: 'Send back to draft'
+      from:
+        - review
+      to: draft
+      weight: 2
+    submit_for_review:
+      label: 'Submit for review'
+      from:
+        - draft
+      to: review
+      weight: 0
+  entity_types:
+    node:
+      - homepage
+      - stallion
+      - article
+  default_moderation_state: draft

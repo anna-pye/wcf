@@ -1,0 +1,19 @@
+uuid: 11376417-845e-4002-8561-d46ee97203cd
+langcode: en
+status: true
+dependencies: {  }
+id: node__stallion
+label: 'Content: Stallion'
+tags:
+  canonical_url: '[node:url]'
+  description: '[node:summary]'
+  og_title: '[node:title]'
+  og_description: '[node:summary]'
+  og_url: '[node:url:absolute]'
+  og_type: article
+  title: '[node:title] | [site:name]'
+  og_image: '[node:field_main_image:entity:field_media_image:entity:url]'
+  twitter_cards_type: summary_large_image
+  twitter_cards_title: '[node:title]'
+  twitter_cards_description: '[node:summary]'
+  twitter_cards_image: '[node:field_main_image:entity:field_media_image:entity:url]'

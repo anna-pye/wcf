@@ -1,0 +1,11 @@
+uuid: a0d2eeb5-7115-4582-a0ec-fc8940933e7f
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.hero
+label: Hero
+description: 'Prominent hero layout for featured content.'
+targetEntityType: node
+cache: true

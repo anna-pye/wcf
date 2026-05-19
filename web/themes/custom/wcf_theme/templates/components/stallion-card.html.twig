@@ -1,0 +1,36 @@
+{#
+/**
+ * @file
+ * Reusable stallion card component.
+ *
+ * Variables:
+ * - node: The stallion node entity.
+ * - url: Canonical URL string.
+ * - title: Node title.
+ * - image: Render array for main image (card view mode).
+ * - summary: Trimmed body/summary text.
+ * - status: Status label string.
+ * - featured: Boolean whether stallion is featured.
+ */
+#}
+<article class="stallion-card">
+  <a class="stallion-card__link" href="{{ url }}" aria-labelledby="stallion-card-title-{{ node.id }}">
+    {% if image %}
+      <figure class="stallion-card__media">
+        {{ image }}
+      </figure>
+    {% endif %}
+    <div class="stallion-card__body">
+      {% if featured %}
+        <span class="stallion-card__badge">{{ 'Featured'|t }}</span>
+      {% endif %}
+      <h3 id="stallion-card-title-{{ node.id }}" class="stallion-card__title">{{ title }}</h3>
+      {% if summary %}
+        <p class="stallion-card__summary">{{ summary }}</p>
+      {% endif %}
+      {% if status %}
+        <span class="stallion-card__status stallion-card__status--{{ status|clean_class }}">{{ status }}</span>
+      {% endif %}
+    </div>
+  </a>
+</article>
