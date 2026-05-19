@@ -1,8 +1,9 @@
 # WCF Platform Performance Audit
 
-**Date:** 2026-05-19  
+**Date:** 2026-05-19 (stabilization pass)  
 **Scope:** Discovery layer implementation (facets, search UX, governance views)  
-**Approach:** Observational audit — no premature optimization applied.
+**Approach:** Observational audit — no premature optimization applied.  
+**Branch:** `feature/faceted-discovery`
 
 ## Executive summary
 
@@ -65,8 +66,26 @@ The WCF Drupal 11 stack is appropriately cache-oriented for public discovery. Se
 - No Search API backend swap (database backend appropriate for current scale)
 - No lazy-loading changes to listing images (already `lazy` on media card display)
 
+## Stabilization pass validation (2026-05-19)
+
+| Check | Command / method | Result |
+|-------|------------------|--------|
+| Theme build | `npm run build` in `wcf_theme` | PASS |
+| Config sync | `ddev drush cst` | PASS (no drift) |
+| Public routes | HTTP GET `/`, `/stallions`, `/search` | All 200 |
+| CSS aggregation | Rendered `/search` | 2 aggregated theme CSS files (core aggregation + `style.css`) — no duplicate theme libraries |
+| JS on search | Rendered `/search` | jQuery + facets AJAX footer scripts only; no `hero-slider` on search |
+| Index size | `search-api:status` | 4 tracked items, 2 public query results |
+| Facet queries | Observed `/search` with 3 facet blocks | 3 aggregation queries acceptable at current volume |
+
+### Rendered payload notes
+
+- Container home search hits use **teaser** view mode (lighter than full, heavier than optimized card). Acceptable until post-migration card alignment.
+- Facet sidebar hidden tags block when empty — reduces DOM noise.
+
 ## Next observability steps (future phase)
 
 1. Enable query logging in staging for `/search` with multiple facets active; capture slow queries.
 2. Add Real User Monitoring (RUM) for LCP on `/search` and `/stallions` after launch traffic exists.
 3. Review `simple_sitemap` cron duration if bundle count grows significantly.
+4. After migration: benchmark `/search` with 5+ active facets and 1k+ indexed nodes.
