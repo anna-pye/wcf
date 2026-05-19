@@ -1,0 +1,111 @@
+id: wcf_d7_node_stallion
+label: 'WCF D7 product rows to stallion nodes'
+audit: true
+migration_tags:
+  - WCF
+  - Drupal 7
+  - Content
+  - Product
+source:
+  plugin: wcf_d7_product
+process:
+  type:
+    plugin: default_value
+    default_value: stallion
+  nid: id
+  vid: id
+  langcode:
+    plugin: default_value
+    default_value: en
+  title: title
+  uid:
+    plugin: default_value
+    default_value: 1
+  status: status
+  created: created_on
+  changed: modified_on
+  promote:
+    plugin: default_value
+    default_value: 0
+  sticky:
+    plugin: default_value
+    default_value: 0
+  revision_uid:
+    plugin: default_value
+    default_value: 1
+  revision_timestamp: modified_on
+  moderation_state:
+    plugin: static_map
+    source: status
+    map:
+      0: draft
+      1: published
+    default_value: draft
+  body/value: description
+  body/summary:
+    plugin: default_value
+    default_value: ''
+  body/format:
+    plugin: default_value
+    default_value: basic_html
+  field_status:
+    plugin: static_map
+    source: sold
+    map:
+      0: active
+      1: sold
+    default_value: active
+  field_featured:
+    plugin: default_value
+    default_value: 0
+  field_main_image/target_id:
+    plugin: migration_lookup
+    migration: wcf_d7_media_image_product
+    source: main_image_filename
+    no_stub: true
+  field_gallery:
+    plugin: sub_process
+    source: gallery_files
+    process:
+      target_id:
+        plugin: migration_lookup
+        migration: wcf_d7_media_image_product
+        source: filename
+        no_stub: true
+  field_documents:
+    plugin: sub_process
+    source: document_files
+    process:
+      target_id:
+        plugin: migration_lookup
+        migration: wcf_d7_media_document_product
+        source: filename
+        no_stub: true
+  field_video/target_id:
+    -
+      plugin: skip_on_empty
+      method: process
+      source: youtube_embed
+    -
+      plugin: migration_lookup
+      migration: wcf_d7_media_remote_video_product
+      source: id
+      no_stub: true
+  path/alias:
+    plugin: wcf_d7_product_path_alias
+    source: alias
+  path/pathauto:
+    plugin: default_value
+    default_value: 0
+  path/langcode:
+    plugin: default_value
+    default_value: en
+destination:
+  plugin: entity:node
+  default_bundle: stallion
+migration_dependencies:
+  required:
+    - wcf_d7_media_image_product
+    - wcf_d7_media_document_product
+  optional:
+    - wcf_d7_media_remote_video_product

@@ -1,0 +1,26 @@
+id: wcf_d7_media_remote_video_product
+label: 'WCF D7 product YouTube embeds to remote video media'
+audit: true
+migration_tags:
+  - WCF
+  - Drupal 7
+  - Media
+  - Product
+source:
+  plugin: wcf_d7_product
+  only_with_video: true
+process:
+  bundle:
+    plugin: default_value
+    default_value: remote_video
+  name: title
+  uid:
+    plugin: default_value
+    default_value: 1
+  created: created_on
+  changed: modified_on
+  field_media_oembed_video: youtube_url
+destination:
+  plugin: entity:media
+  default_bundle: remote_video
+migration_dependencies: {  }

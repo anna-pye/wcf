@@ -19,6 +19,11 @@ Run migrations in this order (dependencies are declared in YAML; this list is th
 | 3 | `wcf_d7_media_image` | `media` image entities from migrated files |
 | 4 | `wcf_d7_node_page` | Basic page nodes (20 expected) |
 | 5 | `wcf_d7_node_container_home` | Container home nodes (3 expected) |
+| 6 | `wcf_d7_file_product` | Product module image/PDF files |
+| 7 | `wcf_d7_media_image_product` | Product images → media |
+| 8 | `wcf_d7_media_document_product` | Product PDFs → document media |
+| 9 | `wcf_d7_media_remote_video_product` | YouTube embeds → remote video media |
+| 10 | `wcf_d7_node_stallion` | `wcf_product` → stallion nodes (278 expected) |
 
 ## Commands
 
@@ -34,6 +39,13 @@ ddev drush mim wcf_d7_media_image
 ddev drush mim wcf_d7_node_page
 ddev drush mim wcf_d7_node_container_home
 
+# Stallion pipeline (after legacy product files rsync — see legacy/README.md)
+ddev drush mim wcf_d7_file_product
+ddev drush migrate:import wcf_d7_media_image_product --force
+ddev drush migrate:import wcf_d7_media_document_product --force
+ddev drush migrate:import wcf_d7_media_remote_video_product --force
+ddev drush migrate:import wcf_d7_node_stallion --force
+
 # Or all WCF migrations (respects dependencies)
 ddev drush mim --tag=WCF
 
@@ -46,6 +58,13 @@ ddev drush mr wcf_d7_node_page
 ddev drush mr wcf_d7_media_image
 ddev drush mr wcf_d7_file
 ddev drush mr wcf_d7_taxonomy_term_tags
+
+# Stallion rollback (reverse order)
+ddev drush mr wcf_d7_node_stallion
+ddev drush mr wcf_d7_media_remote_video_product
+ddev drush mr wcf_d7_media_document_product
+ddev drush mr wcf_d7_media_image_product
+ddev drush mr wcf_d7_file_product
 ```
 
 ## Field mapping notes (audited)
@@ -76,7 +95,7 @@ ddev drush mr wcf_d7_taxonomy_term_tags
 
 - `content_slider` → `hero_slide` paragraphs: see `docs/HERO_SLIDER_MIGRATION_STRATEGY.md`
 - Custom SQL tables (`wcf_product`, `wcf_showcase`, `wcf_banner`, `wcf_testimonial`, `wcf_nomination`, `wcf_news`) — replaced by modern content architecture (see below)
-- Legacy stallion/product node migration from D7 `wcf_product` — not yet implemented
+- Stallion migration: see `docs/stallion-migration-audit.md`, `docs/stallion-migration-validation.md`, `docs/stallion-migration-rollback.md`
 - `snippets_code`, `metatags_quick`
 
 ## Modern business content (D11 foundation)

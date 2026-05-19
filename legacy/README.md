@@ -18,3 +18,14 @@ rsync -a /path/to/drupal7/sites/default/files/ legacy/sites/default/files/
 ```
 
 `$settings['migrate_file_public_path']` points at `legacy/` (the D7 site root), matching core `d7_file` expectations (`sites/default/files/...`).
+
+## Product module files (stallion migration)
+
+Legacy horse images and PDFs live outside `sites/default/files`:
+
+```bash
+rsync -a /path/to/drupal7/sites/all/modules/product/files/ \
+  legacy/sites/all/modules/product/files/
+```
+
+Required for `wcf_d7_file_product` and downstream stallion media migrations.
