@@ -1,0 +1,53 @@
+---
+description: Strict legacy audit rule for Drupal 7 to Drupal 11 migration work
+globs:
+  - "web/modules/custom/wcf_migrate/**"
+  - "config/sync/migrate_plus.migration.*.yml"
+  - "config/sync/migrate_plus.migration_group.*.yml"
+  - "scripts/**/*migration*.php"
+  - "scripts/**/*migrate*.php"
+  - "docs/**/*migration*.md"
+alwaysApply: false
+---
+
+# Strict legacy audit rule
+
+For migration work, legacy business reconstruction, and custom table analysis, always audit the Drupal 7 source before changing Drupal 11.
+
+Legacy source:
+~/drupal7-legacy
+
+Modern target:
+~/drupal11-upgrade
+
+Before editing migration YAML, migrate plugins, migration scripts, or migration documentation:
+
+1. Inspect the relevant Drupal 7 code, schema, fields, and data.
+2. Confirm the actual source table names, field names, and bundle names.
+3. Confirm whether the legacy feature is node-based, field-based, taxonomy-based, file-based, or custom-table-based.
+4. Confirm whether the modern Drupal 11 destination already has a matching field, content type, paragraph type, media type, view mode, or View.
+5. Reuse existing Drupal 11 architecture where possible.
+6. Do not invent mappings.
+
+Do not:
+- guess source fields
+- guess destination fields
+- recreate Drupal 7 raw SQL architecture
+- port procedural Drupal 7 code directly
+- duplicate D11 fields or migrations
+- create new services unless clearly needed
+- bypass Media Library
+- bypass entity APIs
+- use direct file paths
+- migrate metatags_quick directly
+- migrate snippets_code without a separate audit
+
+Required output for migration tasks:
+- D7 source evidence inspected
+- D11 destination mapping
+- migration dependencies
+- rollback behaviour
+- validation commands
+- known deferred items
+
+If D7 evidence is missing or unclear, stop and report the exact missing evidence.

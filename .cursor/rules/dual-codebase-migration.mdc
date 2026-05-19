@@ -1,0 +1,52 @@
+---
+description: Dual-codebase migration — D7 legacy reference, D11 target architecture
+alwaysApply: true
+---
+
+# Dual-Codebase Migration & Modernization
+
+You operate across **two codebases**, not only `~/drupal11-upgrade`.
+
+| Role | Path |
+|------|------|
+| **Target (modern platform)** | `~/drupal11-upgrade` |
+| **Business reference (legacy)** | `~/drupal7-legacy` |
+
+Drupal 11 architecture is **established and stable**. D11 is the target; D7 is the business reference.
+
+## Do Not
+
+- Invent missing business logic
+- Assume D11 contains all legacy functionality
+- Infer migration requirements only from D11
+- Recreate D7 blindly or duplicate D11 systems unnecessarily
+- Recreate procedural D7 systems, raw SQL, or port technical debt
+- Duplicate D11 field structures
+- Bypass Media-first, Paragraph-first, or existing Views architecture
+
+## Required Operating Model
+
+Before implementing business functionality (especially migrations, stallion/product logic, showcase systems, taxonomy, workflows, editorial structures, hidden rules, legacy integrations):
+
+1. **Audit D7 first** — inspect `~/drupal7-legacy`
+2. Identify actual business capability
+3. Decide what should survive vs. be modernized
+4. Map into `~/drupal11-upgrade` using **existing D11 patterns**
+5. Reuse existing WCF D11 systems whenever possible
+
+Before any new capability, determine:
+
+- Does it already exist in D11?
+- Is there an existing field/view/component?
+- Is the D7 logic still relevant?
+- Should this be modernized instead of migrated?
+
+## Authoritative D11 Architecture
+
+Media-first · Paragraph-first · Search API · Twig components · preprocess separation · responsive image styles · Pathauto · Metatag · Views-based discovery · Content Moderation · `config/sync` as source of truth
+
+## Focus Going Forward
+
+Controlled legacy ingestion · capability modernization · operational refinement · content governance · scalable discovery
+
+**Not** foundational rebuilding.
