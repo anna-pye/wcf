@@ -1,0 +1,94 @@
+// Webform and form layout for WCF public pages.
+@use '../abstracts/variables';
+
+.webform-submission-form,
+.webform-submission-wcf-contact-form,
+.webform-submission-wcf-nomination-form {
+  max-width: variables.$content-max-width;
+  margin: 0 auto variables.$spacing-lg;
+  padding: 0 variables.$spacing-sm;
+}
+
+.webform-submission-form fieldset {
+  margin: 0 0 variables.$spacing-md;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+}
+
+.webform-submission-form legend {
+  font-weight: 600;
+  padding: 0 variables.$spacing-xs;
+}
+
+.webform-submission-form .form-item {
+  margin-bottom: variables.$spacing-sm;
+}
+
+.webform-submission-form label,
+.webform-submission-form .fieldset-legend {
+  display: block;
+  font-weight: 600;
+  margin-bottom: variables.$spacing-xs;
+}
+
+.webform-submission-form .form-required::after {
+  content: ' *';
+  color: #b00020;
+  font-weight: 700;
+}
+
+.webform-submission-form input[type='text'],
+.webform-submission-form input[type='email'],
+.webform-submission-form input[type='tel'],
+.webform-submission-form select,
+.webform-submission-form textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  line-height: variables.$line-height-base;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.webform-submission-form textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.webform-submission-form .form-actions {
+  margin-top: variables.$spacing-md;
+}
+
+.webform-submission-form .button,
+.webform-submission-form .webform-button--submit {
+  display: inline-block;
+  padding: 0.625rem 1.5rem;
+  font: inherit;
+  font-weight: 600;
+  color: variables.$color-text-inverse;
+  background-color: variables.$color-primary;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.webform-submission-form .button:hover,
+.webform-submission-form .webform-button--submit:hover {
+  background-color: variables.$color-primary-hover;
+}
+
+.webform-submission-form .webform-confirmation {
+  max-width: variables.$content-max-width;
+  margin: variables.$spacing-lg auto;
+  padding: variables.$spacing-md;
+}
+
+@media (min-width: variables.$breakpoint-md) {
+  .webform-submission-form .form--inline .form-item {
+    display: inline-block;
+    margin-right: variables.$spacing-sm;
+  }
+}
