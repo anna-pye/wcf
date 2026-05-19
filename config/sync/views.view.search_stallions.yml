@@ -118,7 +118,7 @@ display:
           view_modes:
             'entity:node':
               article: teaser
-              container_home: teaser
+              container_home: card
               stallion: card
       css_class: 'site-search stallion-listing'
       header:
@@ -168,6 +168,6 @@ display:
       tags:
         - 'config:facets.facet.content_type'
         - 'config:facets.facet.stallion_status'
-        - 'config:facets.facet.tags'
+        - 'config:facets.facet.categories'
         - 'config:search_api.index.stallion_content'
         - 'search_api_list:stallion_content'

@@ -165,7 +165,7 @@ display:
       row:
         type: 'entity:node'
         options:
-          view_mode: teaser
+          view_mode: card
       display_extenders: {  }
     cache_metadata:
       max-age: -1

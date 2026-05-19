@@ -2,7 +2,10 @@ uuid: 39c2df71-15d9-444d-a856-a078a3aee250
 langcode: en
 status: true
 dependencies:
+  config:
+    - facets_summary.facets_summary.search_active_filters
   module:
+    - facets_summary
     - system
   theme:
     - wcf_theme

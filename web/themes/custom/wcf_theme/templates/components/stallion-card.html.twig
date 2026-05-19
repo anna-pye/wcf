@@ -8,12 +8,13 @@
  * - url: Canonical URL string.
  * - title: Node title.
  * - image: Render array for main image (card view mode).
- * - summary: Trimmed body/summary text.
+ * - summary: Rendered body field (card view mode uses summary-or-trimmed).
+ * - summary_fallback: Plain-text fallback when body summary is empty (optional).
  * - status: Status label string.
  * - featured: Boolean whether stallion is featured.
  */
 #}
-<article class="stallion-card">
+<article class="stallion-card{{ image ? '' : ' stallion-card--no-media' }}">
   <a class="stallion-card__link" href="{{ url }}" aria-labelledby="stallion-card-title-{{ node.id }}">
     {% if image %}
       <figure class="stallion-card__media">
@@ -26,7 +27,9 @@
       {% endif %}
       <h3 id="stallion-card-title-{{ node.id }}" class="stallion-card__title">{{ title }}</h3>
       {% if summary %}
-        <p class="stallion-card__summary">{{ summary }}</p>
+        <div class="stallion-card__summary">{{ summary }}</div>
+      {% elseif summary_fallback %}
+        <p class="stallion-card__summary">{{ summary_fallback }}</p>
       {% endif %}
       {% if status %}
         <span class="stallion-card__status stallion-card__status--{{ status|clean_class }}">{{ status }}</span>

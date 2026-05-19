@@ -10,7 +10,7 @@ dependencies:
     - field.field.node.stallion.field_gallery
     - field.field.node.stallion.field_main_image
     - field.field.node.stallion.field_status
-    - field.field.node.stallion.field_tags
+    - field.field.node.stallion.field_category
     - field.field.node.stallion.field_video
     - node.type.stallion
   module:
@@ -29,6 +29,19 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 1
+    region: content
+  content_moderation_control:
+    settings: {  }
+    third_party_settings: {  }
+    weight: -20
+    region: content
+  field_category:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 7
     region: content
   field_cta_phone:
     type: telephone_link
@@ -72,14 +85,6 @@ content:
     third_party_settings: {  }
     weight: 5
     region: content
-  field_tags:
-    type: entity_reference_label
-    label: above
-    settings:
-      link: true
-    third_party_settings: {  }
-    weight: 7
-    region: content
   field_video:
     type: entity_reference_entity_view
     label: hidden
@@ -96,3 +101,4 @@ content:
     region: content
 hidden:
   field_featured: true
+  search_api_excerpt: true

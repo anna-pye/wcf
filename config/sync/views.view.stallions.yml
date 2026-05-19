@@ -6,7 +6,7 @@ dependencies:
     - core.entity_view_mode.node.card
     - node.type.stallion
     - system.menu.main
-    - taxonomy.vocabulary.tags
+    - taxonomy.vocabulary.categories
   module:
     - node
     - options
@@ -122,10 +122,10 @@ display:
             remember: false
             multiple: false
           is_grouped: false
-        field_tags_target_id:
-          id: field_tags_target_id
-          table: node__field_tags
-          field: field_tags_target_id
+        field_category_target_id:
+          id: field_category_target_id
+          table: node__field_category
+          field: field_category_target_id
           relationship: none
           group_type: group
           admin_label: ''
@@ -135,17 +135,17 @@ display:
           group: 1
           exposed: true
           expose:
-            operator_id: field_tags_target_id_op
-            label: Tag
+            operator_id: field_category_target_id_op
+            label: Category
             description: ''
             use_operator: false
-            operator: field_tags_target_id_op
-            identifier: stallion_tag
+            operator: field_category_target_id_op
+            identifier: stallion_category
             required: false
             remember: false
             multiple: false
           is_grouped: false
-          vid: tags
+          vid: categories
           type: select
           limit: true
       style:

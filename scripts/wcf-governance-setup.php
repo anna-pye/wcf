@@ -110,10 +110,10 @@ function wcf_gov_setup_search_api(): void {
       'property_path' => 'body:summary',
       'type' => 'text',
     ],
-    'tags' => [
-      'label' => 'Tags',
+    'category' => [
+      'label' => 'Category',
       'datasource_id' => 'entity:node',
-      'property_path' => 'field_tags',
+      'property_path' => 'field_category',
       'type' => 'integer',
     ],
     'status' => [
@@ -314,7 +314,7 @@ function wcf_gov_setup_search_view(): void {
         'view_modes' => [
           'entity:node' => [
             'stallion' => 'card',
-            'container_home' => 'teaser',
+            'container_home' => 'card',
             'article' => 'teaser',
           ],
         ],
@@ -353,10 +353,10 @@ function wcf_gov_setup_search_view(): void {
           'summary' => 'summary',
         ],
       ],
-      'tags' => [
-        'id' => 'tags',
+      'category' => [
+        'id' => 'category',
         'table' => 'search_api_index_stallion_content',
-        'field' => 'tags',
+        'field' => 'category',
         'relationship' => 'none',
         'group_type' => 'group',
         'admin_label' => '',
@@ -366,18 +366,18 @@ function wcf_gov_setup_search_view(): void {
         'group' => 1,
         'exposed' => TRUE,
         'expose' => [
-          'operator_id' => 'tags_op',
-          'label' => 'Tag',
+          'operator_id' => 'category_op',
+          'label' => 'Category',
           'description' => '',
           'use_operator' => FALSE,
-          'operator' => 'tags_op',
-          'identifier' => 'tag',
+          'operator' => 'category_op',
+          'identifier' => 'category',
           'required' => FALSE,
           'remember' => FALSE,
           'multiple' => FALSE,
         ],
         'is_grouped' => FALSE,
-        'vid' => 'tags',
+        'vid' => 'categories',
         'hierarchy' => FALSE,
         'type' => 'select',
         'limit' => TRUE,

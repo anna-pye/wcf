@@ -1,0 +1,16 @@
+{#
+/**
+ * @file
+ * Container home card view mode — reuses stallion-card component.
+ */
+#}
+{% include '@wcf_theme/components/stallion-card.html.twig' with {
+  node: node,
+  url: url,
+  title: label,
+  image: content.field_main_image,
+  summary: content.body,
+  summary_fallback: node_summary_fallback,
+  status: container_home_status_label,
+  featured: false,
+} only %}

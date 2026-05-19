@@ -1,0 +1,28 @@
+uuid: d0e6a4b3-8c5f-4a93-b2e1-3f9a7d4c6e05
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_category
+    - node.type.stallion
+    - taxonomy.vocabulary.categories
+id: node.stallion.field_category
+field_name: field_category
+entity_type: node
+bundle: stallion
+label: Category
+description: 'Governed editorial categories only. Select from the approved list; new categories cannot be created here.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      categories: categories
+    sort:
+      field: name
+      direction: asc
+    auto_create: false
+field_type: entity_reference

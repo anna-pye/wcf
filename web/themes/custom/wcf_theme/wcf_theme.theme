@@ -93,6 +93,69 @@ function wcf_theme_build_featured_content_view_renderable(string $content_type, 
 }
 
 /**
+ * Returns a display summary without overwriting stored body summary.
+ *
+ * Uses the editorial summary when present; otherwise trims body text for cards,
+ * metatags, and social previews without writing to the node.
+ */
+function wcf_theme_node_summary_fallback(NodeInterface $node, int $trim_length = 300): ?string {
+  if (!$node->hasField('body') || $node->get('body')->isEmpty()) {
+    return NULL;
+  }
+
+  $body = $node->get('body');
+  $summary = trim((string) $body->summary);
+  if ($summary !== '') {
+    return NULL;
+  }
+
+  $value = (string) $body->value;
+  if (trim(strip_tags($value)) === '') {
+    return NULL;
+  }
+
+  $format = $body->format ?: filter_default_format();
+  return text_summary($value, $format, $trim_length);
+}
+
+/**
+ * Stallion-only wrapper for summary fallback (metatags, cards).
+ */
+function wcf_theme_stallion_summary_fallback(NodeInterface $node, int $trim_length = 300): ?string {
+  if ($node->bundle() !== 'stallion') {
+    return NULL;
+  }
+  return wcf_theme_node_summary_fallback($node, $trim_length);
+}
+
+/**
+ * Implements hook_metatags_alter().
+ */
+function wcf_theme_metatags_alter(array &$metatags, array &$context): void {
+  $entity = $context['entity'] ?? NULL;
+  if (!$entity instanceof NodeInterface || $entity->bundle() !== 'stallion') {
+    return;
+  }
+
+  $fallback = wcf_theme_stallion_summary_fallback($entity);
+  if ($fallback === NULL) {
+    return;
+  }
+
+  foreach (['description', 'og_description', 'twitter_cards_description'] as $tag) {
+    if (!isset($metatags[$tag])) {
+      continue;
+    }
+    $configured = is_array($metatags[$tag])
+      ? (string) ($metatags[$tag]['value'] ?? $metatags[$tag]['#value'] ?? '')
+      : (string) $metatags[$tag];
+    if ($configured === '' || $configured === '[node:summary]') {
+      $metatags[$tag] = $fallback;
+    }
+  }
+}
+
+/**
  * Returns a list field label for display.
  */
 function wcf_theme_list_field_label(NodeInterface $node, string $field_name): ?string {
@@ -203,6 +266,23 @@ function wcf_theme_preprocess_node__stallion(array &$variables): void {
 
   $variables['stallion_status_label'] = wcf_theme_list_field_label($node, 'field_status');
   $variables['stallion_featured'] = (bool) $node->get('field_featured')->value;
+  $variables['stallion_summary_fallback'] = wcf_theme_stallion_summary_fallback($node, 120);
+  $variables['node_summary_fallback'] = $variables['stallion_summary_fallback'];
+}
+
+/**
+ * Implements hook_preprocess_node__container_home().
+ */
+function wcf_theme_preprocess_node__container_home(array &$variables): void {
+  $node = $variables['node'] ?? NULL;
+  if (!$node instanceof NodeInterface) {
+    return;
+  }
+
+  $variables['container_home_status_label'] = $node->get('field_sold')->value
+    ? (string) t('Sold')
+    : NULL;
+  $variables['node_summary_fallback'] = wcf_theme_node_summary_fallback($node, 120);
 }
 
 /**
@@ -261,6 +341,7 @@ function wcf_theme_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface
     if (isset($form['moderation_state'])) {
       $form['moderation_state']['#description'] = t('Draft: work in progress. In review: ready for an editor. Published: live on the site.');
     }
+    wcf_theme_apply_editorial_field_help($form, $form_state);
   }
 
   if ($form_id === 'views_exposed_form' && isset($form['#id']) && str_contains((string) $form['#id'], 'search-stallions')) {
@@ -274,6 +355,48 @@ function wcf_theme_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface
     if (isset($form['actions']['reset'])) {
       $form['actions']['reset']['#attributes']['class'][] = 'site-search__reset';
     }
+  }
+}
+
+/**
+ * Adds concise editorial help on governed node forms.
+ */
+function wcf_theme_apply_editorial_field_help(array &$form, \Drupal\Core\Form\FormStateInterface $form_state): void {
+  $form_object = $form_state->getFormObject();
+  if (!is_object($form_object) || !method_exists($form_object, 'getEntity')) {
+    return;
+  }
+
+  $entity = $form_object->getEntity();
+  if (!$entity instanceof NodeInterface) {
+    return;
+  }
+
+  $bundle = $entity->bundle();
+  if (!in_array($bundle, ['stallion', 'container_home', 'article'], TRUE)) {
+    return;
+  }
+
+  if (isset($form['field_status'])) {
+    $form['field_status']['#description'] = t('Lifecycle only: active, sold, or retired. Do not use categories for sale status.');
+  }
+  if (isset($form['field_category'])) {
+    $form['field_category']['#description'] = t('Governed categories only (Foals, Broodmares, etc.). Select existing terms; new categories cannot be created here.');
+  }
+  if (isset($form['field_featured'])) {
+    $form['field_featured']['#description'] = t('Promotes this stallion in featured listings and sort order. Not a replacement for categories or status.');
+  }
+  if (isset($form['body'])) {
+    $form['body']['#description'] = t('Summary is used on cards, search, and social previews. Leave blank only when body text will supply a trimmed fallback.');
+    if (isset($form['body']['widget'][0]['summary']['#description'])) {
+      $form['body']['widget'][0]['summary']['#description'] = t('Write a short editorial summary. Remediation scripts never overwrite an existing summary.');
+    }
+  }
+  if (isset($form['path'])) {
+    $form['path']['#description'] = t('URL alias is the canonical public path. Avoid duplicate titles; use Pathauto patterns when unsure.');
+  }
+  if ($bundle === 'container_home' && isset($form['field_sold'])) {
+    $form['field_sold']['#description'] = t('Marks this container home as sold. Use this flag instead of taxonomy for sold inventory.');
   }
 }
 

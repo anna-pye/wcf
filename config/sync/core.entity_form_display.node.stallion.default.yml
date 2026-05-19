@@ -10,7 +10,7 @@ dependencies:
     - field.field.node.stallion.field_gallery
     - field.field.node.stallion.field_main_image
     - field.field.node.stallion.field_status
-    - field.field.node.stallion.field_tags
+    - field.field.node.stallion.field_category
     - field.field.node.stallion.field_video
     - node.type.stallion
     - workflows.workflow.editorial
@@ -40,6 +40,16 @@ content:
     weight: 10
     region: content
     settings: {  }
+    third_party_settings: {  }
+  field_category:
+    type: entity_reference_autocomplete
+    weight: 23
+    region: content
+    settings:
+      match_operator: CONTAINS
+      match_limit: 10
+      size: 60
+      placeholder: ''
     third_party_settings: {  }
   field_cta_phone:
     type: telephone_default
@@ -84,16 +94,6 @@ content:
     weight: 20
     region: content
     settings: {  }
-    third_party_settings: {  }
-  field_tags:
-    type: entity_reference_autocomplete_tags
-    weight: 23
-    region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
     third_party_settings: {  }
   field_video:
     type: media_library_widget

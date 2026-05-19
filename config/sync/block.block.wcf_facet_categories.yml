@@ -1,0 +1,30 @@
+uuid: b4c0e8f7-2a5d-4e96-c7f3-6d3b1a0f2c49
+langcode: en
+status: true
+dependencies:
+  config:
+    - facets.facet.categories
+  module:
+    - facets
+    - system
+  theme:
+    - wcf_theme
+id: wcf_facet_categories
+theme: wcf_theme
+region: sidebar_first
+weight: 1
+provider: null
+plugin: 'facet_block:categories'
+settings:
+  id: 'facet_block:categories'
+  label: ''
+  label_display: visible
+  provider: facets
+  context_mapping: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: |-
+      /search
+      /search*
