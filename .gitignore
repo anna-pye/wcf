@@ -63,3 +63,6 @@ phpunit.xml
 
 # Theme build artifacts
 /web/themes/custom/wcf_theme/css/*.map
+
+# Legacy Drupal 7 product binaries - keep local only
+legacy/sites/all/modules/product/files/
