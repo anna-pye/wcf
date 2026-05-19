@@ -11,7 +11,7 @@ field_name: field_category
 entity_type: node
 bundle: stallion
 label: Category
-description: 'Governed editorial categories only. Select from the approved list; new categories cannot be created here.'
+description: 'Select a governed category from the list.'
 required: false
 translatable: true
 default_value: {  }

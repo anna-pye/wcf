@@ -52,7 +52,7 @@ Observed at audit time (published indexable content):
 |-------|--------|-------|
 | Content type | Stallion (majority), Container home (if any published) | Counts align with ~211 results |
 | Stallion status | `active`, `sold` | Matches `field_status` distribution |
-| Tags | Hidden (`facet-hidden`) | 0 tagged published items |
+| Categories | Hidden (`facet-hidden`) | 0 categorized published items |
 
 **Filtered test:** `?f[0]=content_type:stallion` — active filter state, facets summary “Clear all filters” works (per prior `docs/search-validation.md` pattern).
 

@@ -42,14 +42,10 @@ content:
     settings: {  }
     third_party_settings: {  }
   field_category:
-    type: entity_reference_autocomplete
-    weight: 23
+    type: options_select
+    weight: -10
     region: content
-    settings:
-      match_operator: CONTAINS
-      match_limit: 10
-      size: 60
-      placeholder: ''
+    settings: {  }
     third_party_settings: {  }
   field_cta_phone:
     type: telephone_default

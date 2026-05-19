@@ -4,15 +4,28 @@
 # Composer
 /vendor/
 
+# Drupal core and contrib (Composer-managed)
+/web/core/
+/web/modules/contrib/
+/web/themes/contrib/
+/web/profiles/contrib/
+
 # Drupal files
+/web/sites/*/files/
+/web/sites/*/private/
 /web/sites/default/files/
 /web/sites/default/private/
 
-# Drupal settings overrides
-/web/sites//settings.local.php
-/web/sites//services.local.yml
+# Drupal settings overrides (environment-specific)
+/web/sites/*/settings.local.php
+/web/sites/*/services.local.yml
+/web/sites/default/settings.php
+/web/sites/default/services.yml
 
 # DDEV
+/.ddev/.global_commands/
+/.ddev/.importdb*/
+/.ddev/.downloads/
 .ddev/.importdbCommand
 .ddev/db_snapshots
 .ddev/.dbimageBuild
@@ -24,12 +37,15 @@
 
 # Logs
 *.log
+npm-debug.log
+yarn-error.log
 
 # Environment
 .env
 
 # Node
 node_modules/
+/web/themes/custom/wcf_theme/node_modules/
 
 # Sass cache
 .sass-cache/
@@ -40,14 +56,10 @@ temp/
 
 # PHPUnit
 phpunit.xml
+.phpunit.result.cache
 
 # Legacy migration assets - local only
 /legacy/sites/default/files/
-
-# Composer-installed contrib code
-/web/modules/contrib/
-/web/themes/contrib/
-/web/profiles/contrib/
 
 # Theme build artifacts
 /web/themes/custom/wcf_theme/css/*.map

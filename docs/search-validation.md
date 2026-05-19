@@ -68,7 +68,7 @@ Rendered `/search` (no filters):
 | Content type | Container Home | (1) |
 | Content type | Stallion | (1) |
 | Stallion status | active | (1) |
-| Tags | — | hidden (empty) |
+| Categories | — | hidden (empty) |
 
 **Filtered test:** `?f[0]=content_type:stallion`
 
@@ -80,11 +80,11 @@ Rendered `/search` (no filters):
 
 ## Taxonomy filtering
 
-- Tags vocabulary: 1 term (`sf`, tid 1)
-- Tags facet hidden when empty (`facet-empty facet-hidden` on block)
-- Stallions SQL view exposes tag filter with term `sf` on `/stallions`
+- Categories vocabulary: governed terms via `scripts/wcf-governed-categories.php`
+- Categories facet hidden when empty (`facet-empty facet-hidden` on block)
+- Stallions SQL view exposes category filter on `/stallions` (`field_category_target_id`)
 
-**Verdict:** Taxonomy facet wiring correct; **no tagged published index items** to validate tag facet counts on `/search` — **INCONCLUSIVE** until migrated content carries tags
+**Verdict:** Taxonomy facet wiring correct; **no categorized published index items** to validate category facet counts on `/search` — **INCONCLUSIVE** until editors assign `field_category`
 
 ## Reset behavior
 
@@ -111,6 +111,6 @@ After controlled D7 ingestion:
 
 1. `drush search-api:reset-tracker stallion_content && drush search-api:index stallion_content`
 2. Confirm draft/review nodes excluded from `/search`
-3. Re-test tag facet with tagged published stallions/articles
+3. Re-test categories facet with categorized published stallions/articles
 4. Verify article bundle appears in content type facet with accurate counts
 5. Spot-check container_home and stallion card/teaser display on `/search`

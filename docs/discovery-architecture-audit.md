@@ -7,7 +7,7 @@
 
 ## Executive summary
 
-The discovery layer follows the intended split architecture: **SQL Views for bundle-specific listings** (`stallions`, `featured_content`) and **Search API + Facets for cross-bundle site search** (`search_stallions` at `/search`). Overlap in filter concepts (status, tags) is intentional and scoped to different routes—not duplicate platform layers.
+The discovery layer follows the intended split architecture: **SQL Views for bundle-specific listings** (`stallions`, `featured_content`) and **Search API + Facets for cross-bundle site search** (`search_stallions` at `/search`). Overlap in filter concepts (status, categories) is intentional and scoped to different routes—not duplicate platform layers.
 
 ## Views inventory
 
@@ -22,10 +22,10 @@ The discovery layer follows the intended split architecture: **SQL Views for bun
 
 **Finding:** No duplicate Search API–backed Views. Only one index-backed discovery View exists (`search_stallions`).
 
-**Finding:** `stallions` and `search_stallions` both expose status/tag filtering concepts but through different mechanisms (SQL exposed filters vs. Facets). Evidence:
+**Finding:** `stallions` and `search_stallions` both expose status/category filtering concepts but through different mechanisms (SQL exposed filters vs. Facets). Evidence:
 
-- `views.view.stallions.yml` — exposed `field_status_value`, `field_tags_target_id` on `/stallions`
-- `views.view.search_stallions.yml` — keyword fulltext only; facets handle `stallion_status`, `tags`, `content_type` on `/search`
+- `views.view.stallions.yml` — exposed `field_status_value`, `field_category_target_id` on `/stallions`
+- `views.view.search_stallions.yml` — keyword fulltext only; facets handle `stallion_status`, `categories`, `content_type` on `/search`
 - `scripts/wcf-discovery-setup.php` documents intentional removal of duplicate exposed filters from `search_stallions`
 
 **Recommendation:** Preserve both. Editorial training should clarify: **Stallions page = stallion-only SQL listing**; **Search = all indexed bundles with facets**.
@@ -45,7 +45,7 @@ Processors enabled (evidence: `search_api.index.stallion_content.yml`): `entity_
 | Facet ID | Field | Widget | Block |
 |----------|-------|--------|-------|
 | `stallion_status` | `status` | links | `wcf_facet_stallion_status` |
-| `tags` | `tags` | links | `wcf_facet_tags` |
+| `categories` | `category` | links | `wcf_facet_categories` |
 | `content_type` | `type` | links | `wcf_facet_content_type` |
 
 **Finding:** All three facets reference the same facet source and index. No orphaned facet config files in `config/sync`.

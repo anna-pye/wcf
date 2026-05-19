@@ -386,10 +386,10 @@ function wcf_listing_setup_stallions_view(): void {
       ],
       'is_grouped' => FALSE,
     ],
-    'field_tags_target_id' => [
-      'id' => 'field_tags_target_id',
-      'table' => 'node__field_tags',
-      'field' => 'field_tags_target_id',
+    'field_category_target_id' => [
+      'id' => 'field_category_target_id',
+      'table' => 'node__field_category',
+      'field' => 'field_category_target_id',
       'relationship' => 'none',
       'group_type' => 'group',
       'admin_label' => '',
@@ -399,18 +399,18 @@ function wcf_listing_setup_stallions_view(): void {
       'group' => 1,
       'exposed' => TRUE,
       'expose' => [
-        'operator_id' => 'field_tags_target_id_op',
-        'label' => 'Tag',
+        'operator_id' => 'field_category_target_id_op',
+        'label' => 'Category',
         'description' => '',
         'use_operator' => FALSE,
-        'operator' => 'field_tags_target_id_op',
-        'identifier' => 'stallion_tag',
+        'operator' => 'field_category_target_id_op',
+        'identifier' => 'stallion_category',
         'required' => FALSE,
         'remember' => FALSE,
         'multiple' => FALSE,
       ],
       'is_grouped' => FALSE,
-      'vid' => 'tags',
+      'vid' => 'categories',
       'type' => 'select',
       'limit' => TRUE,
     ],
@@ -490,7 +490,7 @@ function wcf_listing_setup_stallions_view(): void {
     'exposed' => FALSE,
   ];
   unset($block['display_options']['filters']['field_status_value']);
-  unset($block['display_options']['filters']['field_tags_target_id']);
+  unset($block['display_options']['filters']['field_category_target_id']);
   $block['display_options']['exposed_form'] = ['type' => 'basic', 'options' => []];
   $block['display_options']['style'] = $default_options['style'];
   $block['display_options']['row'] = $default_options['row'];

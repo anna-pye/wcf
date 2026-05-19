@@ -8,9 +8,9 @@ third_party_settings:
   content_moderation:
     enabled: true
     workflow: editorial
-name: Stallion
+name: Horses
 type: stallion
-description: 'Horse and stallion business profiles. Modern replacement for legacy product/stallion content.'
+description: 'Horse profiles and inventory. Modern replacement for legacy product/stallion content.'
 help: 'Save drafts while working. Submit for review when ready for an editor. Published content is visible on the public site. Use the Content health report under Content for maintenance.'
 new_revision: true
 preview_mode: 1
