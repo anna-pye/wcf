@@ -1,0 +1,33 @@
+id: wcf_d7_file_product
+label: 'WCF D7 product module image and document files'
+audit: true
+migration_tags:
+  - WCF
+  - Drupal 7
+  - Files
+  - Product
+source:
+  plugin: wcf_d7_product_file
+  constants:
+    source_base_path: ''
+    destination_base_uri: 'public://wcf_product'
+process:
+  filename: filename
+  uri:
+    plugin: file_copy
+    source:
+      - source_full_path
+      - uri
+    file_exists: use existing
+  filemime: filemime
+  status:
+    plugin: default_value
+    default_value: 1
+  created: timestamp
+  changed: timestamp
+  uid:
+    plugin: default_value
+    default_value: 1
+destination:
+  plugin: entity:file
+migration_dependencies: {  }

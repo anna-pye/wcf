@@ -1,0 +1,34 @@
+id: wcf_d7_media_document_product
+label: 'WCF D7 product PDFs to document media'
+audit: true
+migration_tags:
+  - WCF
+  - Drupal 7
+  - Media
+  - Product
+source:
+  plugin: wcf_d7_product_file
+  file_type: document
+  constants:
+    source_base_path: ''
+process:
+  bundle:
+    plugin: default_value
+    default_value: document
+  name: filename
+  uid:
+    plugin: default_value
+    default_value: 1
+  created: timestamp
+  changed: timestamp
+  field_media_document/target_id:
+    plugin: migration_lookup
+    migration: wcf_d7_file_product
+    source: filename
+    no_stub: true
+destination:
+  plugin: entity:media
+  default_bundle: document
+migration_dependencies:
+  required:
+    - wcf_d7_file_product

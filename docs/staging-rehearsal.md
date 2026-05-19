@@ -1,76 +1,87 @@
 # Staging Rehearsal (Dry Run)
 
-**Date:** 2026-05-19  
-**Branch:** `feature/editorial-normalization`  
+**Date:** 2026-05-20  
+**Branch:** `feature/stallion-migration-version-control` (merge target: `main`)  
 **Type:** Operational dry run — **do not execute on production without backup**
+
+Migration YAML and plugins are version-controlled in `web/modules/custom/wcf_migrate/` — see `docs/stallion-migration-version-control-audit.md`.
 
 ## Preconditions
 
 - [ ] Database snapshot
-- [ ] Code deployed to staging branch
+- [ ] Code deployed to branch with stallion migrations (`wcf_d7_*_product*`, `wcf_d7_node_stallion`)
+- [ ] `wcf_migrate` enabled (`ddev drush pm:list --filter=wcf_migrate`)
+- [ ] Legacy DB available in DDEV (`legacy`, `wcf_` prefix)
 - [ ] Legacy product files available at `~/drupal7-legacy/sites/all/modules/product/files/`
 - [ ] `ddev drush cst` clean (except known `gin.settings` env delta)
 
-## Sequence (exact order)
+## Stallion migration sequence (exact order)
+
+Run on a **fresh staging DB** or after rollback (see [Rollback (clean re-run only)](#rollback-clean-re-run-only)).
 
 ### 1. Rsync legacy product files
+
+Product images/PDFs are **not in Git**. Copy from the D7 legacy tree:
 
 ```bash
 rsync -a ~/drupal7-legacy/sites/all/modules/product/files/ \
   ~/drupal11-upgrade/legacy/sites/all/modules/product/files/
 ```
 
-**Validate:** file count roughly matches migration audit (~1149 unique refs; not all exist on disk).
+**Validate:** file count roughly matches migration audit (~1149 unique refs; not all exist on disk). See `legacy/README.md`.
 
-### 2. Rollback order (if re-run from clean migration state)
-
-Reverse dependency order — from `docs/stallion-migration-rollback.md`:
-
-```bash
-ddev drush mr wcf_d7_node_stallion -y
-ddev drush mr wcf_d7_media_remote_video_product -y
-ddev drush mr wcf_d7_media_document_product -y
-ddev drush mr wcf_d7_media_image_product -y
-ddev drush mr wcf_d7_file_product -y
-```
-
-**Validate:** `ddev drush sql:query "SELECT COUNT(*) FROM node_field_data WHERE type='stallion';"` → 0 (or expected sample-only count).
-
-### 3. Migration order
+### 2. Import product file migration
 
 ```bash
 ddev drush cr
 ddev drush mim wcf_d7_file_product -y
+```
+
+**Validate:** `ddev drush migrate:status wcf_d7_file_product` — expect many **unprocessed** rows when source files are missing (~796 typical); imported count should match readable files on disk.
+
+### 3. Import product media migrations
+
+```bash
 ddev drush migrate:import wcf_d7_media_image_product --force -y
 ddev drush migrate:import wcf_d7_media_document_product --force -y
 ddev drush migrate:import wcf_d7_media_remote_video_product --force -y
+```
+
+**Validate:** image media ~276 imported; document ~77; remote video ~4 (see `docs/stallion-migration-validation.md`).
+
+### 4. Import stallion node migration
+
+```bash
 ddev drush migrate:import wcf_d7_node_stallion --force -y
 ```
 
 **Validate:**
 
 ```bash
-ddev drush migrate:status | grep wcf_d7_node_stallion
-# Expect: 276 imported, 2 unprocessed (empty titles ids 284–285)
+ddev drush migrate:status wcf_d7_node_stallion
+# Expect: 276 imported, 2 message failures (empty titles ids 284–285)
+ddev drush migrate:messages wcf_d7_node_stallion
 ddev drush sql:query "SELECT COUNT(*) FROM node_field_data WHERE type='stallion';"
 # Expect: 276
 ```
 
-### 4. Search API reindex
+### 5. Search integrity + reindex
+
+Prefer the integrity script over raw tracker reset (handles orphaned tracker rows):
 
 ```bash
-ddev drush search-api:reset-tracker stallion_content
-ddev drush search-api:index stallion_content
+ddev drush php:script scripts/wcf-search-integrity.php
+ddev drush php:script scripts/wcf-search-integrity.php -- --apply --reindex
 ddev drush search-api:status
 ```
 
 **Validate:**
 
-- 100% complete
-- Public query count = published indexable nodes (expect 221 stallions + any published container_home/article)
-- **Critical:** Confirm published stallions without images are either indexed or explicitly accepted as search-excluded (currently 10 published imageless nids fail indexing)
+- `stallion_content` 100% complete
+- Public query count = published indexable nodes (expect ~221 published stallions + other indexed bundles)
+- **Critical:** Confirm published stallions without images are either indexed or explicitly accepted as search-excluded (currently ~10 published imageless nids may fail indexing)
 
-### 5. Sitemap regeneration
+### 6. Sitemap regeneration
 
 ```bash
 ddev drush simple-sitemap:generate
@@ -80,7 +91,7 @@ ddev drush cron
 
 **Validate:** `/sitemap.xml` lists published stallion canonical URLs.
 
-### 6. Cache rebuild
+### 7. Cache rebuild
 
 ```bash
 ddev drush cr
@@ -88,7 +99,7 @@ cd web/themes/custom/wcf_theme && npm ci && npm run build
 ddev drush cr
 ```
 
-### 7. Canonical URL governance (post-migration)
+### 8. Canonical URL governance (post-migration)
 
 Run after stallion import when legacy short aliases coexist with `/stallions/*` Pathauto aliases.
 
@@ -115,7 +126,7 @@ ddev drush cr
 
 **Rollback:** recreate legacy `path_alias` rows for affected nids; do not delete canonical `/stallions/*` aliases. See `docs/canonical-url-governance.md`.
 
-### 8. Validation checks
+### 9. Validation checks
 
 | Check | Command / URL |
 |-------|----------------|
@@ -128,6 +139,22 @@ ddev drush cr
 | Editorial audit | `ddev drush php:script scripts/editorial-audit.php` |
 | Canonical redirects | `scripts/canonical-redirect-remediation.php` (dry-run) |
 | Legacy alias cleanup | `scripts/canonical-alias-governance.php` (dry-run) |
+
+## Rollback (clean re-run only)
+
+**Destructive — staging only.** Reverse dependency order — from `docs/stallion-migration-rollback.md`:
+
+```bash
+ddev drush mr wcf_d7_node_stallion -y
+ddev drush mr wcf_d7_media_remote_video_product -y
+ddev drush mr wcf_d7_media_document_product -y
+ddev drush mr wcf_d7_media_image_product -y
+ddev drush mr wcf_d7_file_product -y
+```
+
+**Validate:** `ddev drush sql:query "SELECT COUNT(*) FROM node_field_data WHERE type='stallion';"` → 0 (or expected sample-only count).
+
+Then re-run [Stallion migration sequence](#stallion-migration-sequence-exact-order) from step 1.
 
 ## Rollback integrity
 
@@ -161,7 +188,9 @@ ddev drush cr
 
 ## Related docs
 
+- `docs/stallion-migration-version-control-audit.md`
 - `docs/canonical-url-governance.md`
 - `docs/stallion-migration-rollback.md`
 - `docs/staging-deployment-checklist.md`
 - `docs/stallion-migration-validation.md`
+- `docs/stallion-migration-audit.md`
