@@ -22,7 +22,7 @@ This document defines **who owns what** in public discovery, how classification 
 | View | `stallions` (`page_1`) |
 | Base | `node_field_data` |
 | Bundles shown | `stallion` only |
-| Filters | Exposed: `field_status`, `field_tags` (SQL) |
+| Filters | Exposed: `field_status`, `field_category` (SQL) |
 | Sort | `field_featured` DESC, `created` DESC |
 | Row mode | `card` → `stallion-card` component |
 
@@ -49,7 +49,7 @@ This document defines **who owns what** in public discovery, how classification 
 | Index | `stallion_content` |
 | Bundles indexed | `stallion`, `container_home`, `article` |
 | Keyword | Exposed fulltext `keywords` |
-| Facets | `stallion_status`, `tags`, `content_type` |
+| Facets | `stallion_status`, `categories`, `content_type` |
 | Facet blocks | Sidebar on `/search` only |
 
 **Responsibility:** Cross-bundle discovery with faceted refinement.
@@ -57,7 +57,7 @@ This document defines **who owns what** in public discovery, how classification 
 **Use when:**
 
 - Searching across content types
-- Facet-driven exploration (status, type, tags)
+- Facet-driven exploration (status, type, categories)
 - Keyword lookup
 
 **Do not:**
@@ -79,18 +79,18 @@ This document defines **who owns what** in public discovery, how classification 
 | Retired | Use when horse withdrawn but not “sold” semantics |
 | Do not | Create taxonomy terms for Active/Sold |
 
-### Business tags (`field_tags`)
+### Editorial categories (`field_category`)
 
 | Rule | Detail |
 |------|--------|
-| Allow-list | Maintain approved list in editorial handbook (≤20 terms) |
-| Create terms | Restrict to users with `administer taxonomy` |
-| Do not | Auto-tag from titles, categories, or bulk legacy import without workshop |
-| Do not | Use tags for lifecycle (use `field_status`) |
-| Do not | Use tags for “Featured” (use `field_featured`) |
-| After bulk tag change | Run `ddev drush search-api:reset-tracker stallion_content` |
+| Allow-list | Governed terms only — seed via `scripts/wcf-governed-categories.php` |
+| Create terms | Restrict to users with `administer taxonomy`; editors select only |
+| Do not | Auto-create terms on node save (`auto_create: false`) |
+| Do not | Use categories for lifecycle (use `field_status`) |
+| Do not | Use categories for “Featured” (use `field_featured`) |
+| After bulk category change | Run `ddev drush search-api:reset-tracker stallion_content` |
 
-**Current state:** 0 stallions tagged; tags facet hidden on `/search`.
+**Current state:** category facet hidden on `/search` until indexed content carries `field_category`.
 
 ### Marketing (`field_featured`)
 
@@ -106,7 +106,7 @@ This document defines **who owns what** in public discovery, how classification 
 | Mechanism | Governance |
 |-----------|------------|
 | `homepage` node + paragraphs | Marketing owns composition |
-| `featured_stallions` paragraph | Explicit horse picks — not automatic from tags |
+| `featured_stallions` paragraph | Explicit horse picks — not automatic from categories |
 | `feature_card` paragraphs | Showcase-style cards — separate from taxonomy |
 
 ---
@@ -117,15 +117,15 @@ This document defines **who owns what** in public discovery, how classification 
 |-------|-------------|---------------|
 | `stallion_status` | `field_status` values | Always visible when stallions indexed |
 | `content_type` | Bundle machine names | Stable — do not add bundles without index update |
-| `tags` | `field_tags` population | Hidden until terms exist on indexed content |
+| `categories` | `field_category` population | Hidden until terms exist on indexed content |
 
 **Developers must not:**
 
 - Add facets without index field + processor review
 - Point facets at a second index
-- Enable `auto_create` on tags without editorial policy (currently enabled — monitor closely)
+- Enable `auto_create` on categories without editorial policy (`auto_create: false` in config)
 
-**Facet scale:** See `docs/taxonomy-scale-readiness.md` — review when tag count &gt;25.
+**Facet scale:** See `docs/taxonomy-scale-readiness.md` — review when category count &gt;25.
 
 ---
 
@@ -153,15 +153,15 @@ This document defines **who owns what** in public discovery, how classification 
 1. Set `field_status` accurately before promoting horses publicly.
 2. Use `/stallions` to verify listing appearance after status changes.
 3. Use `/search` to verify cross-bundle findability after major edits.
-4. Request new tag terms through governance — do not invent during node save.
+4. Request new category terms through governance — do not invent during node save.
 5. Use `field_featured` sparingly for homepage-quality highlights.
 
 ### Do not
 
-1. Bulk-assign tags from legacy category names without approval.
+1. Bulk-assign categories from legacy D7 names without approval.
 2. Create parallel menus pointing to custom Views duplicating `/stallions`.
 3. Unpublish sold horses that should remain in sold archive (use `field_status=sold`).
-4. Tag container homes with horse section labels.
+4. Assign container homes horse-section categories inappropriately.
 5. Use body text keywords as a substitute for structured classification.
 
 ---
@@ -183,13 +183,13 @@ This document defines **who owns what** in public discovery, how classification 
 1. Does `/stallions` or `/search` already solve this?
 2. Can an exposed filter or facet be extended instead of a new View?
 3. Will this create a second index or facet source?
-4. Does classification belong in lifecycle, tags, or marketing — not two places?
+4. Does classification belong in lifecycle, categories, or marketing — not two places?
 
 ### Acceptable future additions (gated)
 
 | Addition | Condition |
 |----------|-----------|
-| Governed tag migration | Approved tag list + one migration plugin |
+| Governed category assignment | Approved category list + editorial workflow |
 | `field_year` exposed filter | Product-owner sign-off |
 | `node--container_home--card` in search | UX consistency — not classification |
 | One normalization drush command | Documented, idempotent, entity API only |
@@ -202,7 +202,7 @@ When onboarding a new horse section or business line:
 
 - [ ] Audit D7 legacy (`docs/legacy-classification-audit.md` process)
 - [ ] Confirm D11 bundle exists or justify new bundle
-- [ ] Map to lifecycle / tags / marketing — not all three
+- [ ] Map to lifecycle / categories / marketing — not all three
 - [ ] Update Search API index only if new bundle
 - [ ] Update facet `content_type` only if indexed
 - [ ] Document in this file if governance rules change
@@ -231,7 +231,7 @@ ddev exec curl -s -o /dev/null -w "%{http_code}" https://wcf11.ddev.site/search
 
 | Risk | Mitigation |
 |------|------------|
-| Editors create unbounded tags (`auto_create`) | Allow-list; restrict taxonomy permissions |
+| Editors create unbounded categories | Governed vocabulary; restrict taxonomy permissions |
 | Developers add `/stallions-asb` duplicate View | Require architecture review; use filters |
 | Legacy category import without cleanup | Blocked — see taxonomy normalization plan |
 | Status facet shows wrong counts after bulk edit | Reindex tracker after bulk operations |

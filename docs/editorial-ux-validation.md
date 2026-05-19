@@ -102,7 +102,7 @@ Anonymous: HTTP 403 — **PASS**
 | Two discovery URLs | `/stallions` vs `/search` | Onboarding doc |
 | Search mixed card/teaser | container_home teaser on `/search` | Post-migration display alignment |
 | Facet status label | Facet shows `active` lowercase | Consider `list_item` labels or allowed_values labels |
-| Tags facet empty | No tagged published index content | Expected until migration |
+| Categories facet empty | No categorized published index content | Expected until editors assign `field_category` |
 | Reset search button | Only visible when keywords query present | Document for editors |
 
 ## Confusing workflows
@@ -112,7 +112,7 @@ None identified that block staging. Moderation descriptions added via theme `for
 ## Editorial testing checklist (post-migration)
 
 - [ ] Create draft stallion → confirm absent from `/search` and `/stallions`
-- [ ] Publish with tags → confirm tag facet counts
+- [ ] Publish with category → confirm categories facet counts
 - [ ] Add featured_content paragraph to homepage → verify listing
 - [ ] Run content health reports as content editor role
 - [ ] Upload media without alt → confirm media_governance surfaces item

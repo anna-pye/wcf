@@ -35,7 +35,7 @@ ddev drush cst
 | Config | Depends on |
 |--------|------------|
 | `facets.facet.stallion_status.yml` | index, `search_stallions` view |
-| `facets.facet.tags.yml` | index, `search_stallions` view |
+| `facets.facet.categories.yml` | index, `search_stallions` view |
 | `facets.facet.content_type.yml` | index, `search_stallions` view |
 | `facets_summary.facets_summary.search_active_filters.yml` | index, `search_stallions` view |
 
@@ -56,7 +56,7 @@ ddev drush cst
 | Block | Region | Theme | Visibility |
 |-------|--------|-------|------------|
 | `wcf_facet_stallion_status` | `sidebar_first` | `wcf_theme` | `/search`, `/search*` |
-| `wcf_facet_tags` | `sidebar_first` | `wcf_theme` | `/search`, `/search*` |
+| `wcf_facet_categories` | `sidebar_first` | `wcf_theme` | `/search`, `/search*` |
 | `wcf_facet_content_type` | `sidebar_first` | `wcf_theme` | `/search`, `/search*` |
 | `wcf_search_facets_summary` | `content` | `wcf_theme` | `/search`, `/search*` |
 
@@ -84,7 +84,7 @@ From `core.extension.yml` (discovery-relevant):
 
 - Facet blocks → `facets.facet.*` → index + view: **valid chain**
 - `search_stallions` page display → `search_api.index.stallion_content`: **valid**
-- Index field settings reference existing field storage (`field_tags`, `field_status`, `body`, etc.): **valid**
+- Index field settings reference existing field storage (`field_category`, `field_status`, `body`, etc.): **valid**
 
 ## Incidental export drift (resolved)
 

@@ -1,8 +1,8 @@
 # Classification Domain Model (D11 Target)
 
-**Date:** 2026-05-19  
-**Branch:** `feature/legacy-classification-model`  
-**Status:** Design phase — **no config changes applied**  
+**Date:** 2026-05-20  
+**Branch:** `feature/editorial-governance-stabilization`  
+**Status:** Active — `categories` vocabulary + `field_category` in config/sync  
 **Prerequisite:** `docs/legacy-classification-audit.md`
 
 ---
@@ -11,7 +11,7 @@
 
 1. **Single horse entity** — all `wcf_product` legacy sections map to `node:stallion`.
 2. **Separate dimensions** — lifecycle, business type, and marketing flags must not share one field.
-3. **Governed taxonomy** — tags are editorial labels, not automatic legacy category imports.
+3. **Governed taxonomy** — `field_category` uses the `categories` vocabulary; terms are centrally managed, not auto-created on save.
 4. **Dual discovery preserved** — `/stallions` (SQL) and `/search` (Search API) keep distinct roles.
 5. **Intentional reduction** — D11 is smaller and more governed than D7; legacy parity is not a goal.
 
@@ -22,7 +22,7 @@
 ```mermaid
 erDiagram
   STALLION ||--o| LIFECYCLE : has
-  STALLION ||--o{ BUSINESS_TAG : optional
+  STALLION ||--o| CATEGORY : optional
   STALLION ||--o| MARKETING : optional
   CONTAINER_HOME ||--o| SOLD_FLAG : has
   PAGE ||--o{ BUSINESS_TAG : optional
@@ -33,8 +33,8 @@ erDiagram
     enum sold
     enum retired
   }
-  BUSINESS_TAG {
-    string tags_vocab
+  CATEGORY {
+    string categories_vocab
     bool governed
   }
   MARKETING {
@@ -83,9 +83,9 @@ Legacy `wcf_category` rows represented **listing sections**, not Drupal taxonomy
 | Approach | Verdict | Notes |
 |----------|---------|-------|
 | Separate bundles (`foal`, `broodmare`, …) | **Rejected** | Breaks single index; duplicates fields |
-| Controlled vocabulary `horse_section` | **Deferred** | Valid if governance approved; prefer reusing `tags` with allow-list |
-| Governed `tags` terms | **Preferred (when approved)** | Reuse existing `field_tags` + facet; cap at &lt;20 terms |
-| Computed discovery mapping | **Future** | View contextual filters from migration lookup table — only if tags rejected |
+| Controlled vocabulary `horse_section` | **Rejected** | Duplicates `categories` |
+| Governed `categories` terms | **Active** | `field_category` + facet `categories`; seed via `wcf-governed-categories.php` |
+| Computed discovery mapping | **Future** | View contextual filters from migration lookup table — only if categories insufficient |
 
 ### Proposed controlled labels (not yet imported)
 
@@ -134,7 +134,7 @@ If implemented: expose on `/stallions` as exposed filter only; **do not** add to
 |-------|-------|----------|
 | Status | `field_status` → index `status` | **Yes** — lifecycle discovery |
 | Content type | bundle | **Yes** — cross-bundle search |
-| Tags | `field_tags` | **Yes when populated** — hidden when empty (current state) |
+| Categories | `field_category` | **Yes when populated** — hidden when empty (current state) |
 
 ### What should remain editorial-only
 
@@ -151,15 +151,15 @@ If implemented: expose on `/stallions` as exposed filter only; **do not** add to
 |---------|--------|
 | Raw legacy `category_id` | No D11 field; would need rebuild |
 | “For Sale” as facet | Conflicts with status semantics |
-| Unlimited auto-created tags | `auto_create: true` risks facet explosion |
+| Unlimited auto-created categories | `auto_create: false` in config; enforce via permissions |
 | ASB + Sold + Stallions as three facets | Redundant with status + optional single “section” tag |
 
 ### Facet scale policy
 
 Reference: `docs/taxonomy-scale-readiness.md`
 
-- Keep tag vocabulary **&lt;25 terms** before promoting tags facet visibility.
-- Run `search-api:reset-tracker` after bulk tag operations.
+- Keep `categories` vocabulary **&lt;25 terms** before promoting categories facet visibility.
+- Run `search-api:reset-tracker` after bulk category operations.
 
 ---
 
@@ -169,7 +169,7 @@ Reference: `docs/taxonomy-scale-readiness.md`
 |--------|------------|----------------------|
 | Compliant Container Homes | `container_home` | Separate bundle; `field_sold` for lifecycle |
 | Agistment | `page` | Editorial page — no horse fields |
-| News | `article` | Editorial; optional `field_tags` |
+| News | `article` | Editorial; optional `field_category` |
 | Homepage marketing | `homepage` | Paragraph composition |
 
 **Do not** classify container homes as stallions or tag them with horse section labels.
@@ -181,8 +181,8 @@ Reference: `docs/taxonomy-scale-readiness.md`
 | Step | Action | Gate |
 |------|--------|------|
 | 1 | Product-owner resolves For Sale / `sold` anomaly | Business sign-off |
-| 2 | Editorial workshop: approved tag list (≤20) | Governance doc signed |
-| 3 | One-time migration plugin: `category_id` → `field_tags` | Step 2 + synonym table |
+| 2 | Editorial workshop: approved category assignments | Governance doc signed |
+| 3 | One-time script: legacy `field_tags` → `field_category` | `wcf-migrate-tags-to-categories.php` |
 | 4 | Optional `field_year` + View exposed filter | Step 1 if foal year-nav required |
 | 5 | Re-index + facet QA | After any field population |
 
@@ -195,7 +195,7 @@ Reference: `docs/taxonomy-scale-readiness.md`
 | Concern | Authoritative field | Never use |
 |---------|---------------------|-----------|
 | Is it sold? | `field_status` | Tag “Sold”, category |
-| Is it a foal/broodmare/ASB? | Governed `field_tags` (future) | Separate bundle |
+| Is it a foal/broodmare/ASB? | Governed `field_category` | Separate bundle |
 | Is it highlighted? | `field_featured` | Taxonomy |
 | Is it on homepage hero? | Homepage paragraphs | View filter |
 | Container sold? | `field_sold` on `container_home` | `field_status` (until unified) |
@@ -209,8 +209,8 @@ Reference: `docs/taxonomy-scale-readiness.md`
 |----------|---------|------|
 | Single `stallion` bundle | **Accepted** (existing) | Platform baseline |
 | `field_status` for lifecycle | **Accepted** (existing) | Migration shipped |
-| Bulk `wcf_category` → tags | **Rejected** | 2026-05-19 |
+| Bulk `wcf_category` → categories | **Rejected** | 2026-05-19 |
 | New `horse_section` vocabulary | **Rejected** | 2026-05-19 |
 | `field_year` for foals | **Deferred** | 2026-05-19 |
 | ASB dedicated View | **Rejected** | 2026-05-19 |
-| Tag facet promotion | **Deferred** until ≥1 governed term on stallions | 2026-05-19 |
+| Categories facet promotion | **Active** when indexed content has `field_category` | 2026-05-20 |

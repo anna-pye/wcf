@@ -23,7 +23,7 @@
 | **Compliant Container Homes** | Menu + homepage static tiles; D7 path `compliant_container_homes` | Not in `wcf_product` | `node:container_home` bundle | **Separate business line** — keep `container_home` bundle |
 | **show mares** | `wcf_category` alias `show-mares` (`id=5`) | 2 products | None | Optional tag if section retained; menu commented in D7 theme |
 
-**D11 live counts (2026-05-19):** 221 published stallions; `field_status` active=147, sold=117; `field_tags` on stallions=0; `tags` vocabulary=1 term.
+**D11 live counts (2026-05-20):** 221 published stallions; `field_status` active=147, sold=117; `field_category` governed via `categories` vocabulary (`scripts/wcf-governed-categories.php`). Legacy `field_tags` may exist only until one-time migration.
 
 ---
 
@@ -156,7 +156,7 @@ compliant_container_homes
 | Horse entity | `node:stallion` (single bundle) |
 | Lifecycle | `field_status`: active, sold, retired |
 | Highlight | `field_featured` (boolean) |
-| Cross-cutting labels | `field_tags` → `tags` vocab (empty on migrated stallions) |
+| Cross-cutting labels | `field_category` → `categories` vocab (governed; editors select from approved list) |
 | Stallion listing | View `stallions` at `/stallions` |
 | Site search | Search API `stallion_content` + facets at `/search` |
 | Container homes | `node:container_home` |
@@ -168,7 +168,7 @@ compliant_container_homes
 
 | Legacy item | Reason to reject |
 |-------------|------------------|
-| 6 `wcf_category` rows → `tags` bulk import | Facet noise; duplicates bundle + status; 0 tags on 221 stallions |
+| 6 `wcf_category` rows → bulk `categories` import | Facet noise; duplicates bundle + status; use governed seed only |
 | Separate node types per section | Breaks Search API index; duplicates fields |
 | Recreate D7 page+Views stallion layer | Dual source of truth (7 pages vs 278 products) |
 | `For Sale` as taxonomy | Conflicts with `field_status`; data anomaly (all sold=1) |
@@ -185,9 +185,9 @@ compliant_container_homes
 | Proposed change | Verdict | Rationale |
 |-----------------|---------|-----------|
 | New `horse_section` vocabulary | **Rejected** | Duplicates deferred tag strategy; no editorial governance yet |
-| Bulk category → tag migration | **Rejected** | `taxonomy-normalization-plan.md`; 0 tags today |
+| Bulk category → ungoverned terms | **Rejected** | `taxonomy-normalization-plan.md`; use governed list |
 | `field_year` for foals | **Deferred** | Requires product-owner sign-off on year-nav UX |
-| New Search API facet | **Rejected** | Status + type facets sufficient; tags facet hidden (empty) |
+| New Search API facet | **Rejected** | Status + type + categories facets sufficient |
 | ASB listing View | **Rejected** | Would duplicate `/stallions` + filters |
 | Normalization script | **Rejected** | No mapping rules approved; for-sale anomaly unresolved |
 
@@ -209,11 +209,11 @@ compliant_container_homes
 
 | Risk | Impact |
 |------|--------|
-| Bulk category → tags without governance | Facet explosion; inconsistent discovery |
+| Bulk category import without governance | Facet explosion; inconsistent discovery |
 | Multiple horse bundles | Breaks index, doubles migration |
 | Recreating `/category/*` URLs | Fights canonical `/stallions/*` strategy |
 | Ignoring foal `year` | Loses year-tab UX unless replaced |
-| Editors using `field_tags` free-form | Unbounded facet values (`auto_create: true`) |
+| Editors creating categories outside governed list | Unbounded facet values; blocked by `auto_create: false` |
 | Treating Sold as category only | Loses cross-category sold archive behaviour |
 
 ---

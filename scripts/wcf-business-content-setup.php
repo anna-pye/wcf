@@ -128,8 +128,8 @@ function wcf_business_ensure_image_style(string $id, string $label, int $width):
 // ---------------------------------------------------------------------------
 // Prerequisites
 // ---------------------------------------------------------------------------
-if (!Vocabulary::load('tags')) {
-  throw new \RuntimeException('Tags vocabulary (tags) is missing.');
+if (!Vocabulary::load('categories')) {
+  throw new \RuntimeException('Categories vocabulary (categories) is missing. Import config/sync or run wcf-governed-categories.php first.');
 }
 
 $module_installer = \Drupal::service('module_installer');
@@ -366,20 +366,30 @@ wcf_business_ensure_field_instance([
   ],
 ])->save();
 
+if (!FieldStorageConfig::loadByName('node', 'field_category')) {
+  wcf_business_ensure_field_storage([
+    'field_name' => 'field_category',
+    'entity_type' => 'node',
+    'type' => 'entity_reference',
+    'cardinality' => 1,
+    'settings' => ['target_type' => 'taxonomy_term'],
+  ])->save();
+}
+
 wcf_business_ensure_field_instance([
-  'field_name' => 'field_tags',
+  'field_name' => 'field_category',
   'entity_type' => 'node',
   'bundle' => 'stallion',
-  'label' => 'Tags',
-  'description' => 'Optional taxonomy tags for filtering and grouping.',
+  'label' => 'Category',
+  'description' => 'Select a governed category from the approved list.',
   'required' => FALSE,
   'translatable' => TRUE,
   'settings' => [
     'handler' => 'default:taxonomy_term',
     'handler_settings' => [
-      'target_bundles' => ['tags' => 'tags'],
+      'target_bundles' => ['categories' => 'categories'],
       'sort' => ['field' => 'name', 'direction' => 'asc'],
-      'auto_create' => TRUE,
+      'auto_create' => FALSE,
     ],
   ],
 ])->save();
@@ -466,10 +476,10 @@ wcf_business_configure_form_display('node', 'stallion', [
     'settings' => ['placeholder' => ''],
     'region' => 'content',
   ],
-  'field_tags' => [
-    'type' => 'entity_reference_autocomplete_tags',
+  'field_category' => [
+    'type' => 'options_select',
     'weight' => 23,
-    'settings' => ['match_operator' => 'CONTAINS', 'match_limit' => 10, 'size' => 60, 'placeholder' => ''],
+    'settings' => [],
     'region' => 'content',
   ],
   'path' => ['type' => 'path', 'weight' => 30, 'region' => 'content'],
@@ -497,7 +507,7 @@ wcf_business_configure_view_display('node', 'stallion', [
   'field_documents' => array_merge($stallion_media_formatter, ['weight' => 4, 'label' => 'above']),
   'field_status' => ['type' => 'list_default', 'label' => 'inline', 'weight' => 5, 'region' => 'content'],
   'field_cta_phone' => ['type' => 'telephone_link', 'label' => 'inline', 'weight' => 6, 'region' => 'content'],
-  'field_tags' => ['type' => 'entity_reference_label', 'label' => 'above', 'weight' => 7, 'settings' => ['link' => TRUE], 'region' => 'content'],
+  'field_category' => ['type' => 'entity_reference_label', 'label' => 'above', 'weight' => 7, 'settings' => ['link' => TRUE], 'region' => 'content'],
   'links' => ['weight' => 100, 'region' => 'content'],
 ]);
 

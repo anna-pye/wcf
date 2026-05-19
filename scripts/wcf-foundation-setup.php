@@ -77,12 +77,12 @@ function wcf_configure_view_display(string $entity_type, string $bundle, array $
   $display->save();
 }
 
-// Phase 3: Verify Tags vocabulary.
-$vocabulary = Vocabulary::load('tags');
+// Phase 3: Verify Categories vocabulary.
+$vocabulary = Vocabulary::load('categories');
 if (!$vocabulary) {
-  throw new \RuntimeException('Tags vocabulary (tags) is missing. Apply tags_taxonomy recipe first.');
+  throw new \RuntimeException('Categories vocabulary (categories) is missing. Import config/sync or run wcf-governed-categories.php first.');
 }
-print "Verified taxonomy vocabulary: tags\n";
+print "Verified taxonomy vocabulary: categories\n";
 
 // Phase 4A: Verify Basic page exists.
 if (!NodeType::load('page')) {
@@ -177,29 +177,30 @@ wcf_ensure_field_instance([
   ],
 ])->save();
 
-// field_tags on container_home (reuse storage).
-if (!FieldStorageConfig::loadByName('node', 'field_tags')) {
+// field_category on container_home (reuse storage).
+if (!FieldStorageConfig::loadByName('node', 'field_category')) {
   wcf_ensure_field_storage([
-    'field_name' => 'field_tags',
+    'field_name' => 'field_category',
     'entity_type' => 'node',
     'type' => 'entity_reference',
-    'cardinality' => -1,
+    'cardinality' => 1,
     'settings' => ['target_type' => 'taxonomy_term'],
   ])->save();
 }
 
 wcf_ensure_field_instance([
-  'field_name' => 'field_tags',
+  'field_name' => 'field_category',
   'entity_type' => 'node',
   'bundle' => 'container_home',
-  'label' => 'Tags',
+  'label' => 'Category',
+  'description' => 'Governed editorial categories only. Select from the approved list; new categories cannot be created here.',
   'required' => FALSE,
   'settings' => [
     'handler' => 'default:taxonomy_term',
     'handler_settings' => [
-      'target_bundles' => ['tags' => 'tags'],
+      'target_bundles' => ['categories' => 'categories'],
       'sort' => ['field' => 'name', 'direction' => 'asc'],
-      'auto_create' => TRUE,
+      'auto_create' => FALSE,
     ],
   ],
 ])->save();
@@ -210,7 +211,7 @@ wcf_configure_form_display('node', 'container_home', [
   'field_main_image' => ['type' => 'media_library_widget', 'weight' => 2, 'settings' => ['media_types' => ['image']], 'region' => 'content'],
   'field_gallery' => ['type' => 'media_library_widget', 'weight' => 3, 'settings' => ['media_types' => ['image']], 'region' => 'content'],
   'field_sold' => ['type' => 'boolean_checkbox', 'weight' => 4, 'settings' => ['display_label' => TRUE], 'region' => 'content'],
-  'field_tags' => ['type' => 'entity_reference_autocomplete_tags', 'weight' => 5, 'settings' => ['match_operator' => 'CONTAINS', 'match_limit' => 10, 'size' => 60, 'placeholder' => ''], 'region' => 'content'],
+  'field_category' => ['type' => 'options_select', 'weight' => 5, 'settings' => [], 'region' => 'content'],
   'path' => ['type' => 'path', 'weight' => 30, 'region' => 'content'],
 ]);
 
@@ -219,7 +220,7 @@ wcf_configure_view_display('node', 'container_home', [
   'field_main_image' => ['type' => 'entity_reference_entity_view', 'label' => 'hidden', 'weight' => 1, 'settings' => ['view_mode' => 'default', 'link' => FALSE], 'region' => 'content'],
   'field_gallery' => ['type' => 'entity_reference_entity_view', 'label' => 'above', 'weight' => 2, 'settings' => ['view_mode' => 'default', 'link' => FALSE], 'region' => 'content'],
   'field_sold' => ['type' => 'boolean', 'label' => 'inline', 'weight' => 3, 'region' => 'content'],
-  'field_tags' => ['type' => 'entity_reference_label', 'label' => 'above', 'weight' => 4, 'settings' => ['link' => TRUE], 'region' => 'content'],
+  'field_category' => ['type' => 'entity_reference_label', 'label' => 'above', 'weight' => 4, 'settings' => ['link' => TRUE], 'region' => 'content'],
 ]);
 
 print "Configured container_home fields and displays\n";

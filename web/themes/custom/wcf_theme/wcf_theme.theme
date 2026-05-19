@@ -381,7 +381,7 @@ function wcf_theme_apply_editorial_field_help(array &$form, \Drupal\Core\Form\Fo
     $form['field_status']['#description'] = t('Lifecycle only: active, sold, or retired. Do not use categories for sale status.');
   }
   if (isset($form['field_category'])) {
-    $form['field_category']['#description'] = t('Governed categories only (Foals, Broodmares, etc.). Select existing terms; new categories cannot be created here.');
+    $form['field_category']['#description'] = t('Choose one governed category from the list.');
   }
   if (isset($form['field_featured'])) {
     $form['field_featured']['#description'] = t('Promotes this stallion in featured listings and sort order. Not a replacement for categories or status.');

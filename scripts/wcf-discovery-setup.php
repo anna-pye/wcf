@@ -140,7 +140,7 @@ function wcf_disc_setup_facets(): void {
       'settings' => [],
     ],
   ]);
-  wcf_disc_ensure_facet('tags', 'Tags', 'tags', 1, [
+  wcf_disc_ensure_facet('categories', 'Categories', 'category', 1, [
     'translate_entity' => [
       'processor_id' => 'translate_entity',
       'weights' => ['build' => 5],
@@ -156,7 +156,7 @@ function wcf_disc_setup_facets(): void {
   ]);
 
   wcf_disc_place_facet_block('stallion_status', 0);
-  wcf_disc_place_facet_block('tags', 1);
+  wcf_disc_place_facet_block('categories', 1);
   wcf_disc_place_facet_block('content_type', 2);
 
   $summary_id = 'search_active_filters';
@@ -177,9 +177,9 @@ function wcf_disc_setup_facets(): void {
       'show_count' => FALSE,
       'weight' => 0,
     ],
-    'tags' => [
+    'categories' => [
       'checked' => TRUE,
-      'label' => 'Tag',
+      'label' => 'Category',
       'separator' => ', ',
       'show_count' => FALSE,
       'weight' => 1,
@@ -249,6 +249,7 @@ function wcf_disc_setup_search_view(): void {
   }
 
   $display = &$view->getDisplay('default');
+  unset($display['display_options']['filters']['category']);
   unset($display['display_options']['filters']['tags']);
   unset($display['display_options']['filters']['status']);
 
