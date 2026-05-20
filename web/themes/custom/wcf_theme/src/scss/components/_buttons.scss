@@ -1,0 +1,57 @@
+// Shared button styles — used with classes from wcf_theme.theme preprocess.
+@use '../abstracts/variables' as *;
+
+@mixin button-base {
+  display: inline-block;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  text-decoration: none;
+  text-align: center;
+  border: 2px solid transparent;
+  border-radius: $radius-sm;
+  padding: $spacing-xs $spacing-md;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+
+  &:focus-visible {
+    outline: 3px solid $color-primary;
+    outline-offset: 2px;
+  }
+}
+
+@mixin button-primary {
+  @include button-base;
+  color: $color-text-inverse;
+  background-color: $color-primary;
+  border-color: $color-primary;
+
+  &:hover {
+    color: $color-text-inverse;
+    background-color: $color-primary-hover;
+    border-color: $color-primary-hover;
+  }
+}
+
+.button {
+  @include button-base;
+}
+
+.button--primary {
+  @include button-primary;
+}
+
+.button--outline {
+  @include button-base;
+  color: #606060;
+  background-color: transparent;
+  border-color: $color-d7-border-teal;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.8125rem;
+
+  &:hover {
+    color: $color-text;
+    background-color: rgba($color-d7-border-teal, 0.12);
+  }
+}

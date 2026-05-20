@@ -503,6 +503,131 @@ ddev drush cr
 
 ---
 
+## Slice 4 final visual QA and parity hardening
+
+**Date:** 2026-05-20  
+**Branch:** `feature/d7-d11-style-parity-audit`
+
+### Safety check
+
+| Check | Result |
+|-------|--------|
+| Branch | `feature/d7-d11-style-parity-audit` ✓ |
+| Unexpected module / migration / JS changes | None in working tree |
+| Untracked (pre-existing / out of slice) | `block.block.wcf_theme_site_branding.yml`, `docs/d7-d11-style-system-plan.md`, `_fonts.scss`, `_buttons.scss` |
+
+### Pages tested
+
+| Route | Node / notes | HTTP |
+|-------|----------------|------|
+| `/` | Homepage nid `38` (front: `/node/38`) | 200 |
+| `/stallions` | Stallions View page | 200 |
+| `/search` | Search API View page | 200 |
+| `/node/14` | Stallion full (2013 frame overo ASB filly) | 200 |
+| `/node/325` | **Local QA** — populated container home (body, sold, category, main image, gallery) | 200 |
+| `/node/326` | **Local QA** — no-media container home (`container-home--no-media`) | 200 |
+| Container homes listing | **Not available** — no dedicated View page route; only `featured_content` block display + Search API inclusion |
+
+### Viewports tested
+
+Playwright headless Chromium at **375×900**, **768×900**, **1200×900** on each page above.
+
+| Check | Result |
+|-------|--------|
+| Horizontal overflow (`scrollWidth - clientWidth ≤ 1`) | **Pass** all pages / widths |
+| Duplicate `h1` | **Pass** (after search fix) |
+| Visible raw `.field__label` | **Pass** |
+| Empty `.container-home__media` | **Pass** (Slice 2 Twig guard holds) |
+| Populated container home (gallery, tags, sold) | **Pass** nid 325 |
+| No-media container home | **Pass** nid 326 |
+| Primary menu touch targets (≥44px) | **Pass** on homepage, stallion full, container home pages |
+| Listing cards present | Homepage 3; stallions/search 12 per page |
+| Images missing `alt` | **Pass** (0 on tested pages) |
+
+### Defects found
+
+| Defect | Severity | Action |
+|--------|----------|--------|
+| `/search` had no page-level `h1` (only facet `h2`s and result header) | Real — heading hierarchy | **Fixed** — `views-view--search-stallions.html.twig` adds `h1.stallion-listing-page__title` (reuses listing title styles) |
+| `GET /themes/custom/wcf_theme/logo.svg` → **404** | Real — broken branding image | **Not fixed** — no approved logo asset in repo; `system.theme:logo` is null but branding block has `use_site_logo: true` |
+| Drupal core pager links &lt;44px on stallions/search | Pre-existing / core markup | **Documented** — not in style-parity SCSS scope |
+| Container homes dedicated listing route | N/A | **Documented** — no page display in config |
+
+### Fixes made
+
+| File | Change |
+|------|--------|
+| `templates/views/views-view--search-stallions.html.twig` | Page `h1` using existing `stallion-listing-page__title` classes |
+
+No SCSS changes in this slice pass. `css/style.css` unchanged (grep: **no `url()` references**).
+
+### Asset check result
+
+```bash
+grep -o 'url([^)]*)' web/themes/custom/wcf_theme/css/style.css
+# (no matches)
+```
+
+- No D7 texture `url()` references in compiled CSS ✓  
+- No `@font-face` / WOFF2 references ✓  
+- No local absolute paths in CSS ✓  
+- Runtime 404: **`/themes/custom/wcf_theme/logo.svg`** (theme branding fallback, not CSS)
+
+### Accessibility spot-check
+
+| Item | Result |
+|------|--------|
+| `:focus-visible` on cards, footer/facet links, hero controls, container-home tags | Present in SCSS |
+| Heading order | Pass after search `h1` fix |
+| Contrast | Not instrumented; visual pass at spot-check level |
+| `prefers-reduced-motion` | Hero slider SCSS + `hero-slider.js` respect `reduce` |
+| Image `alt` | Pass on tested pages (media/view modes) |
+
+### Local QA content (not for commit)
+
+Created for verification only (do not export/migrate):
+
+- nid **325** — populated container home  
+- nid **326** — no-media container home  
+
+### Commands run
+
+```bash
+git status --short && git branch --show-current
+cd web/themes/custom/wcf_theme && npm run build
+ddev drush cr
+ddev drush sql:query "SELECT nid, title, status FROM node_field_data WHERE type = 'stallion' ..."
+ddev drush sql:query "SELECT nid, title, status FROM node_field_data WHERE type = 'container_home' ..."
+ddev drush cget system.site page.front --format=string
+# Playwright: /tmp/wcf-slice4-qa.mjs (375 / 768 / 1200)
+grep -o 'url([^)]*)' web/themes/custom/wcf_theme/css/style.css
+ddev drush cr   # after search Twig fix
+```
+
+**Build / cache:** `npm run build` — pass · `ddev drush cr` — pass
+
+### Remaining blockers
+
+- [ ] Approved `logo.svg` (or site logo upload) to clear branding 404  
+- [ ] Self-hosted Bebas / Open Sans after licensing (`_fonts.scss` dormant)  
+- [ ] `listing_texture_bg.jpg` after asset approval  
+- [ ] D7 side-by-side screenshots at 375 / 768 / 1200  
+- [ ] Container homes dedicated listing page (if required for parity)  
+- [ ] Core pager touch-target sizing (optional follow-up)  
+- [ ] Export `block.block.wcf_theme_site_branding.yml` when logo strategy decided  
+
+### Recommended commit message
+
+```
+fix(theme): add search page h1 and document slice 4 visual QA
+
+Complete viewport QA at 375/768/1200 for homepage, listings, search,
+stallion full, and container_home full. Fix missing search page h1;
+document logo.svg 404 and remaining parity blockers.
+```
+
+---
+
 ## 6. Verification commands
 
 ```bash
