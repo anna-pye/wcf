@@ -20,6 +20,26 @@ use Drupal\wcf_migrate\Plugin\migrate\source\WcfD7Product;
 class WcfD7ProductFile extends DrupalSqlBase {
 
   /**
+   * Maps legacy gallery columns to D7 thumbnail slot numbers.
+   */
+  private const GALLERY_SLOT_MAP = [
+    'product_img1' => 1,
+    'product_img2' => 2,
+    'product_img3' => 3,
+    'product_img4' => 4,
+  ];
+
+  /**
+   * D7 gallery derivative sizes (product_view.tpl.php uses 645 for lightbox).
+   */
+  private const GALLERY_SIZE_SUFFIXES = ['645', '263', '100'];
+
+  /**
+   * D7 main image derivative prefixes.
+   */
+  private const MAIN_IMAGE_PREFIXES = ['thumb_350_', 'thumb_405_', 'thumb_100_'];
+
+  /**
    * {@inheritdoc}
    */
   public function query() {
@@ -93,10 +113,6 @@ class WcfD7ProductFile extends DrupalSqlBase {
 
     $row->setSourceProperty('filename', $filename);
 
-    $subdir = $type === 'document' ? 'pdf_files' : 'product_images';
-    $relative = 'sites/all/modules/product/files/' . $subdir . '/' . $filename;
-    $row->setSourceProperty('source_relative_path', $relative);
-
     $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
     $mime_map = [
       'jpg' => 'image/jpeg',
@@ -113,31 +129,96 @@ class WcfD7ProductFile extends DrupalSqlBase {
     $timestamp = $this->lookupTimestamp($filename);
     $row->setSourceProperty('timestamp', $timestamp);
 
-    $base_path = Settings::get('migrate_file_public_path');
-    if ($base_path) {
-      $base_path = rtrim($base_path, '/');
-      $full_path = $base_path . '/' . $relative;
-      if (!is_readable($full_path) && $type === 'image') {
-        foreach (['thumb_350_', 'thumb_405_', 'thumb_100_'] as $prefix) {
-          $fallback_relative = 'sites/all/modules/product/files/product_images/' . $prefix . $filename;
-          $fallback_path = $base_path . '/' . $fallback_relative;
-          if (is_readable($fallback_path)) {
-            $relative = $fallback_relative;
-            $full_path = $fallback_path;
-            $row->setSourceProperty('source_relative_path', $relative);
-            break;
-          }
+    if ($type === 'document') {
+      $relative = 'sites/all/modules/product/files/pdf_files/' . $filename;
+      $row->setSourceProperty('source_relative_path', $relative);
+      $base_path = Settings::get('migrate_file_public_path');
+      if ($base_path) {
+        $full_path = rtrim($base_path, '/') . '/' . $relative;
+        if (!is_readable($full_path)) {
+          return FALSE;
         }
+        $row->setSourceProperty('source_full_path', $full_path);
       }
-      if (!is_readable($full_path)) {
+    }
+    else {
+      $resolved = $this->resolveReadableImagePath($filename);
+      if ($resolved === NULL) {
         return FALSE;
       }
-      $row->setSourceProperty('source_full_path', $full_path);
+      [$relative, $full_path] = $resolved;
+      $row->setSourceProperty('source_relative_path', $relative);
+      if ($full_path !== '') {
+        $row->setSourceProperty('source_full_path', $full_path);
+      }
     }
 
     $row->setSourceProperty('uri', 'public://wcf_product/' . $filename);
 
     return TRUE;
+  }
+
+  /**
+   * Resolves a readable legacy image path (bare, gallery slot, or main thumb).
+   *
+   * @return array{0: string, 1: string}|null
+   *   Relative path and full path, or NULL when no readable file exists.
+   */
+  protected function resolveReadableImagePath(string $filename): ?array {
+    $base_path = Settings::get('migrate_file_public_path');
+    $dir = 'sites/all/modules/product/files/product_images/';
+    $candidates = [];
+    $slot = $this->lookupGallerySlot($filename);
+    if ($slot !== NULL) {
+      foreach (self::GALLERY_SIZE_SUFFIXES as $size) {
+        $candidates[] = 'img' . $slot . '_' . $size . '_' . $filename;
+      }
+    }
+    $candidates[] = $filename;
+    foreach (self::MAIN_IMAGE_PREFIXES as $prefix) {
+      $candidates[] = $prefix . $filename;
+    }
+    if ($slot === NULL) {
+      for ($n = 1; $n <= 4; $n++) {
+        foreach (self::GALLERY_SIZE_SUFFIXES as $size) {
+          $candidates[] = 'img' . $n . '_' . $size . '_' . $filename;
+        }
+      }
+    }
+
+    if (!$base_path) {
+      $relative = $dir . $candidates[0];
+      return [$relative, ''];
+    }
+
+    $base_path = rtrim($base_path, '/');
+    foreach (array_unique($candidates) as $candidate) {
+      $relative = $dir . $candidate;
+      $full_path = $base_path . '/' . $relative;
+      if (is_readable($full_path)) {
+        return [$relative, $full_path];
+      }
+    }
+    return NULL;
+  }
+
+  /**
+   * Returns the gallery slot (1–4) when the filename is stored on product_imgN.
+   */
+  protected function lookupGallerySlot(string $filename): ?int {
+    $database = $this->getDatabase();
+    foreach (self::GALLERY_SLOT_MAP as $column => $slot) {
+      $match = $database->select('product', 'p')
+        ->fields('p', ['id'])
+        ->condition($column, $filename)
+        ->range(0, 1)
+        ->execute()
+        ->fetchField();
+      if ($match !== FALSE) {
+        return $slot;
+      }
+    }
+    return NULL;
   }
 
   /**
