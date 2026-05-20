@@ -40,27 +40,8 @@ $touch-target-min: 2.75rem; // 44px
   padding-inline: 0;
 }
 
-// —— Site header (banner + nav stack; mobile-first) ——
+// —— Site header shell (chrome layout in layout/_chrome.scss) ——
 .site-header {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-sm;
-  padding: $spacing-sm;
-  border-block-end: 1px solid $color-border;
-  background-color: $color-text-inverse;
-
-  @media (min-width: $breakpoint-md) {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: $spacing-md;
-    padding-block: $spacing-md;
-    padding-inline: $spacing-md;
-  }
-}
-
-.site-header--front {
   position: relative;
   z-index: 2;
 }
@@ -121,121 +102,10 @@ $touch-target-min: 2.75rem; // 44px
   color: $color-text-muted;
 }
 
-// Primary navigation — region wrapper in page.html.twig; core menu uses .menu--main.
-.site-header__menus,
-.primary-menu {
-  width: 100%;
-
-  @media (min-width: $breakpoint-md) {
-    width: auto;
-    flex: 1 1 auto;
-    display: flex;
-    justify-content: flex-end;
-  }
-}
-
-.site-header__menus .menu,
-.primary-menu ul,
-.primary-menu .menu {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-
-  @media (min-width: $breakpoint-md) {
-    flex-direction: row;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: flex-end;
-    gap: $spacing-xs;
-  }
-}
-
-.site-header__menus .menu-item,
-.primary-menu li {
-  margin: 0;
-  padding: 0;
-}
-
-.site-header__menus .menu-item a,
-.primary-menu a {
-  display: inline-flex;
-  align-items: center;
-  min-height: $touch-target-min;
-  padding: $spacing-xs $spacing-sm;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  line-height: 1.3;
-  color: $color-text;
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-  border-radius: $radius-sm;
-
-  &:hover {
-    color: $color-primary;
-    background-color: rgba($color-primary, 0.06);
-  }
-
-  @include focus-visible-ring;
-
-  &.is-active {
-    color: $color-primary;
-    font-weight: 700;
-  }
-}
-
-// —— Site footer ——
+// —— Site footer shell ——
 .site-footer {
   margin-block-start: auto;
-  padding: $spacing-lg $spacing-sm;
   border-block-start: 1px solid $color-border;
   background-color: rgba($color-d7-heading, 0.04);
   color: $color-text;
-
-  @media (min-width: $breakpoint-md) {
-    padding-inline: $spacing-md;
-  }
-
-  .menu {
-    display: flex;
-    flex-direction: column;
-    gap: $spacing-xs;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-
-    @media (min-width: $breakpoint-md) {
-      flex-direction: row;
-      flex-wrap: wrap;
-      gap: $spacing-sm $spacing-md;
-    }
-  }
-
-  .menu-item {
-    margin: 0;
-  }
-}
-
-.site-footer a {
-  display: inline-flex;
-  align-items: center;
-  min-height: $touch-target-min;
-  padding-block: $spacing-xs;
-  color: $color-text;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-
-  &:hover {
-    color: $color-primary;
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-
-  @include focus-visible-ring;
 }

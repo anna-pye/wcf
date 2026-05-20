@@ -1,0 +1,381 @@
+@use '../abstracts/variables' as *;
+@use 'page' as page;
+
+// —— Public site chrome (D7 banner + right nav patterns) ——
+
+.site-chrome {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $spacing-sm;
+  width: 100%;
+}
+
+.site-chrome--inner {
+  max-width: $content-max-width;
+  margin-inline: auto;
+  padding: $spacing-md $spacing-sm;
+  background-color: $color-d7-inner-band;
+  border-block-end: 1px solid $color-border;
+
+  @media (min-width: $breakpoint-md) {
+    padding-inline: $spacing-md;
+    align-items: center;
+  }
+}
+
+.site-chrome__identity {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+// Front: left overlay panel on hero (D7 .banner_bg — gradient, no image asset).
+.site-chrome--front {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  min-height: 0;
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+.site-chrome__identity--overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 4;
+  width: min(100%, 17.5rem);
+  min-height: 12rem;
+  padding: $spacing-md $spacing-sm $spacing-lg;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.94) 0%,
+    rgba(255, 255, 255, 0.82) 55%,
+    rgba(255, 255, 255, 0) 100%
+  );
+
+  .site-branding__name {
+    font-family: $font-family-display;
+    font-size: clamp(1.25rem, 2vw + 0.5rem, 1.75rem);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    width: min(28rem, 38vw);
+    min-height: 14rem;
+    padding: $spacing-lg $spacing-md;
+  }
+}
+
+// —— Navigation drawer (D7 right panel; mobile collapsible via <details>) ——
+
+.site-chrome__nav-drawer {
+  margin: 0;
+  margin-inline-start: auto;
+}
+
+.site-chrome__nav-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: page.$touch-target-min;
+  min-width: page.$touch-target-min;
+  padding: $spacing-xs $spacing-sm;
+  list-style: none;
+  cursor: pointer;
+  font-family: $font-family-base;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $color-text-muted;
+  background: $color-text-inverse;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  @include page.focus-visible-ring;
+
+  @media (min-width: $breakpoint-md) {
+    display: none;
+  }
+}
+
+.site-chrome__nav-panel {
+  display: none;
+  margin-block-start: $spacing-xs;
+
+  .site-chrome__nav-drawer[open] & {
+    display: block;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    display: block;
+    margin-block-start: 0;
+  }
+}
+
+.site-chrome__nav-drawer--overlay {
+  position: absolute;
+  top: $spacing-sm;
+  right: 0;
+  z-index: 5;
+
+  @media (min-width: $breakpoint-md) {
+    top: 0;
+    right: 0;
+    width: 11.5rem;
+    min-height: 100%;
+  }
+
+  .site-chrome__nav-panel {
+    @media (min-width: $breakpoint-md) {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 11.5rem;
+      min-height: 100vh;
+      padding: $spacing-xl $spacing-sm $spacing-lg;
+      background: $color-text-inverse;
+      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.12);
+      overflow-y: auto;
+    }
+  }
+
+  .site-chrome__nav-toggle {
+    @media (min-width: $breakpoint-md) {
+      position: fixed;
+      top: $spacing-md;
+      right: 11.5rem;
+      z-index: 6;
+      display: none;
+    }
+  }
+}
+
+.site-chrome__nav {
+  .menu,
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .menu-item,
+  li {
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    display: block;
+    padding: 0.65rem $spacing-xs;
+    font-size: 0.8125rem;
+    font-weight: 400;
+    line-height: 1.35;
+    color: #525252;
+    text-decoration: none;
+    text-transform: capitalize;
+    text-align: center;
+    border-radius: $radius-sm;
+
+    &:hover {
+      color: $color-accent;
+    }
+
+    &.is-active {
+      color: $color-accent;
+      font-weight: 600;
+    }
+
+    @include page.focus-visible-ring;
+  }
+
+  .menu-item--expanded > a::before {
+    content: '› ';
+    opacity: 0.6;
+  }
+
+  .menu .menu {
+    margin-block-start: 0;
+    padding-inline-start: 0;
+    background: rgba(0, 0, 0, 0.03);
+    border-radius: $radius-sm;
+
+    a {
+      font-size: 0.75rem;
+      padding-block: 0.5rem;
+    }
+  }
+}
+
+// —— Front header positioning over hero ——
+
+.layout-container--front .site-header--front {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  z-index: 10;
+  border: none;
+  background: transparent;
+  padding: 0;
+  pointer-events: none;
+
+  .site-chrome--front {
+    min-height: 4rem;
+    pointer-events: none;
+
+    > * {
+      pointer-events: auto;
+    }
+  }
+}
+
+// —— Footer (D7 columns + meta) ——
+
+.site-footer__inner {
+  max-width: $content-max-width;
+  margin-inline: auto;
+  padding: $spacing-xl $spacing-sm $spacing-lg;
+  display: grid;
+  gap: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    align-items: start;
+    padding-inline: $spacing-md;
+  }
+}
+
+.site-footer__menus .menu {
+  display: grid;
+  gap: $spacing-xs $spacing-md;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @media (min-width: $breakpoint-sm) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.site-footer__menus .menu-item {
+  margin: 0;
+  padding: 0;
+  position: relative;
+  padding-inline-start: $spacing-md;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.65em;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background-color: $color-accent;
+  }
+}
+
+.site-footer__menus a {
+  display: inline-flex;
+  align-items: center;
+  min-height: page.$touch-target-min;
+  padding-block: $spacing-xs;
+  color: $color-d7-heading;
+  font-size: 0.75rem;
+  font-weight: 400;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+
+  &:hover {
+    color: $color-text-muted;
+  }
+
+  @include page.focus-visible-ring;
+}
+
+.site-footer__meta {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  text-align: left;
+
+  @media (min-width: $breakpoint-md) {
+    text-align: right;
+    align-items: flex-end;
+  }
+}
+
+.site-footer__contact {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: $color-text;
+}
+
+.site-footer__contact-label {
+  display: block;
+  margin-bottom: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: $color-d7-heading;
+}
+
+.site-footer__contact a {
+  color: $color-text;
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    color: $color-accent;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+
+  @include page.focus-visible-ring;
+}
+
+.site-footer__branding {
+  margin: 0;
+}
+
+.site-footer__site-name {
+  font-family: $font-family-display;
+  font-size: 1.25rem;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: $color-d7-heading;
+
+  &:hover {
+    color: $color-accent;
+  }
+
+  @include page.focus-visible-ring;
+}
+
+.site-footer__copyright {
+  margin: 0;
+  font-size: 0.75rem;
+  color: $color-text-muted;
+}

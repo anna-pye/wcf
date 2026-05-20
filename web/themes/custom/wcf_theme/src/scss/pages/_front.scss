@@ -21,11 +21,21 @@
 .homepage-feature-sections {
   display: flex;
   flex-direction: column;
-  gap: $spacing-xl;
+  gap: $spacing-2xl;
+  padding-block: $spacing-xl;
 
   > * {
     margin-block: 0;
   }
+}
+
+.layout-container--front .homepage__content {
+  display: flex;
+  flex-direction: column;
+}
+
+.layout-container--front .hero-slider {
+  margin-block-end: 0;
 }
 
 // D7 `.news_sec h2` — lighter section title with accent span support.
@@ -66,5 +76,64 @@
 
   .featured-stallions__title {
     @include homepage-section-heading-display;
+  }
+
+  // D7 simple image + title rows — no card chrome on homepage discovery.
+  .stallion-card {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    background: transparent;
+    height: auto;
+  }
+
+  .stallion-card__link {
+    display: block;
+    height: auto;
+  }
+
+  .stallion-card__media {
+    aspect-ratio: auto;
+    max-height: 14.375rem;
+    margin-block-end: $spacing-sm;
+    overflow: hidden;
+
+    img,
+    picture {
+      width: 100%;
+      height: 100%;
+      max-height: 14.375rem;
+      object-fit: cover;
+    }
+  }
+
+  .stallion-card__body {
+    padding: 0;
+    gap: $spacing-xs;
+  }
+
+  .stallion-card__title {
+    font-family: $font-family-base;
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-align: left;
+    color: #212121;
+  }
+
+  .stallion-card__summary,
+  .stallion-card__badge {
+    display: none;
+  }
+
+  .featured-stallions__listing,
+  .featured-content__listing {
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+  }
+
+  .stallion-listing__grid {
+    gap: $spacing-xl $spacing-md;
   }
 }
