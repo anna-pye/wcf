@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Stallion gallery — horizontal D7-style cards (explicit markup; D11 field has no BEM classes).
+ */
+#}
+{% if items %}
+  <ul class="stallion-gallery__grid" role="list">
+    {% for item in items %}
+      <li class="stallion-gallery__item" role="listitem">
+        <div class="stallion-gallery__card">
+          {{ item.content }}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

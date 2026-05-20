@@ -1,0 +1,19 @@
+uuid: 5b779cc6-7ccb-474b-a8cd-597ef6cd5cee
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_display_name
+    - node.type.stallion
+id: node.stallion.field_display_name
+field_name: field_display_name
+entity_type: node
+bundle: stallion
+label: 'Horse name'
+description: 'Short display name on the profile (e.g. Donna). Use the node title for the year, breed, and sex line.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

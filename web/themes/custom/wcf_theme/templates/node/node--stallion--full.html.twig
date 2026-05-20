@@ -1,7 +1,13 @@
 {#
 /**
  * @file
- * Stallion full view — semantic profile layout.
+ * Stallion full view — D7 product/view layout (image left, copy right, gallery band).
+ *
+ * Variables (preprocess):
+ * - stallion_display_name: Horse name from field_display_name (D7 product_name).
+ * - stallion_status_label, stallion_featured, stallion_nomination_cta_link
+ * - stallion_is_foals: TRUE when category term is Foals.
+ * - stallion_foal_year_links: Year filter links for Foals (empty until year field exists).
  */
 #}
 {%
@@ -10,9 +16,22 @@
     'node--type-' ~ node.bundle|clean_class,
     'node--view-mode-' ~ view_mode|clean_class,
     'stallion',
+    stallion_is_foals ? 'stallion--foals',
   ]
 %}
 <article{{ attributes.addClass(classes) }}>
+  {% if stallion_foal_year_links %}
+    <nav class="stallion__year-nav" aria-label="{{ 'Foal year'|t }}">
+      <ul class="stallion__year-nav-list">
+        {% for item in stallion_foal_year_links %}
+          <li class="stallion__year-nav-item">
+            <a href="{{ item.url }}" class="stallion__year-nav-link{{ item.active ? ' is-active' : '' }}">{{ item.label }}</a>
+          </li>
+        {% endfor %}
+      </ul>
+    </nav>
+  {% endif %}
+
   <header class="stallion__header">
     {% if content.field_main_image %}
       <div class="stallion__media">
@@ -20,16 +39,32 @@
       </div>
     {% endif %}
     <div class="stallion__intro">
-      <h1 class="stallion__title">{{ label }}</h1>
+      {% if stallion_display_name %}
+        <h1 class="stallion__name">
+          <span class="stallion__name-text">{{ stallion_display_name }}</span>
+        </h1>
+        <p class="stallion__subtitle">{{ label }}</p>
+      {% else %}
+        <h1 class="stallion__subtitle stallion__subtitle--primary">{{ label }}</h1>
+      {% endif %}
+
       {% if stallion_status_label %}
         <p class="stallion__status stallion__status--{{ stallion_status_label|clean_class }}">
           <span class="visually-hidden">{{ 'Status'|t }}: </span>
           {{ stallion_status_label }}
         </p>
       {% endif %}
+
       {% if stallion_featured %}
         <p class="stallion__featured-badge">{{ 'Featured'|t }}</p>
       {% endif %}
+
+      {% if not node.body.isEmpty() %}
+        <div class="stallion__body stallion__section--body">
+          {{ content.body }}
+        </div>
+      {% endif %}
+
       {% if stallion_nomination_cta_link or content.field_cta_phone %}
         <div class="stallion__cta">
           {% if stallion_nomination_cta_link %}
@@ -44,40 +79,31 @@
   </header>
 
   <div class="stallion__content">
-    {% if content.body %}
-      <section class="stallion__section stallion__section--body" aria-labelledby="stallion-body-heading">
-        <h2 id="stallion-body-heading" class="visually-hidden">{{ 'About'|t }}</h2>
-        {{ content.body }}
-      </section>
-    {% endif %}
-
-    {% if content.field_video %}
+    {% if not node.field_video.isEmpty() %}
       <section class="stallion__section stallion__section--video" aria-labelledby="stallion-video-heading">
         <h2 id="stallion-video-heading" class="stallion__section-title">{{ 'Video'|t }}</h2>
         {{ content.field_video }}
       </section>
     {% endif %}
 
-    {% if content.field_gallery %}
+    {% if not node.field_gallery.isEmpty() %}
       <section class="stallion__section stallion__section--gallery" aria-labelledby="stallion-gallery-heading">
-        <h2 id="stallion-gallery-heading" class="stallion__section-title">{{ 'Gallery'|t }}</h2>
-        <div class="stallion__gallery">
-          {{ content.field_gallery }}
+        <div class="stallion__gallery-band">
+          <h2 id="stallion-gallery-heading" class="stallion__section-title">{{ 'Gallery'|t }}</h2>
+          <div class="stallion__gallery">
+            {{ content.field_gallery }}
+          </div>
         </div>
       </section>
     {% endif %}
 
-    {% if content.field_documents %}
+    {% if not node.field_documents.isEmpty() %}
       <section class="stallion__section stallion__section--documents" aria-labelledby="stallion-documents-heading">
         <h2 id="stallion-documents-heading" class="stallion__section-title">{{ 'Documents'|t }}</h2>
+        {% if stallion_display_name %}
+          <p class="stallion__documents-lead">{{ 'The attached is more information on @name.'|t({'@name': stallion_display_name}) }}</p>
+        {% endif %}
         {{ content.field_documents }}
-      </section>
-    {% endif %}
-
-    {% if content.field_category %}
-      <section class="stallion__section stallion__section--categories" aria-labelledby="stallion-categories-heading">
-        <h2 id="stallion-categories-heading" class="stallion__section-title">{{ 'Categories'|t }}</h2>
-        {{ content.field_category }}
       </section>
     {% endif %}
   </div>

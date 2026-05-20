@@ -204,4 +204,6 @@ curl -s https://wcf11.ddev.site/ | grep site-chrome
 
 ## Recommended next slice
 
-**Slice 6:** Inner page band parity (stallion full, container home full), listing texture band (approved asset), and footer menu block split / `footer` menu hierarchy export to match D7 column groups.
+**Slice 6:** Implemented — see [d7-inner-page-parity-audit.md](d7-inner-page-parity-audit.md).
+
+**Slice 7:** Expand footer/main menu config to approved D7 destinations; listing texture band when asset approved; container home publish + visual sign-off.

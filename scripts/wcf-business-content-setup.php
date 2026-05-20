@@ -251,6 +251,29 @@ wcf_business_ensure_field_instance([
 ])->save();
 
 wcf_business_ensure_field_storage([
+  'field_name' => 'field_display_name',
+  'entity_type' => 'node',
+  'type' => 'string',
+  'cardinality' => 1,
+  'settings' => [
+    'max_length' => 255,
+    'case_sensitive' => FALSE,
+    'is_ascii' => FALSE,
+  ],
+])->save();
+
+wcf_business_ensure_field_instance([
+  'field_name' => 'field_display_name',
+  'entity_type' => 'node',
+  'bundle' => 'stallion',
+  'label' => 'Horse name',
+  'description' => 'Short display name on the profile (e.g. Donna). Use the node title for the year, breed, and sex line.',
+  'required' => FALSE,
+  'translatable' => TRUE,
+  'settings' => [],
+])->save();
+
+wcf_business_ensure_field_storage([
   'field_name' => 'field_gallery',
   'entity_type' => 'node',
   'type' => 'entity_reference',

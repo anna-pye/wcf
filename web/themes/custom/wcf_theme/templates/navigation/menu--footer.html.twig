@@ -1,0 +1,43 @@
+{#
+/**
+ * @file
+ * Footer menu — D7-style column groups (.navigation-footer).
+ *
+ * Columns are built in wcf_theme_preprocess_menu() when menu_name is footer.
+ */
+#}
+{% import _self as menus %}
+
+{% if footer_menu_columns %}
+  <div class="site-footer__columns" role="navigation" aria-label="{{ 'Footer'|t }}">
+    {% for column in footer_menu_columns %}
+      <div class="navigation-footer">
+        <h2 class="navigation-footer__heading">{{ column.title }}</h2>
+        {% set column_attributes = create_attribute({'class': ['menu', 'navigation-footer__menu']}) %}
+        {{ menus.menu_links(column.items, column_attributes, 0) }}
+      </div>
+    {% endfor %}
+  </div>
+{% else %}
+  {{ menus.menu_links(items, attributes, 0) }}
+{% endif %}
+
+{% macro menu_links(items, attributes, menu_level) %}
+  {% import _self as menus %}
+  {% if items %}
+    {% if menu_level == 0 %}
+      <ul{{ attributes }}>
+    {% else %}
+      <ul>
+    {% endif %}
+    {% for item in items %}
+      <li{{ item.attributes.addClass('menu-item') }}>
+        {{ link(item.title, item.url) }}
+        {% if item.below %}
+          {{ menus.menu_links(item.below, attributes, menu_level + 1) }}
+        {% endif %}
+      </li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endmacro %}

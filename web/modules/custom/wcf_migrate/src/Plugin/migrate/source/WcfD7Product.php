@@ -53,6 +53,10 @@ class WcfD7Product extends DrupalSqlBase {
       'alias' => $this->t('URL alias slug'),
       'description' => $this->t('Description'),
       'product_img' => $this->t('Main image filename'),
+      'product_img1' => $this->t('Gallery image 1 filename'),
+      'product_img2' => $this->t('Gallery image 2 filename'),
+      'product_img3' => $this->t('Gallery image 3 filename'),
+      'product_img4' => $this->t('Gallery image 4 filename'),
       'sold' => $this->t('Sold flag'),
       'status' => $this->t('Published flag'),
       'created_on' => $this->t('Created timestamp'),
@@ -91,6 +95,7 @@ class WcfD7Product extends DrupalSqlBase {
       return FALSE;
     }
     $row->setSourceProperty('title', $title);
+    $row->setSourceProperty('display_name', self::normalizeDisplayName($row->getSourceProperty('product_name')));
 
     $main = trim((string) $row->getSourceProperty('product_img'));
     $row->setSourceProperty('main_image_filename', $main);
@@ -121,6 +126,13 @@ class WcfD7Product extends DrupalSqlBase {
     }
 
     return TRUE;
+  }
+
+  /**
+   * Normalizes legacy product_name for field_display_name (trim stray quotes).
+   */
+  public static function normalizeDisplayName(mixed $value): string {
+    return trim(trim((string) $value), "\"'");
   }
 
   /**
