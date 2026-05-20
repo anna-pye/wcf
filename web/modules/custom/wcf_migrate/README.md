@@ -25,6 +25,26 @@ Run migrations in this order (dependencies are declared in YAML; this list is th
 | 9 | `wcf_d7_media_remote_video_product` | YouTube embeds → remote video media |
 | 10 | `wcf_d7_node_stallion` | `wcf_product` → stallion nodes (278 expected) |
 
+### Post-migrate: stallion category mapping
+
+`category_id` is **not** set during `wcf_d7_node_stallion` import. After the stallion pipeline completes, map legacy categories with idempotent scripts (no re-import):
+
+| Step | Script / action | Purpose |
+|------|-----------------|---------|
+| 1 | `scripts/wcf-governed-categories.php` | Seed governed `categories` terms (Foals, Broodmares, Stallions, ASB Stallions, Show Mares, For Sale) |
+| 2 | Stallion migration validation | `docs/stallion-migration-validation.md` — counts, maps, media |
+| 3 | `scripts/wcf-map-product-categories.php` | D7 `wcf_product.category_id` → `field_category` on stallion nodes |
+| 4 | `ddev drush cr` | Rebuild caches |
+| 5 | Category filter QA | `/stallions` exposed filter — see `docs/audits/d7-custom-module-comparison/phase-2-category-mapping-validation.md` |
+
+```bash
+ddev drush php:script scripts/wcf-governed-categories.php
+ddev drush php:script scripts/wcf-map-product-categories.php
+ddev drush cr
+```
+
+Optional: `--force` on the mapping script overwrites existing `field_category` values (documented in script header).
+
 ## Commands
 
 ```bash
@@ -108,4 +128,4 @@ Established via `scripts/wcf-business-content-setup.php` (config in sync):
 | `wcf_testimonial` | `testimonial_item` paragraph on `homepage` |
 | `wcf_showcase` / `wcf_banner` | `feature_card` paragraph on `homepage` |
 
-Stallion migration is **not** in scope until a dedicated migrate plugin maps D7 source data to `stallion` fields.
+Stallion node/media migration: `wcf_d7_node_stallion` and related migrations. Category assignment: post-migrate scripts above (Phase 2).
