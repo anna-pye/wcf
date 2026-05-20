@@ -2,8 +2,8 @@
 @use '../abstracts/variables' as *;
 
 .featured-content {
-  margin-block: $spacing-lg;
-  padding-block: $spacing-lg;
+  margin-block: 0;
+  padding-block: 0;
   padding-inline: $spacing-sm;
   max-width: $content-max-width;
   margin-inline: auto;

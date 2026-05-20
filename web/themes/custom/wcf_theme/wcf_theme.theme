@@ -437,4 +437,7 @@ function wcf_theme_preprocess_page(array &$variables): void {
   if (!empty($variables['is_front'])) {
     $variables['#attached']['library'][] = 'wcf_theme/global';
   }
+
+  $site_config = \Drupal::config('system.site');
+  $variables['site_mail'] = $site_config->get('mail');
 }
