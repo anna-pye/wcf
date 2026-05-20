@@ -7,6 +7,7 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\views\ViewExecutable;
@@ -44,6 +45,31 @@ function wcf_theme_build_paragraph_cta_link(ParagraphInterface $paragraph): ?arr
     '#url' => $url,
     '#attributes' => [
       'class' => ['feature-card__cta', 'button', 'button--primary'],
+    ],
+  ];
+}
+
+/**
+ * Builds the stallion detail nomination CTA link render array.
+ *
+ * @return array<string, mixed>|null
+ *   Link render array or NULL when the webform is unavailable.
+ */
+function wcf_theme_build_stallion_nomination_cta_link(): ?array {
+  $url = Url::fromRoute('entity.webform.canonical', ['webform' => 'wcf_nomination']);
+  if ($url->isRouted() && !$url->access()) {
+    return NULL;
+  }
+
+  return [
+    '#type' => 'link',
+    '#title' => (string) t('Nominate this stallion'),
+    '#url' => $url,
+    '#attributes' => [
+      'class' => ['stallion__nomination-cta', 'button', 'button--primary'],
+    ],
+    '#cache' => [
+      'tags' => ['config:webform.webform.wcf_nomination'],
     ],
   ];
 }
@@ -268,6 +294,10 @@ function wcf_theme_preprocess_node__stallion(array &$variables): void {
   $variables['stallion_featured'] = (bool) $node->get('field_featured')->value;
   $variables['stallion_summary_fallback'] = wcf_theme_stallion_summary_fallback($node, 120);
   $variables['node_summary_fallback'] = $variables['stallion_summary_fallback'];
+
+  if (($variables['view_mode'] ?? '') === 'full') {
+    $variables['stallion_nomination_cta_link'] = wcf_theme_build_stallion_nomination_cta_link();
+  }
 }
 
 /**

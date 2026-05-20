@@ -30,9 +30,14 @@
       {% if stallion_featured %}
         <p class="stallion__featured-badge">{{ 'Featured'|t }}</p>
       {% endif %}
-      {% if content.field_cta_phone %}
+      {% if stallion_nomination_cta_link or content.field_cta_phone %}
         <div class="stallion__cta">
-          {{ content.field_cta_phone }}
+          {% if stallion_nomination_cta_link %}
+            {{ stallion_nomination_cta_link }}
+          {% endif %}
+          {% if content.field_cta_phone %}
+            {{ content.field_cta_phone }}
+          {% endif %}
         </div>
       {% endif %}
     </div>
