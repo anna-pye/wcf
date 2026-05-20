@@ -12,8 +12,15 @@
 
 .stallion-listing-page__title {
   margin: 0;
-  font-size: 2rem;
-  line-height: 1.2;
+  color: $color-d7-heading;
+  font-family: $font-family-display;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw + 1rem, 3.125rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding-bottom: $spacing-sm;
+  border-block-end: 1px solid #bbbbbb;
 }
 
 .stallion-listing-page__filters {
@@ -64,7 +71,26 @@
 }
 
 .stallion-listing-page__results {
+  margin-block-start: $spacing-md;
+  padding-block: $spacing-lg;
+  padding-inline: $spacing-sm;
+  background-color: $listing-band-bg;
+  background-image: linear-gradient(180deg, rgba($color-accent, 0.07) 0%, transparent 55%);
+  border-block: 1px solid $color-border;
+  border-radius: $radius-sm;
+
   .pager {
     margin-top: $spacing-lg;
   }
+}
+
+// Search results reuse stallion cards — same listing band treatment.
+.stallion-listing.site-search .site-search__results {
+  margin-block-start: $spacing-md;
+  padding-block: $spacing-lg;
+  padding-inline: $spacing-sm;
+  background-color: $listing-band-bg;
+  background-image: linear-gradient(180deg, rgba($color-accent, 0.07) 0%, transparent 55%);
+  border-block: 1px solid $color-border;
+  border-radius: $radius-sm;
 }

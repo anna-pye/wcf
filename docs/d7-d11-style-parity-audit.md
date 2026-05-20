@@ -420,6 +420,89 @@ ddev drush uli /node/324
 
 ---
 
+## Slice 3 implementation log
+
+**Date:** 2026-05-20  
+**Branch:** `feature/d7-d11-style-parity-audit`
+
+### D7 selectors reviewed
+
+| D7 selector | D7 intent | D11 target |
+|-------------|-----------|------------|
+| `.stallions h2` | Bebas 50px, `#242424`, bottom border | `.featured-stallions__title`, `.stallion-listing-page__title`, `.homepage-feature-sections .featured-stallions__title` |
+| `.news_sec h2` | Open Sans light 30px, underline image, accent `span` | `.featured-content__title`, `.homepage-feature-sections .featured-content__title` |
+| `.view-stalions` | Horizontal padding + `listing_texture_bg.jpg` repeat | `.stallion-listing-page__results`, `.featured-stallions__listing` |
+| `.pattern_bg` | Same texture image | CSS-only band (no image reference) |
+| `.view-container-homes` | Card grid in texture band | Reuses `.stallion-card` + listing band on Views pages when wrapped by `stallion-listing-page` |
+| `.stallion_title a` | Centered `#8c8c8c` title | `.stallion-card__title` |
+| `.stallion_body` | `#9d9d9d` excerpt | `.stallion-card__summary` |
+| `.read_more` / `.list a.read_more` | Teal outline button | **Not applied** — card is a single link; no separate read-more markup |
+
+### SCSS files changed
+
+| File | Change |
+|------|--------|
+| `src/scss/abstracts/_variables.scss` | `$font-family-display` condensed stack; `$color-d7-section-heading`, `$listing-band-bg` |
+| `src/scss/pages/_front.scss` | Homepage section stack spacing; display/editorial heading mixins for feature sections |
+| `src/scss/components/_featured-stallions.scss` | Display heading `clamp()`; listing band on `__listing` |
+| `src/scss/components/_featured-content.scss` | Editorial heading + accent `span`; section max-width/padding |
+| `src/scss/pages/_stallion-listing.scss` | Page title display typography; results band; search results band |
+| `src/scss/components/_stallion-card.scss` | D7 muted title/body colours; centered title; subtle border/shadow |
+| `css/style.css` | Rebuilt via `npm run build` |
+
+### Typography changes
+
+- Section display headings: `clamp(2rem, 4vw + 1rem, 3.125rem)`, `$font-family-display` (Arial Narrow / Franklin Gothic stack — **not** Bebas `@font-face`).
+- Editorial section headings: `clamp(1.5rem, 2.5vw + 0.75rem, 1.875rem)`, weight 300, `$color-d7-section-heading`, accent underline via `border-block-end` + `span { color: $color-accent }` (replaces missing `black_underline.png`).
+- Homepage sections: `homepage-feature-sections` vertical rhythm (`gap: $spacing-xl`).
+
+### Listing background / texture decision
+
+- D7 asset `listing_texture_bg.jpg` exists in legacy theme only — **not** copied to D11 (per slice rules).
+- Applied token-based CSS band: `$listing-band-bg`, soft accent gradient, `border-block` — on featured stallions listing, stallions View results, and site search results.
+- **Blocker for pixel parity:** approved copy of `listing_texture_bg.jpg` into `web/themes/custom/wcf_theme/images/` then swap gradient for `background-image: url(...)`.
+
+### Card changes
+
+- Title: `$color-d7-title-muted`, centered (D7 `.stallion_title`).
+- Summary: `$color-text-muted` (`#9d9d9d`).
+- Hover title: `$color-d7-heading` (was `$color-primary` green).
+- Border uses `$color-border`; light box-shadow.
+- No Twig or read-more button changes.
+
+### Visual QA result (local)
+
+| Page / route | HTTP | Markup / notes |
+|--------------|------|----------------|
+| `/` (homepage nid 3838) | 200 | `homepage-feature-sections`, `featured-stallions`, 30× `stallion-card` |
+| `/stallions` | 200 | `stallion-listing-page__results` present |
+| `/search` | 200 | `site-search__results` + listing band selector |
+| `/node/14` (stallion) | 200 | Full stallion layout (unaffected by listing band) |
+| `/node/324` (container home test) | 200 | Slice 2 layout |
+| Container homes listing route | Not verified | No dedicated path confirmed in this pass |
+
+**Viewport checks:** Automated DOM/class checks only; no Playwright screenshot compare at 375 / 768 / 1200 in this pass. Manual browser pass recommended for overflow and contrast.
+
+**Compiled CSS:** No `url(` references to missing theme images (verified grep on `css/style.css`).
+
+### Commands run
+
+```bash
+git status --short && git branch --show-current
+cd web/themes/custom/wcf_theme && npm run build
+ddev drush cr
+```
+
+### Remaining blockers
+
+- [ ] Self-hosted Bebas Neue / Open Sans after licensing — enable `_fonts.scss` + update `$font-family-display`
+- [ ] Copy `listing_texture_bg.jpg` after asset approval for true texture parity
+- [ ] D7 side-by-side screenshots at 375 / 768 / 1200
+- [ ] Container homes View listing route + visual compare
+- [ ] `.button--outline` for separate read-more links if markup gains a CTA outside the card link
+
+---
+
 ## 6. Verification commands
 
 ```bash

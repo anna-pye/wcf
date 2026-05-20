@@ -23,7 +23,11 @@ $color-sold: #8b2635;
 $color-retired: #5c5c5c;
 
 $font-family-base: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-$font-family-display: $font-family-base;
+// Condensed sans stack — D7 Bebas Neue stand-in until licensed WOFF2 is approved.
+$font-family-display: 'Arial Narrow', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif;
+
+$color-d7-section-heading: #474747;
+$listing-band-bg: #f5f6f5;
 
 $font-size-base: 1rem;
 $line-height-base: 1.5;
