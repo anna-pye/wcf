@@ -1,5 +1,6 @@
 // Webform and form layout for WCF public pages.
 @use '../abstracts/variables';
+@use 'buttons';
 
 .webform-submission-form,
 .webform-submission-wcf-contact-form,
@@ -64,20 +65,7 @@
 
 .webform-submission-form .button,
 .webform-submission-form .webform-button--submit {
-  display: inline-block;
-  padding: 0.625rem 1.5rem;
-  font: inherit;
-  font-weight: 600;
-  color: variables.$color-text-inverse;
-  background-color: variables.$color-primary;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.webform-submission-form .button:hover,
-.webform-submission-form .webform-button--submit:hover {
-  background-color: variables.$color-primary-hover;
+  @include buttons.button-primary;
 }
 
 .webform-submission-form .webform-confirmation {

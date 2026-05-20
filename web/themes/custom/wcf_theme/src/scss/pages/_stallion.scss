@@ -41,11 +41,11 @@
   text-transform: capitalize;
 
   &--sold {
-    color: #8b2635;
+    color: $color-sold;
   }
 
   &--retired {
-    color: #5c5c5c;
+    color: $color-retired;
   }
 
   &--active {
@@ -73,29 +73,7 @@
   align-items: center;
 }
 
-.stallion__nomination-cta {
-  display: inline-block;
-  padding: $spacing-xs $spacing-md;
-  background: $color-primary;
-  color: $color-text-inverse;
-  text-decoration: none;
-  border-radius: 0.25rem;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-
-  &:hover,
-  &:focus {
-    background: $color-primary-hover;
-    color: $color-text-inverse;
-    outline: 2px solid $color-primary;
-    outline-offset: 2px;
-  }
-
-  &:focus-visible {
-    outline: 3px solid $color-primary;
-    outline-offset: 2px;
-  }
-}
+// Nomination CTA uses .button--primary from _buttons.scss.
 
 .stallion__cta a:not(.stallion__nomination-cta) {
   font-weight: 600;

@@ -84,11 +84,11 @@
   text-transform: capitalize;
 
   &--sold {
-    color: #8b2635;
+    color: $color-sold;
   }
 
   &--retired {
-    color: #5c5c5c;
+    color: $color-retired;
   }
 
   &--active {
