@@ -22,6 +22,7 @@ $governed = [
   'Stallions',
   'ASB Stallions',
   'Show Mares',
+  'For Sale',
 ];
 
 $vocabulary = 'categories';
