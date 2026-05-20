@@ -73,7 +73,11 @@ $find_menu_link = static function (string $menu_name, string $title, string $uri
     ->condition('menu_name', $menu_name)
     ->execute();
   foreach ($storage->loadMultiple($ids) as $link) {
-    if ($link->getTitle() === $title && $link->getUrlObject()->toUri() === $uri) {
+    if ($link->get('link')->isEmpty()) {
+      continue;
+    }
+    $existing_uri = (string) $link->get('link')->uri;
+    if ($link->getTitle() === $title && $existing_uri === $uri) {
       return $link;
     }
   }
