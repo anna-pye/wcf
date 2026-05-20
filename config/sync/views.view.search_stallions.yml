@@ -153,10 +153,7 @@ display:
       display_extenders: {  }
       path: search
       menu:
-        type: normal
-        title: Search
-        weight: 10
-        menu_name: main
+        type: none
     cache_metadata:
       max-age: -1
       contexts:
