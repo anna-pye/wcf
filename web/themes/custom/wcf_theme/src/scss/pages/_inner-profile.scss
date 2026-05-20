@@ -1,0 +1,172 @@
+@use '../abstracts/variables' as *;
+
+// Shared full-page profile layout (stallion + container home) — D7 group-header / gallery patterns.
+
+@mixin profile-page-title {
+  margin: 0 0 $spacing-sm;
+  padding-bottom: $spacing-sm;
+  font-family: $font-family-display;
+  font-size: clamp(1.875rem, 4vw, 2.75rem);
+  font-weight: 400;
+  line-height: 1.15;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: $color-d7-heading;
+  border-block-end: 1px solid #bbbbbb;
+}
+
+@mixin profile-section-title {
+  margin: 0 0 $spacing-sm;
+  font-family: $font-family-base;
+  font-size: clamp(1.125rem, 2vw, 1.625rem);
+  font-weight: 500;
+  line-height: 1.3;
+  color: #747474;
+}
+
+@mixin profile-body-copy {
+  color: $color-d7-body-muted;
+  font-size: 1rem;
+  line-height: 1.65;
+  letter-spacing: 0.02em;
+
+  :where(p, ul, ol) {
+    margin-block: 0 1em;
+    text-align: justify;
+  }
+
+  :where(p:last-child, ul:last-child, ol:last-child) {
+    margin-block-end: 0;
+  }
+
+  :where(strong, b) {
+    color: #2c2c2c;
+    font-weight: 600;
+  }
+}
+
+@mixin profile-main-media {
+  img,
+  picture {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    max-height: 28rem;
+    margin-inline: auto;
+    padding: $spacing-sm;
+    object-fit: contain;
+    background-color: $color-text-inverse;
+    border: 1px solid $color-border;
+  }
+
+  @media (min-width: $breakpoint-md) {
+    img,
+    picture {
+      max-height: 31.25rem; // ~500px — D7 .group-left img
+    }
+  }
+}
+
+@mixin profile-gallery-grid {
+  display: grid;
+  gap: $spacing-sm;
+  grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+  }
+
+  :where(.field__item, .media, a) {
+    display: block;
+    min-width: 0;
+  }
+
+  img,
+  picture {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 16.5rem; // D7 gallery thumb ~261px
+    padding: 0.35rem;
+    object-fit: contain;
+    background-color: $color-text-inverse;
+    border: 1px solid $color-d7-heading;
+  }
+
+  a {
+    &:focus-visible {
+      outline: 3px solid $color-primary;
+      outline-offset: 2px;
+    }
+  }
+}
+
+body.page-node-type-stallion,
+body.page-node-type-container-home {
+  .site-main {
+    background-color: $listing-band-bg;
+  }
+}
+
+.stallion,
+.container-home {
+  max-width: $content-max-width;
+  margin-inline: auto;
+  padding: $spacing-md $spacing-sm $spacing-xl;
+}
+
+.stallion__header,
+.container-home__hero {
+  display: grid;
+  gap: $spacing-md;
+  margin-bottom: $spacing-lg;
+
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+    align-items: end;
+    gap: $spacing-lg;
+  }
+}
+
+.stallion__media,
+.container-home__media {
+  @include profile-main-media;
+}
+
+.container-home--no-media .container-home__hero {
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.container-home__title {
+  @include profile-page-title;
+}
+
+.stallion__intro,
+.container-home__content {
+  min-width: 0;
+}
+
+.stallion__content,
+.container-home__body {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+.stallion__section-title,
+.container-home__section-title {
+  @include profile-section-title;
+}
+
+.stallion__body,
+.stallion__section--body,
+.container-home__summary {
+  @include profile-body-copy;
+}
+
+.container-home__gallery {
+  @include profile-gallery-grid;
+}

@@ -64,6 +64,7 @@ Legacy horse/stallion content lives in the **custom SQL table `wcf_product`**, n
 | D7 source | D11 field | Status |
 |-----------|-----------|--------|
 | `title_with_year` → fallback `product_name` | `title` | Mapped |
+| `product_name` | `field_display_name` | Mapped (`wcf_d7_node_stallion`); backfill via `scripts/wcf-map-product-display-names.php` |
 | `description` | `body.value` | Mapped (`basic_html`) |
 | — | `body.summary` | Empty (no D7 summary) |
 | `product_img` (+ thumb fallback) | `field_main_image` → `media:image` | Mapped |

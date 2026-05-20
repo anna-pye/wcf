@@ -1,110 +1,21 @@
 @use '../abstracts/variables' as *;
 
-// Full container home profile (mirrors stallion full layout patterns).
-.container-home {
-  max-width: $content-max-width;
-  margin-inline: auto;
-  padding: $spacing-md $spacing-sm;
-}
-
-.container-home__hero {
-  display: grid;
-  gap: $spacing-md;
-  margin-bottom: $spacing-lg;
-
-  @media (min-width: $breakpoint-md) {
-    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
-    align-items: end;
-  }
-}
-
-.container-home--no-media .container-home__hero {
-  @media (min-width: $breakpoint-md) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.container-home__media {
-  img,
-  picture {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 0.25rem;
-  }
-}
-
-.container-home__content {
-  min-width: 0;
-}
-
-.container-home__title {
-  margin: 0 0 $spacing-xs;
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-  line-height: 1.2;
-}
+// Container home full profile — extends shared inner-profile patterns in _inner-profile.scss.
 
 .container-home__status {
-  margin: 0;
+  margin: 0 0 $spacing-sm;
   font-size: 0.9375rem;
   font-weight: 600;
   text-transform: capitalize;
 
   &--sold {
-    color: #8b2635;
-  }
-}
-
-.container-home__body {
-  display: flex;
-  flex-direction: column;
-  gap: $spacing-lg;
-}
-
-.container-home__summary {
-  max-width: 65ch;
-
-  :where(p, ul, ol) {
-    margin-block: 0 1em;
-  }
-
-  :where(p:last-child, ul:last-child, ol:last-child) {
-    margin-block-end: 0;
-  }
-}
-
-.container-home__section-title {
-  margin: 0 0 $spacing-sm;
-  font-size: 1.25rem;
-}
-
-.container-home__gallery {
-  display: grid;
-  gap: $spacing-sm;
-  grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
-
-  img,
-  picture {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 0.25rem;
-  }
-
-  a {
-    display: block;
-    border-radius: 0.25rem;
-
-    &:focus-visible {
-      outline: 3px solid $color-primary;
-      outline-offset: 2px;
-    }
+    color: $color-sold;
   }
 }
 
 .container-home__meta {
-  padding-block-start: $spacing-sm;
-  border-block-start: 1px solid rgba(0, 0, 0, 0.12);
+  padding-block-start: $spacing-md;
+  border-block-start: 1px solid $color-border;
 }
 
 .container-home__tags {
@@ -122,8 +33,8 @@
     font-weight: 600;
     color: $color-primary;
     text-decoration: none;
-    border: 1px solid rgba(0, 0, 0, 0.12);
-    border-radius: 0.25rem;
+    border: 1px solid $color-border;
+    border-radius: $radius-sm;
 
     &:hover {
       border-color: $color-primary;

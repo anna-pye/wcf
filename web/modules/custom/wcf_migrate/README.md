@@ -4,9 +4,13 @@ Controlled Drupal 7 → Drupal 11 migrations for the WCF rebuild. Does **not** r
 
 ## Prerequisites
 
-1. Legacy database in DDEV (`legacy`, table prefix `wcf_`) — configured in `settings.ddev.php`.
-2. `$settings['migrate_file_public_path']` points at the D7 site root containing `sites/default/files` (see `/legacy` in the project root).
+1. **Legacy database in D11 DDEV** — database `legacy` with D7 dump (table prefix `wcf_`):
+   - `.ddev/config.yaml` → `additional_databases: [legacy]`
+   - `web/sites/default/settings.migrate.php` → `$databases['migrate']` (included from `settings.php`)
+   - Import: `./scripts/wcf-import-legacy-database.sh` (exports from `~/drupal7-legacy` DDEV by default)
+2. `$settings['migrate_file_public_path']` → project `/legacy` directory (D7 public + product files).
 3. Destination vocabularies, media types, and content types already exist in config sync.
+4. `ddev drush en wcf_migrate -y` and `ddev drush cr`.
 
 ## Migration execution order
 
@@ -34,12 +38,14 @@ Run migrations in this order (dependencies are declared in YAML; this list is th
 | 1 | `scripts/wcf-governed-categories.php` | Seed governed `categories` terms (Foals, Broodmares, Stallions, ASB Stallions, Show Mares, For Sale) |
 | 2 | Stallion migration validation | `docs/stallion-migration-validation.md` — counts, maps, media |
 | 3 | `scripts/wcf-map-product-categories.php` | D7 `wcf_product.category_id` → `field_category` on stallion nodes |
-| 4 | `ddev drush cr` | Rebuild caches |
-| 5 | Category filter QA | `/stallions` exposed filter — see `docs/audits/d7-custom-module-comparison/phase-2-category-mapping-validation.md` |
+| 4 | `scripts/wcf-map-product-display-names.php` | D7 `wcf_product.product_name` → `field_display_name` |
+| 5 | `ddev drush cr` | Rebuild caches |
+| 6 | Category filter QA | `/stallions` exposed filter — see `docs/audits/d7-custom-module-comparison/phase-2-category-mapping-validation.md` |
 
 ```bash
 ddev drush php:script scripts/wcf-governed-categories.php
 ddev drush php:script scripts/wcf-map-product-categories.php
+ddev drush php:script scripts/wcf-map-product-display-names.php
 ddev drush cr
 ```
 

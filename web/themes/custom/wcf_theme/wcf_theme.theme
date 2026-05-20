@@ -294,9 +294,25 @@ function wcf_theme_preprocess_node__stallion(array &$variables): void {
   $variables['stallion_featured'] = (bool) $node->get('field_featured')->value;
   $variables['stallion_summary_fallback'] = wcf_theme_stallion_summary_fallback($node, 120);
   $variables['node_summary_fallback'] = $variables['stallion_summary_fallback'];
+  $variables['stallion_is_foals'] = FALSE;
+  $variables['stallion_foal_year_links'] = [];
+  $variables['stallion_display_name'] = NULL;
+  if ($node->hasField('field_display_name') && !$node->get('field_display_name')->isEmpty()) {
+    $variables['stallion_display_name'] = trim((string) $node->get('field_display_name')->value);
+    if ($variables['stallion_display_name'] === '') {
+      $variables['stallion_display_name'] = NULL;
+    }
+  }
 
   if (($variables['view_mode'] ?? '') === 'full') {
     $variables['stallion_nomination_cta_link'] = wcf_theme_build_stallion_nomination_cta_link();
+
+    if (!$node->get('field_category')->isEmpty()) {
+      $term = $node->get('field_category')->entity;
+      if ($term !== NULL) {
+        $variables['stallion_is_foals'] = $term->label() === 'Foals';
+      }
+    }
   }
 }
 
@@ -440,4 +456,58 @@ function wcf_theme_preprocess_page(array &$variables): void {
 
   $site_config = \Drupal::config('system.site');
   $variables['site_mail'] = $site_config->get('mail');
+}
+
+/**
+ * Groups footer menu links into D7-style columns for menu--footer.html.twig.
+ *
+ * Maps known link titles to column buckets; unmapped items fall into Site.
+ */
+function wcf_theme_preprocess_menu(array &$variables): void {
+  if (($variables['menu_name'] ?? '') !== 'footer' || empty($variables['items'])) {
+    return;
+  }
+
+  $column_defs = [
+    'stallions' => [
+      'title' => (string) t('Stallions'),
+      'titles' => ['Stallions', 'Search'],
+    ],
+    'site' => [
+      'title' => (string) t('Site'),
+      'titles' => ['Home', 'Contact'],
+    ],
+    'services' => [
+      'title' => (string) t('Services'),
+      'titles' => ['Nomination', 'Facebook'],
+    ],
+  ];
+
+  $columns = [];
+  foreach ($column_defs as $id => $def) {
+    $columns[$id] = [
+      'title' => $def['title'],
+      'items' => [],
+    ];
+  }
+
+  foreach ($variables['items'] as $key => $item) {
+    $title = trim((string) $item['title']);
+    $placed = FALSE;
+    foreach ($column_defs as $id => $def) {
+      if (in_array($title, $def['titles'], TRUE)) {
+        $columns[$id]['items'][$key] = $item;
+        $placed = TRUE;
+        break;
+      }
+    }
+    if (!$placed) {
+      $columns['site']['items'][$key] = $item;
+    }
+  }
+
+  $variables['footer_menu_columns'] = array_values(array_filter(
+    $columns,
+    static fn(array $column): bool => $column['items'] !== [],
+  ));
 }

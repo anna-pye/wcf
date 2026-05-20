@@ -13,11 +13,11 @@ process:
     plugin: default_value
     default_value: stallion
   nid: id
-  vid: id
   langcode:
     plugin: default_value
     default_value: en
   title: title
+  field_display_name: display_name
   uid:
     plugin: default_value
     default_value: 1
@@ -30,10 +30,6 @@ process:
   sticky:
     plugin: default_value
     default_value: 0
-  revision_uid:
-    plugin: default_value
-    default_value: 1
-  revision_timestamp: modified_on
   moderation_state:
     plugin: static_map
     source: status
@@ -104,8 +100,7 @@ destination:
   plugin: entity:node
   default_bundle: stallion
 migration_dependencies:
-  required:
+  optional:
     - wcf_d7_media_image_product
     - wcf_d7_media_document_product
-  optional:
     - wcf_d7_media_remote_video_product

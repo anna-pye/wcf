@@ -30,5 +30,5 @@ destination:
   plugin: entity:media
   default_bundle: document
 migration_dependencies:
-  required:
+  optional:
     - wcf_d7_file_product
