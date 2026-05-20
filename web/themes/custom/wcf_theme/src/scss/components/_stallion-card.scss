@@ -1,11 +1,12 @@
 @use '../abstracts/variables' as *;
 
 .stallion-card {
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 0.25rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-sm;
   overflow: hidden;
   background: #fff;
   height: 100%;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .stallion-card--no-media {
@@ -24,7 +25,7 @@
   &:hover,
   &:focus-visible {
     .stallion-card__title {
-      color: $color-primary;
+      color: $color-d7-heading;
     }
   }
 
@@ -69,12 +70,17 @@
   margin: 0;
   font-size: 1.125rem;
   line-height: 1.3;
+  font-weight: 400;
+  text-align: center;
+  color: $color-d7-title-muted;
 }
 
 .stallion-card__summary {
   margin: 0;
   font-size: 0.9375rem;
-  color: rgba($color-text, 0.85);
+  line-height: 1.5;
+  text-align: left;
+  color: $color-text-muted;
   flex: 1;
 }
 
@@ -84,11 +90,11 @@
   text-transform: capitalize;
 
   &--sold {
-    color: #8b2635;
+    color: $color-sold;
   }
 
   &--retired {
-    color: #5c5c5c;
+    color: $color-retired;
   }
 
   &--active {

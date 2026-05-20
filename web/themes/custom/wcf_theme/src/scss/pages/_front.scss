@@ -16,3 +16,55 @@
   position: relative;
   z-index: 2;
 }
+
+// Homepage editorial sections (featured stallions, featured content, etc.).
+.homepage-feature-sections {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+
+  > * {
+    margin-block: 0;
+  }
+}
+
+// D7 `.news_sec h2` — lighter section title with accent span support.
+@mixin homepage-section-heading-editorial {
+  margin: 0 0 $spacing-md;
+  color: $color-d7-section-heading;
+  font-family: $font-family-base;
+  font-weight: 300;
+  font-size: clamp(1.5rem, 2.5vw + 0.75rem, 1.875rem);
+  line-height: 1.25;
+  letter-spacing: 0.01em;
+  padding-bottom: $spacing-sm;
+  border-block-end: 2px solid rgba($color-accent, 0.35);
+
+  span {
+    color: $color-accent;
+  }
+}
+
+// D7 `.stallions h2` — display section title with bottom rule.
+@mixin homepage-section-heading-display {
+  margin: 0 0 $spacing-md;
+  color: $color-d7-heading;
+  font-family: $font-family-display;
+  font-weight: 400;
+  font-size: clamp(2rem, 4vw + 1rem, 3.125rem);
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  padding-bottom: $spacing-sm;
+  border-block-end: 1px solid #bbbbbb;
+}
+
+.homepage-feature-sections {
+  .featured-content__title {
+    @include homepage-section-heading-editorial;
+  }
+
+  .featured-stallions__title {
+    @include homepage-section-heading-display;
+  }
+}

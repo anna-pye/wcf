@@ -15,6 +15,9 @@
 <div{{ attributes.addClass(classes) }}>
   <div class="site-search__layout">
     <div class="site-search__main">
+      <header class="stallion-listing-page__header">
+        <h1 class="stallion-listing-page__title">{{ view.getTitle()|default('Search'|t) }}</h1>
+      </header>
       {% if header %}
         <header class="site-search__header" aria-live="polite">
           {{ header }}

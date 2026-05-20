@@ -1,0 +1,38 @@
+// Webfont scaffold — Slice 1.
+//
+// D7 used Open Sans, Bebas Neue, and Proxima Nova from sites/all/themes/wcf/fonts/.
+// Do not @import or link external CDNs until privacy/licensing is approved.
+//
+// Before enabling @font-face rules:
+// 1. Confirm font licensing allows self-hosting on this site.
+// 2. Place WOFF2 files under web/themes/custom/wcf_theme/fonts/ (create directory).
+// 3. Uncomment the matching @font-face block and wire $font-family-* in _variables.scss.
+//
+// Example paths (files not shipped in this slice):
+//   fonts/open-sans/open-sans-regular.woff2
+//   fonts/bebas-neue/bebas-neue-regular.woff2
+//   fonts/proxima-nova/proxima-nova-semibold.woff2
+
+// @font-face {
+//   font-family: 'Open Sans';
+//   font-style: normal;
+//   font-weight: 400;
+//   font-display: swap;
+//   src: url('../fonts/open-sans/open-sans-regular.woff2') format('woff2');
+// }
+
+// @font-face {
+//   font-family: 'Bebas Neue';
+//   font-style: normal;
+//   font-weight: 400;
+//   font-display: swap;
+//   src: url('../fonts/bebas-neue/bebas-neue-regular.woff2') format('woff2');
+// }
+
+// @font-face {
+//   font-family: 'Proxima Nova';
+//   font-style: normal;
+//   font-weight: 600;
+//   font-display: swap;
+//   src: url('../fonts/proxima-nova/proxima-nova-semibold.woff2') format('woff2');
+// }

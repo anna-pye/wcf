@@ -1,0 +1,61 @@
+{#
+/**
+ * @file
+ * Container home full view — semantic profile layout.
+ *
+ * Fields (config/sync): body, field_main_image, field_gallery, field_sold,
+ * field_category. Status label via preprocess (container_home_status_label).
+ */
+#}
+{%
+  set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    'node--view-mode-' ~ view_mode|clean_class,
+    'container-home',
+    node.field_main_image.isEmpty() ? 'container-home--no-media',
+  ]
+%}
+<article{{ attributes.addClass(classes) }}>
+  <header class="container-home__hero">
+    {% if not node.field_main_image.isEmpty() %}
+      <div class="container-home__media">
+        {{ content.field_main_image }}
+      </div>
+    {% endif %}
+    <div class="container-home__content">
+      <h1 class="container-home__title">{{ label }}</h1>
+      {% if container_home_status_label %}
+        <p class="container-home__status container-home__status--{{ container_home_status_label|clean_class }}">
+          <span class="visually-hidden">{{ 'Status'|t }}: </span>
+          {{ container_home_status_label }}
+        </p>
+      {% endif %}
+    </div>
+  </header>
+
+  <div class="container-home__body">
+    {% if content.body %}
+      <section class="container-home__summary" aria-labelledby="container-home-summary-heading">
+        <h2 id="container-home-summary-heading" class="visually-hidden">{{ 'Description'|t }}</h2>
+        {{ content.body }}
+      </section>
+    {% endif %}
+
+    {% if not node.field_gallery.isEmpty() %}
+      <section class="container-home__gallery" aria-labelledby="container-home-gallery-heading">
+        <h2 id="container-home-gallery-heading" class="container-home__section-title">{{ 'Gallery'|t }}</h2>
+        {{ content.field_gallery }}
+      </section>
+    {% endif %}
+
+    {% if not node.field_category.isEmpty() %}
+      <section class="container-home__meta" aria-labelledby="container-home-meta-heading">
+        <h2 id="container-home-meta-heading" class="container-home__section-title">{{ 'Categories'|t }}</h2>
+        <div class="container-home__tags">
+          {{ content.field_category }}
+        </div>
+      </section>
+    {% endif %}
+  </div>
+</article>

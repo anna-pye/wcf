@@ -67,26 +67,9 @@
   margin-top: $spacing-sm;
 }
 
-.hero-slide__cta {
-  display: inline-block;
-  padding: $spacing-xs $spacing-md;
-  background: $color-primary;
-  color: $color-text-inverse;
-  text-decoration: none;
-  border-radius: 0.25rem;
-  font-weight: 600;
-  transition: background-color 0.2s ease;
-
-  &:hover,
-  &:focus {
-    background: $color-primary-hover;
-    color: $color-text-inverse;
-    outline: 2px solid $color-text-inverse;
-    outline-offset: 2px;
-  }
-
+// .button--primary from _buttons.scss; hero overlay focus ring on dark background.
+.hero-slide__cta.button--primary {
   &:focus-visible {
-    outline: 3px solid $color-text-inverse;
-    outline-offset: 3px;
+    outline-color: $color-text-inverse;
   }
 }
