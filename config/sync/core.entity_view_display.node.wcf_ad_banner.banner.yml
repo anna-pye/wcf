@@ -1,0 +1,35 @@
+uuid: c29cd27d-0222-4225-904d-f157bef62b16
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.banner
+    - field.field.node.wcf_ad_banner.field_banner_caption
+    - field.field.node.wcf_ad_banner.field_banner_categories
+    - field.field.node.wcf_ad_banner.field_banner_image
+    - field.field.node.wcf_ad_banner.field_banner_link
+    - field.field.node.wcf_ad_banner.field_banner_weight
+    - node.type.wcf_ad_banner
+  module:
+    - user
+id: node.wcf_ad_banner.banner
+targetEntityType: node
+bundle: wcf_ad_banner
+mode: banner
+content:
+  field_banner_image:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: banner
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_banner_caption: true
+  field_banner_categories: true
+  field_banner_link: true
+  field_banner_weight: true
+  links: true
+  search_api_excerpt: true

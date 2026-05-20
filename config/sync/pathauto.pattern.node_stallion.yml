@@ -9,7 +9,7 @@ dependencies:
 id: node_stallion
 label: 'Content Stallion'
 type: 'canonical_entities:node'
-pattern: '/stallions/[node:title]'
+pattern: '/horses/[node:title]'
 selection_criteria:
   a465532b-2fb7-4ce4-aa95-053940ee76c6:
     id: 'entity_bundle:node'

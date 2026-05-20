@@ -19,7 +19,7 @@ settings:
   label: 'Main navigation'
   label_display: '0'
   provider: system
-  level: 3
+  level: 1
   depth: null
   expand_all_items: false
 visibility: {  }

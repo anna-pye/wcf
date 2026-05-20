@@ -1,0 +1,34 @@
+{#
+/**
+ * @file
+ * Homepage feature icon strip.
+ *
+ * Variables:
+ * - wcf_home_feature_links: list of title, text, icon, tone, url
+ */
+#}
+{% if wcf_home_feature_links is not empty %}
+  <nav class="wcf-home-feature-strip" aria-label="{{ 'Services'|t }}">
+    <ul class="wcf-home-feature-strip__grid">
+      {% for item in wcf_home_feature_links %}
+        <li class="wcf-home-feature-strip__item">
+          {% if item.url %}
+            <a class="wcf-home-feature-strip__card wcf-home-feature-strip__card--{{ item.tone }}" href="{{ item.url }}">
+          {% else %}
+            <div class="wcf-home-feature-strip__card wcf-home-feature-strip__card--{{ item.tone }}">
+          {% endif %}
+            <span class="wcf-home-feature-strip__badge" aria-hidden="true">
+              {% include '@wcf_theme/components/wcf-icon.html.twig' with { icon: item.icon } only %}
+            </span>
+            <span class="wcf-home-feature-strip__title">{{ item.title }}</span>
+            <span class="wcf-home-feature-strip__text">{{ item.text }}</span>
+          {% if item.url %}
+            </a>
+          {% else %}
+            </div>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}

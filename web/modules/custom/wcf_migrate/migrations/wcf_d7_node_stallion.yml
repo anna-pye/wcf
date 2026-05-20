@@ -18,6 +18,10 @@ process:
     default_value: en
   title: title
   field_display_name: display_name
+  field_foal_year:
+    plugin: skip_on_empty
+    method: process
+    source: foal_year
   uid:
     plugin: default_value
     default_value: 1

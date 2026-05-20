@@ -1,0 +1,125 @@
+@use '../abstracts/variables' as *;
+@use '../layout/page' as page;
+
+.wcf-home-feature-strip {
+  padding-block: $spacing-lg;
+  background-color: $wcf-cream;
+  border-block: 1px solid $color-border;
+
+  @media (min-width: $breakpoint-md) {
+    padding-block: $spacing-xl;
+  }
+
+  &__grid {
+    display: grid;
+    gap: $spacing-sm;
+    max-width: $content-max-width;
+    margin-inline: auto;
+    padding-inline: $spacing-sm;
+    list-style: none;
+
+    @media (min-width: $breakpoint-sm) {
+      gap: $spacing-md;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (min-width: $breakpoint-md) {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+
+  &__item {
+    margin: 0;
+    min-width: 0;
+  }
+
+  &__card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $spacing-xs;
+    min-height: 100%;
+    padding: $spacing-sm $spacing-xs;
+    text-align: center;
+    text-decoration: none;
+    color: $color-text;
+    background-color: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+
+    &:hover {
+      border-color: rgba($wcf-purple, 0.28);
+      box-shadow: $shadow-md;
+      transform: translateY(-2px);
+    }
+
+    @include page.focus-visible-ring;
+  }
+
+  &__badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    clip-path: polygon(25% 6%, 75% 6%, 100% 50%, 75% 94%, 25% 94%, 0 50%);
+    background-color: rgba($wcf-purple, 0.12);
+    color: $wcf-purple;
+  }
+
+  &__card--purple &__badge {
+    background-color: rgba($wcf-purple, 0.14);
+    color: $wcf-purple;
+  }
+
+  &__card--coral &__badge {
+    background-color: rgba($wcf-coral, 0.14);
+    color: $wcf-coral;
+  }
+
+  &__card--sky &__badge {
+    background-color: rgba($wcf-sky, 0.16);
+    color: $wcf-sky;
+  }
+
+  &__card--lilac &__badge {
+    background-color: rgba($wcf-lilac, 0.16);
+    color: $wcf-lilac;
+  }
+
+  &__card--gold &__badge {
+    background-color: rgba($wcf-gold, 0.18);
+    color: $wcf-gold;
+  }
+
+  &__title {
+    font-size: $font-size-sm;
+    font-weight: 700;
+    line-height: $line-height-tight;
+  }
+
+  &__text {
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: $color-text-muted;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wcf-home-feature-strip__card {
+    transition: none;
+
+    &:hover {
+      transform: none;
+    }
+  }
+}

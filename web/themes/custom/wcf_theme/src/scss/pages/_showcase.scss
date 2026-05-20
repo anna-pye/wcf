@@ -1,0 +1,95 @@
+// Showcase listing — reuses stallion / inner-profile tokens and gallery styles.
+
+@use '../abstracts/variables' as *;
+@use 'inner-profile' as profile;
+
+// Page shell (matches stallion / container home listing context).
+body.path-showcase {
+  .site-main {
+    background-color: $color-background;
+  }
+}
+
+.showcase-page {
+  max-width: $content-max-width;
+  margin-inline: auto;
+  padding: $spacing-md $spacing-sm $spacing-xl;
+
+  @media (min-width: $breakpoint-md) {
+    padding-inline: $spacing-md;
+  }
+}
+
+.showcase-page__header {
+  margin-bottom: $spacing-lg;
+  padding: $spacing-lg $spacing-md;
+  text-align: center;
+  background-color: $color-surface;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+}
+
+.showcase-page__intro-title {
+  @include profile.profile-section-title;
+  margin: 0 auto $spacing-sm;
+  max-width: 42rem;
+  text-align: center;
+  font-size: clamp(1.25rem, 2.5vw, 1.625rem);
+  color: $color-d7-heading;
+
+  span {
+    display: block;
+    font-family: $font-family-display;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: $wcf-gold;
+    margin-bottom: $spacing-xs;
+  }
+}
+
+.showcase-page__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+}
+
+// Each view row: same card shell as stallion full node.
+.showcase-page__list > .views-row {
+  margin: 0;
+}
+
+.showcase-page .showcase-story.stallion {
+  max-width: none;
+  margin-inline: 0;
+}
+
+// No hero image — single-column header (intro only).
+.showcase-story.stallion--no-main-image .stallion__header {
+  @media (min-width: $breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.showcase-story .stallion__subtitle--primary {
+  @include profile.profile-page-title;
+  color: $color-d7-heading;
+
+  &::before,
+  &::after {
+    content: none;
+  }
+}
+
+.showcase-story .stallion__body {
+  @include profile.profile-body-copy;
+}
+
+.showcase-page__empty {
+  padding: $spacing-lg;
+  text-align: center;
+  color: $color-text-muted;
+  background-color: $color-surface;
+  border-radius: $radius-md;
+}

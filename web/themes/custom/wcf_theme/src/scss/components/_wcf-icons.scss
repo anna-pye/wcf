@@ -1,0 +1,15 @@
+@use '../abstracts/variables' as *;
+
+.wcf-icon {
+  display: block;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.wcf-home-feature-strip__badge,
+.wcf-social-follow__icon-badge {
+  .wcf-icon {
+    width: 1.75rem;
+    height: 1.75rem;
+  }
+}

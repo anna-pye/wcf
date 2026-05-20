@@ -1,0 +1,11 @@
+uuid: cfe61cfc-fa4c-4ede-bd38-999e35e0b954
+langcode: en
+status: true
+dependencies: {  }
+name: 'Registry logo'
+type: wcf_registry_logo
+description: 'Official stud book or society logos for the homepage Recognised bloodlines section.'
+help: 'Upload only client-approved logos via Media. Use the colour swatch when no logo is available. Lower weight values appear first (maximum five published items).'
+new_revision: true
+preview_mode: 1
+display_submitted: false

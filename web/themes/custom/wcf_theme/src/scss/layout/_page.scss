@@ -10,7 +10,7 @@ $touch-target-min: 2.75rem; // 44px
   }
 
   &:focus-visible {
-    outline: $focus-ring-width solid $color-primary;
+    outline: $focus-ring-width solid $color-focus;
     outline-offset: $focus-ring-offset;
   }
 }
@@ -19,6 +19,7 @@ $touch-target-min: 2.75rem; // 44px
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background-color: $color-background;
 }
 
 .site-main {
@@ -40,13 +41,11 @@ $touch-target-min: 2.75rem; // 44px
   padding-inline: 0;
 }
 
-// —— Site header shell (chrome layout in layout/_chrome.scss) ——
 .site-header {
   position: relative;
   z-index: 2;
 }
 
-// Core system branding block (block--system-branding-block).
 .site-branding {
   display: flex;
   flex-wrap: wrap;
@@ -62,23 +61,60 @@ $touch-target-min: 2.75rem; // 44px
   line-height: 0;
   text-decoration: none;
 
-  img {
+  // Official WCF logo (163×90) — preserve aspect ratio on light chrome.
+  img,
+  a {
     display: block;
+    line-height: 0;
+    text-decoration: none;
+  }
+
+  img {
     width: auto;
-    max-width: min(10rem, 40vw);
-    max-height: 3.5rem;
     height: auto;
+    max-width: min(10.1875rem, 48vw); // 163px at 16px root
+    max-height: 5.625rem; // 90px
+    aspect-ratio: 163 / 90;
     object-fit: contain;
   }
 
-  @include focus-visible-ring;
+  a {
+    @include focus-visible-ring;
+  }
+}
+
+// Branding block may render a home link without .site-branding__logo on the anchor.
+#block-wcf-theme-site-branding {
+  margin: 0;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    line-height: 0;
+    text-decoration: none;
+
+    @include focus-visible-ring;
+  }
+
+  img {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(10.1875rem, 48vw);
+    max-height: 5.625rem;
+    aspect-ratio: 163 / 90;
+    object-fit: contain;
+  }
 }
 
 .site-branding__name {
   margin: 0;
+  font-family: $font-family-display;
   font-size: clamp(1.125rem, 2.5vw + 0.5rem, 1.5rem);
-  font-weight: 700;
-  line-height: 1.2;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  line-height: $line-height-tight;
   color: $color-text;
 
   a {
@@ -87,8 +123,6 @@ $touch-target-min: 2.75rem; // 44px
 
     &:hover {
       color: $color-primary;
-      text-decoration: underline;
-      text-underline-offset: 0.15em;
     }
 
     @include focus-visible-ring;
@@ -98,14 +132,6 @@ $touch-target-min: 2.75rem; // 44px
 .site-branding__slogan {
   flex: 1 1 100%;
   margin: 0;
-  font-size: 0.875rem;
+  font-size: $font-size-sm;
   color: $color-text-muted;
-}
-
-// —— Site footer shell ——
-.site-footer {
-  margin-block-start: auto;
-  border-block-start: 1px solid $color-border;
-  background-color: rgba($color-d7-heading, 0.04);
-  color: $color-text;
 }

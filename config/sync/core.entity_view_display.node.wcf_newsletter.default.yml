@@ -1,0 +1,49 @@
+uuid: c1c2c3d4-2222-4222-8333-444455556666
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.wcf_newsletter.field_newsletter_file
+    - field.field.node.wcf_newsletter.field_newsletter_legacy_id
+    - field.field.node.wcf_newsletter.field_newsletter_month
+    - field.field.node.wcf_newsletter.field_newsletter_weight
+    - field.field.node.wcf_newsletter.field_newsletter_year
+    - node.type.wcf_newsletter
+  module:
+    - user
+id: node.wcf_newsletter.default
+targetEntityType: node
+bundle: wcf_newsletter
+mode: default
+content:
+  field_newsletter_file:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: true
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_newsletter_month:
+    type: string
+    label: inline
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_newsletter_year:
+    type: number_integer
+    label: inline
+    settings:
+      thousand_separator: ''
+      prefix_suffix: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_newsletter_legacy_id: true
+  field_newsletter_weight: true
+  links: true
+  search_api_excerpt: true

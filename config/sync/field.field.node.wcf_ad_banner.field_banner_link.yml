@@ -1,0 +1,23 @@
+uuid: 255af25e-462e-4532-bec3-f8e247c73bf7
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_banner_link
+    - node.type.wcf_ad_banner
+  module:
+    - link
+id: node.wcf_ad_banner.field_banner_link
+field_name: field_banner_link
+entity_type: node
+bundle: wcf_ad_banner
+label: Link
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 17
+field_type: link

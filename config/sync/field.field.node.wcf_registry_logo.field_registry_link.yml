@@ -1,0 +1,23 @@
+uuid: b0c05312-13b6-4047-9977-b139abb92515
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_registry_link
+    - node.type.wcf_registry_logo
+  module:
+    - link
+id: node.wcf_registry_logo.field_registry_link
+field_name: field_registry_link
+entity_type: node
+bundle: wcf_registry_logo
+label: 'Official website'
+description: 'Optional link to the organisation website. The card links only when this URL is accessible.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  title: 0
+  link_type: 17
+field_type: link

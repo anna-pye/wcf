@@ -1,0 +1,41 @@
+{#
+/**
+ * @file
+ * Facebook follow panel — overlaps registry gradient band.
+ *
+ * Variables:
+ * - wcf_home_social_follow: title, text, cta_label, url
+ */
+#}
+{% if wcf_home_social_follow %}
+  <section class="wcf-social-follow{% if wcf_social_follow_variant %} wcf-social-follow--{{ wcf_social_follow_variant }}{% endif %}" aria-labelledby="wcf-social-follow-title">
+    {% if wcf_home_social_follow.url %}
+      <a
+        class="wcf-social-follow__card wcf-social-follow__card--linked"
+        href="{{ wcf_home_social_follow.url }}"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-labelledby="wcf-social-follow-title"
+      >
+    {% else %}
+      <div class="wcf-social-follow__card">
+    {% endif %}
+      <span class="wcf-social-follow__icon-badge" aria-hidden="true">
+        {% include '@wcf_theme/components/wcf-icon.html.twig' with { icon: 'facebook' } only %}
+      </span>
+      <div class="wcf-social-follow__content">
+        <h2 id="wcf-social-follow-title" class="wcf-social-follow__title">{{ wcf_home_social_follow.title }}</h2>
+        {% if wcf_home_social_follow.text %}
+          <p class="wcf-social-follow__text">{{ wcf_home_social_follow.text }}</p>
+        {% endif %}
+      </div>
+      {% if wcf_home_social_follow.url %}
+        <span class="wcf-social-follow__cta-label">{{ wcf_home_social_follow.cta_label|default('Follow us on Facebook'|t) }}</span>
+      {% endif %}
+    {% if wcf_home_social_follow.url %}
+      </a>
+    {% else %}
+      </div>
+    {% endif %}
+  </section>
+{% endif %}

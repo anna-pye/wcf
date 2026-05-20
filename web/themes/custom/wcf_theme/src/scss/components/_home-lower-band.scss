@@ -1,0 +1,40 @@
+@use '../abstracts/variables' as *;
+
+// Registry gradient band (Facebook card is in the front footer).
+
+.wcf-home-lower-band {
+  margin-block-start: $spacing-xl;
+
+  &__gradient {
+    background: $gradient-registry-band;
+    padding-block: $spacing-xl $spacing-2xl;
+    padding-inline: $spacing-sm;
+
+    @media (min-width: $breakpoint-md) {
+      padding-block: $section-spacing $spacing-2xl;
+      padding-inline: $spacing-md;
+    }
+  }
+
+  .wcf-registry {
+    padding: 0;
+    background: transparent;
+    border: 0;
+
+    .wcf-section__inner {
+      max-width: $section-max-width;
+    }
+
+    .wcf-section__header {
+      margin-block-end: $spacing-lg;
+    }
+
+    .wcf-section__title {
+      color: $wcf-white;
+    }
+
+    .wcf-section__lead {
+      color: rgba($wcf-white, 0.92);
+    }
+  }
+}

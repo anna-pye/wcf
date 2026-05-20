@@ -1,0 +1,42 @@
+{#
+/**
+ * @file
+ * Homepage promotional cards — image left, copy right.
+ *
+ * Variables:
+ * - wcf_home_promo_cards: title, text, tone, image_url, image_alt, link
+ */
+#}
+{% if wcf_home_promo_cards is not empty %}
+  <section class="wcf-home-promo-cards wcf-section wcf-section--cream" aria-labelledby="wcf-home-promo-cards-title">
+    <div class="wcf-section__inner">
+      <h2 id="wcf-home-promo-cards-title" class="visually-hidden">{{ 'Discover WCF'|t }}</h2>
+      <div class="wcf-home-promo-cards__grid">
+        {% for card in wcf_home_promo_cards %}
+          <article class="wcf-home-promo-cards__card wcf-home-promo-cards__card--{{ card.tone }}">
+            <div class="wcf-home-promo-cards__visual">
+              {% if card.image_url %}
+                <img
+                  class="wcf-home-promo-cards__image"
+                  src="{{ card.image_url }}"
+                  alt="{{ card.image_alt|default('') }}"
+                  loading="lazy"
+                  decoding="async"
+                >
+              {% endif %}
+            </div>
+            <div class="wcf-home-promo-cards__body">
+              <h3 class="wcf-home-promo-cards__title">{{ card.title }}</h3>
+              <p class="wcf-home-promo-cards__text">{{ card.text }}</p>
+              {% if card.link %}
+                <div class="wcf-home-promo-cards__actions">
+                  {{ card.link }}
+                </div>
+              {% endif %}
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endif %}

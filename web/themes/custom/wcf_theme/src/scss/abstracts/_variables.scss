@@ -1,37 +1,71 @@
-// Brand and layout tokens.
-// D7 reference values (custom.css) — activate in slice 1 after visual sign-off.
+// WCF brand palette (logo colours) and layout tokens.
+
+// —— Logo palette ——
+$wcf-charcoal: #25252a;
+$wcf-cream: #faf7f1;
+$wcf-sand: #efe7dc;
+$wcf-coral: #e7604d;
+$wcf-orange: #f28b45;
+$wcf-purple: #7d5aa6;
+$wcf-magenta: #b75a96;
+$wcf-teal: #4fa7b8;
+$wcf-blue: #5c8fb8;
+$wcf-green: #6f7f3a;
+$wcf-white: #ffffff;
+
+// Homepage icon / accent tones (logo-adjacent).
+$wcf-lilac: #9b7ec4;
+$wcf-sky: #6eb8d4;
+$wcf-gold: #d4a84a;
+
+// —— Semantic colours (use these in components) ——
+$color-text: $wcf-charcoal;
+$color-text-muted: #6b6b72;
+$color-text-inverse: $wcf-white;
+$color-background: $wcf-cream;
+$color-background-alt: $wcf-sand;
+$color-surface: $wcf-white;
+$color-primary: $wcf-coral;
+$color-primary-hover: #cf4f3e;
+$color-secondary: $wcf-purple;
+$color-secondary-hover: #6a4d91;
+$color-accent: $wcf-teal;
+$color-accent-alt: $wcf-blue;
+$color-border: rgba($wcf-charcoal, 0.12);
+$color-border-strong: rgba($wcf-charcoal, 0.2);
+$color-overlay: rgba($wcf-charcoal, 0.42);
+$color-overlay-soft: rgba($wcf-purple, 0.55);
+$color-sold: #a63d4a;
+$color-retired: #5c5c62;
+$color-focus: $wcf-blue;
+
+// Legacy D7 reference tokens (audit / gradual migration only).
 $color-d7-brand: #2eb361;
-$color-d7-accent: #6fbcac;
+$color-d7-accent: $wcf-teal;
 $color-d7-cta: #2bb99b;
 $color-d7-cta-text: #015c49;
 $color-d7-red: #e8463a;
-$color-d7-title-muted: #8c8c8c;
-$color-d7-body-muted: #9d9d9d;
-$color-d7-border-teal: #7de1cb;
-$color-d7-heading: #242424;
-$color-d7-inner-band: #e7e7e7;
+$color-d7-title-muted: #6b6b72;
+$color-d7-body-muted: $color-text-muted;
+$color-d7-border-teal: rgba($wcf-teal, 0.45);
+$color-d7-heading: $wcf-charcoal;
+$color-d7-inner-band: $wcf-sand;
+$color-d7-section-heading: #47474d;
+$listing-band-bg: $wcf-sand;
 
-// Active semantic tokens (D11).
-$color-text: #1a1a1a;
-$color-text-muted: $color-d7-body-muted;
-$color-text-inverse: #ffffff;
-$color-primary: #2d5016;
-$color-primary-hover: #1f3810;
-$color-accent: $color-d7-accent;
-$color-overlay: rgba(0, 0, 0, 0.45);
-$color-border: rgba(0, 0, 0, 0.12);
-$color-sold: #8b2635;
-$color-retired: #5c5c5c;
-
+// —— Typography ——
 $font-family-base: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-// Condensed sans stack — D7 Bebas Neue stand-in until licensed WOFF2 is approved.
 $font-family-display: 'Arial Narrow', 'Franklin Gothic Medium', 'Nimbus Sans Narrow', sans-serif;
 
-$color-d7-section-heading: #474747;
-$listing-band-bg: #f5f6f5;
-
 $font-size-base: 1rem;
+$font-size-sm: 0.875rem;
+$font-size-lg: 1.125rem;
 $line-height-base: 1.5;
+$line-height-tight: 1.2;
+
+// —— Layout ——
+$content-max-width: 72rem;
+$section-max-width: 68rem;
 
 $spacing-xs: 0.5rem;
 $spacing-sm: 1rem;
@@ -40,12 +74,56 @@ $spacing-lg: 2.5rem;
 $spacing-xl: 4rem;
 $spacing-2xl: 6rem;
 
-$radius-sm: 0.25rem;
-$radius-md: 0.375rem;
+$section-spacing: $spacing-xl;
+$section-spacing-lg: $spacing-2xl;
 
-$hero-min-height-mobile: 28rem;
-$hero-min-height-desktop: 42rem;
+// —— Radii & elevation ——
+$radius-sm: 0.375rem;
+$radius-md: 0.625rem;
+$radius-lg: 1rem;
+$radius-pill: 999px;
+
+$shadow-sm: 0 2px 8px rgba($wcf-charcoal, 0.06);
+$shadow-md: 0 8px 24px rgba($wcf-charcoal, 0.1);
+$shadow-lg: 0 16px 40px rgba($wcf-charcoal, 0.12);
+
+// —— Header chrome ——
+$wcf-header-bg: $wcf-cream;
+$wcf-header-border: rgba($wcf-purple, 0.14);
+$wcf-header-shadow: 0 4px 18px rgba($wcf-charcoal, 0.07);
+
+// —— Breakpoints ——
 $breakpoint-sm: 36rem;
-$content-max-width: 72rem;
 $breakpoint-md: 48rem;
 $breakpoint-lg: 75rem;
+
+// —— Hero ——
+$hero-min-height-mobile: 28rem;
+$hero-min-height-desktop: 42rem;
+
+// Gradients (brand hero / overlays).
+$gradient-hero-overlay: linear-gradient(
+  118deg,
+  rgba($wcf-purple, 0.72) 0%,
+  rgba($wcf-magenta, 0.45) 38%,
+  rgba($wcf-coral, 0.35) 68%,
+  rgba($wcf-charcoal, 0.15) 100%
+);
+$gradient-registry-band: linear-gradient(
+  90deg,
+  $wcf-teal 0%,
+  $wcf-blue 18%,
+  $wcf-purple 42%,
+  $wcf-magenta 62%,
+  $wcf-coral 82%,
+  $wcf-orange 100%
+);
+
+$gradient-hero-overlay-soft: linear-gradient(
+  105deg,
+  rgba($wcf-purple, 0.55) 0%,
+  rgba($wcf-teal, 0.35) 45%,
+  transparent 85%
+);
+$gradient-section: linear-gradient(180deg, $wcf-cream 0%, $wcf-sand 100%);
+$gradient-cta: linear-gradient(135deg, $wcf-purple 0%, $wcf-magenta 50%, $wcf-coral 100%);

@@ -1,21 +1,35 @@
 // Shared button styles — used with classes from wcf_theme.theme preprocess.
 @use '../abstracts/variables' as *;
+@use '../layout/page' as page;
 
 @mixin button-base {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xs;
+  min-height: page.$touch-target-min;
+  padding: $spacing-xs $spacing-md;
   cursor: pointer;
   font: inherit;
   font-weight: 600;
-  line-height: 1.25;
+  font-size: $font-size-sm;
+  line-height: $line-height-tight;
   text-decoration: none;
   text-align: center;
   border: 2px solid transparent;
-  border-radius: $radius-sm;
-  padding: $spacing-xs $spacing-md;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  border-radius: $radius-pill;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:focus {
+    outline: none;
+  }
 
   &:focus-visible {
-    outline: 3px solid $color-primary;
+    outline: 3px solid $color-focus;
     outline-offset: 2px;
   }
 }
@@ -25,11 +39,26 @@
   color: $color-text-inverse;
   background-color: $color-primary;
   border-color: $color-primary;
+  box-shadow: $shadow-sm;
 
   &:hover {
     color: $color-text-inverse;
     background-color: $color-primary-hover;
     border-color: $color-primary-hover;
+    box-shadow: $shadow-md;
+  }
+}
+
+@mixin button-secondary {
+  @include button-base;
+  color: $color-text-inverse;
+  background-color: $color-secondary;
+  border-color: $color-secondary;
+
+  &:hover {
+    color: $color-text-inverse;
+    background-color: $color-secondary-hover;
+    border-color: $color-secondary-hover;
   }
 }
 
@@ -41,17 +70,31 @@
   @include button-primary;
 }
 
+.button--secondary {
+  @include button-secondary;
+}
+
 .button--outline {
   @include button-base;
-  color: #606060;
+  color: $color-secondary;
   background-color: transparent;
-  border-color: $color-d7-border-teal;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-size: 0.8125rem;
+  border-color: rgba($color-secondary, 0.45);
 
   &:hover {
-    color: $color-text;
-    background-color: rgba($color-d7-border-teal, 0.12);
+    color: $color-text-inverse;
+    background-color: $color-secondary;
+    border-color: $color-secondary;
+  }
+}
+
+.button--ghost {
+  @include button-base;
+  color: $color-text;
+  background-color: rgba($wcf-white, 0.92);
+  border-color: rgba($wcf-white, 0.92);
+
+  &:hover {
+    background-color: $wcf-white;
+    border-color: $wcf-white;
   }
 }

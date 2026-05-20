@@ -1,32 +1,240 @@
-// Site search page — facets sidebar, keyword form, results.
+// Site search page — facets sidebar, intro toolbar, results.
 @use '../abstracts/variables' as *;
+@use '../layout/page' as page;
+
+// Hide active-filters strip when empty (no facet chips).
+.site-search__intro {
+  > .site-search__active-filters:not(:has(a)),
+  > .site-search__active-filters .site-search__active-filters-inner:empty {
+    display: none;
+  }
+
+  &:has(> .site-search__active-filters a) {
+    padding-block-start: 0;
+    border-start-start-radius: 0;
+    border-start-end-radius: 0;
+    border-block-start: none;
+  }
+}
+
+.site-search__year-nav {
+  margin-block-start: $spacing-md;
+}
+
+.site-search__active-filters {
+  margin-block-end: 0;
+
+  .site-search__active-filters-inner {
+    padding: $spacing-sm $spacing-md;
+    background: rgba($color-secondary, 0.08);
+    border: 1px solid rgba($color-secondary, 0.18);
+    border-radius: $radius-md $radius-md 0 0;
+  }
+
+  ul {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: $spacing-sm;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  li {
+    margin: 0;
+    padding: 0;
+  }
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    min-height: page.$touch-target-min;
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+    font-weight: 600;
+    text-decoration: none;
+    color: $color-secondary;
+    background: $color-surface;
+    border: 1px solid rgba($color-secondary, 0.35);
+    border-radius: $radius-pill;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: $color-text-inverse;
+      background-color: $color-secondary;
+      border-color: $color-secondary;
+    }
+  }
+
+  .facet-summary-item--clear a {
+    color: $color-primary;
+    border-color: rgba($color-primary, 0.45);
+
+    &:hover,
+    &:focus-visible {
+      color: $color-text-inverse;
+      background-color: $color-primary;
+      border-color: $color-primary;
+    }
+  }
+}
 
 .site-search {
   &__layout {
     display: block;
   }
 
-  &__header {
-    margin-block-end: $spacing-sm;
+  &__intro {
+    margin-block-end: $spacing-md;
+    padding: $spacing-md;
+    background-color: $color-surface;
+    background-image: linear-gradient(
+      135deg,
+      rgba($wcf-purple, 0.06) 0%,
+      rgba($wcf-teal, 0.05) 45%,
+      transparent 100%
+    );
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+  }
+
+  &__page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: $spacing-sm $spacing-md;
+    margin-block-end: $spacing-md;
+    padding-block-end: $spacing-md;
+    border-block-end: 1px solid $color-border;
+  }
+
+  &__lead {
+    flex: 1 1 16rem;
+    min-width: 0;
+  }
+
+  &__title {
+    margin: 0;
+    color: $color-d7-heading;
+    font-family: $font-family-display;
+    font-weight: 400;
+    font-size: clamp(1.75rem, 3vw + 1rem, 2.75rem);
+    line-height: 1.05;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  &__tagline {
+    margin: $spacing-xs 0 0;
+    max-width: 36rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    color: $color-text-muted;
+  }
+
+  &__range {
+    flex: 0 0 auto;
+    margin: 0;
+    padding: $spacing-xs $spacing-sm;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: $color-d7-heading;
+    background: rgba($color-accent, 0.12);
+    border: 1px solid rgba($color-accent, 0.25);
+    border-radius: $radius-pill;
+    white-space: nowrap;
 
     .view-header {
-      font-weight: 600;
+      margin: 0;
+      font: inherit;
+      color: inherit;
     }
   }
 
   &__keywords {
-    margin-block-end: $spacing-md;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
   }
 
-  &__form {
-    display: flex;
-    flex-wrap: wrap;
+  &__form--inline {
+    display: grid;
+    grid-template-columns: 1fr auto;
     gap: $spacing-sm;
-    align-items: flex-end;
+    align-items: start;
+
+    .form-item-keywords {
+      margin: 0;
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .form-actions {
+      margin: 0;
+      grid-column: 2;
+      grid-row: 1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: $spacing-xs;
+      align-items: center;
+    }
+
+    .description {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      margin: 0;
+      font-size: 0.8125rem;
+      color: $color-text-muted;
+    }
+  }
+
+  &__input {
+    width: 100%;
+    min-height: page.$touch-target-min;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    line-height: 1.3;
+    color: $color-text;
+    background: $wcf-cream;
+    border: 1px solid $color-border-strong;
+    border-radius: $radius-pill;
+    box-shadow: inset 0 1px 2px rgba($wcf-charcoal, 0.04);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &::placeholder {
+      color: rgba($color-text-muted, 0.85);
+    }
+
+    &:focus-visible {
+      outline: 3px solid $color-focus;
+      outline-offset: 2px;
+      border-color: $color-primary;
+      box-shadow: inset 0 1px 2px rgba($wcf-charcoal, 0.04), 0 0 0 3px rgba($color-primary, 0.15);
+    }
+  }
+
+  &__submit {
+    min-width: 6.5rem;
+  }
+
+  &__reset {
+    margin: 0;
   }
 
   &__results {
-    margin-block-start: $spacing-sm;
+    margin-block-start: 0;
   }
 
   &__empty {
@@ -36,14 +244,19 @@
   &__empty-message {
     margin: 0;
   }
+}
 
-  &__pager {
-    margin-block-start: $spacing-lg;
-  }
-
-  &__reset {
-    margin-inline-start: $spacing-xs;
-  }
+// Results band (search + stallion listing).
+.stallion-listing.site-search .site-search__results,
+.stallion-listing.site-search .stallion-listing__results {
+  margin-block-start: 0;
+  padding-block: $spacing-lg;
+  padding-inline: $spacing-md;
+  background-color: $listing-band-bg;
+  background-image: linear-gradient(180deg, rgba($color-accent, 0.07) 0%, transparent 55%);
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
 }
 
 .layout-content--with-sidebar {
@@ -53,6 +266,17 @@
   margin-inline: auto;
   padding-inline: $spacing-sm;
 
+  // Mobile: keyword search + results before facet blocks (DOM keeps sidebar first for desktop).
+  @media (max-width: ($breakpoint-lg - 0.0625rem)) {
+    .layout-content__primary {
+      order: 1;
+    }
+
+    .layout-sidebar--first {
+      order: 2;
+    }
+  }
+
   @media (min-width: $breakpoint-lg) {
     grid-template-columns: minmax(220px, 280px) 1fr;
     align-items: start;
@@ -60,9 +284,32 @@
 }
 
 .layout-sidebar--first {
-  .block-facet-block,
-  .block-facets-summary-block {
+  .block-facet-block {
     margin-block-end: $spacing-md;
+    padding: $spacing-md;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
+  }
+
+  .block-facet-block h2,
+  .block-facet-block h3 {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-block: 0 $spacing-sm;
+    color: $color-d7-heading;
+    padding-block-end: $spacing-xs;
+    border-block-end: 1px solid $color-border;
+  }
+
+  .facets-widget-links,
+  .item-list__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   .facet-item {
@@ -70,36 +317,56 @@
   }
 
   .facet-item a {
+    display: flex;
+    justify-content: space-between;
+    gap: $spacing-sm;
+    padding: 0.5rem 0.625rem;
     text-decoration: none;
+    color: $color-d7-heading;
+    font-size: 0.9375rem;
+    border-radius: $radius-sm;
+    transition: background-color 0.15s ease;
 
     &:hover,
     &:focus-visible {
-      text-decoration: underline;
+      color: $color-primary;
+      background: rgba($color-primary, 0.08);
     }
   }
 
-  h2,
-  h3 {
-    font-size: 1rem;
-    margin-block: 0 $spacing-xs;
-  }
-}
-
-.page--search {
-  .block-facets-summary-block {
-    margin-block-end: $spacing-sm;
+  .facet-item__count {
+    color: $color-text-muted;
+    font-size: 0.875rem;
+    white-space: nowrap;
   }
 }
 
 @media (max-width: $breakpoint-md) {
-  .layout-sidebar--first {
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    border-radius: 4px;
-    padding: $spacing-sm;
-  }
-
-  .site-search__form {
+  .site-search__page-header {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .site-search__range {
+    align-self: flex-start;
+  }
+
+  .site-search__form--inline {
+    grid-template-columns: 1fr;
+
+    .form-actions {
+      grid-column: 1;
+      grid-row: 2;
+      justify-content: stretch;
+
+      .button,
+      .form-submit {
+        flex: 1 1 auto;
+      }
+    }
+
+    .description {
+      grid-row: 3;
+    }
   }
 }

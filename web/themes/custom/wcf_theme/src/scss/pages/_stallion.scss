@@ -3,9 +3,9 @@
 // Stallion full profile — D7 product/view patterns (extends _inner-profile.scss).
 
 $stallion-profile-max-width: 56rem;
-$stallion-name-color: #212121;
-$stallion-subtitle-color: #db4b3d;
-$stallion-gallery-band-bg: $color-d7-inner-band;
+$stallion-name-color: $color-text;
+$stallion-subtitle-color: $wcf-coral;
+$stallion-gallery-band-bg: $color-background-alt;
 
 .stallion {
   max-width: $stallion-profile-max-width;
@@ -33,7 +33,7 @@ $stallion-gallery-band-bg: $color-d7-inner-band;
   min-width: 4.625rem;
   min-height: 4.625rem;
   padding: 0 $spacing-sm;
-  border: 1px solid $color-d7-accent;
+  border: 1px solid $color-accent;
   border-radius: 50%;
   font-size: 0.875rem;
   font-weight: 700;
@@ -41,22 +41,26 @@ $stallion-gallery-band-bg: $color-d7-inner-band;
   text-transform: uppercase;
   text-decoration: none;
   color: $color-text-inverse;
-  background: linear-gradient(to bottom, #7bcbba 0%, #43b7c5 100%);
+  background: linear-gradient(135deg, $wcf-teal 0%, $wcf-blue 100%);
 
   &:hover {
-    background: linear-gradient(to bottom, #43b7c5 0%, #7bcbba 100%);
+    background: linear-gradient(135deg, $wcf-blue 0%, $wcf-teal 100%);
     color: $color-text-inverse;
   }
 
   &:focus-visible {
-    outline: 3px solid $color-primary;
+    outline: 3px solid $color-focus;
     outline-offset: 2px;
   }
 
   &.is-active {
-    border-color: #800080;
-    background: linear-gradient(to bottom, #800080 0%, #bc65ac 100%);
+    border-color: $wcf-purple;
+    background: linear-gradient(135deg, $wcf-purple 0%, $wcf-magenta 100%);
   }
+}
+
+.stallion__intro > :first-child {
+  margin-block-start: 0;
 }
 
 .stallion__name {
@@ -143,19 +147,76 @@ $stallion-gallery-band-bg: $color-d7-inner-band;
   color: $color-primary;
 }
 
-.stallion__gallery-band {
-  margin-inline: calc(-1 * #{$spacing-sm});
-  padding: $spacing-lg $spacing-sm;
-  background-color: $stallion-gallery-band-bg;
+// Hero/main image — 4px frame, rounded corners (stallion detail header).
+$stallion-main-image-border: 4px;
+
+// Header grid: image and title share the same top edge (no field wrapper offset).
+.stallion__header {
+  @media (min-width: $breakpoint-md) {
+    align-items: start;
+  }
+}
+
+.stallion__media,
+.stallion__intro {
+  align-self: start;
+}
+
+.stallion__media-frame {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: 100%;
+}
+
+.stallion__media {
+  :where(.field, .field__item, .media) {
+    margin-block: 0;
+  }
+
+  :where(img:not(.stallion-sold-badge__image), picture img) {
+    box-sizing: border-box;
+    padding: 0;
+    border: $stallion-main-image-border solid $color-border;
+    border-radius: $radius-md;
+  }
+
+  picture {
+    display: block;
+    border-radius: $radius-md;
+    overflow: hidden;
+  }
+}
+
+.stallion__placeholder-image {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: 28rem;
+  margin-inline: auto;
+  padding: 0;
+  object-fit: contain;
+  background-color: $color-text-inverse;
+  border: $stallion-main-image-border solid $color-border;
+  border-radius: $radius-md;
 
   @media (min-width: $breakpoint-md) {
-    margin-inline: calc(-1 * #{$spacing-md});
-    padding-inline: $spacing-md;
+    max-height: 31.25rem;
   }
+}
+
+.stallion__gallery-band {
+  margin-inline: 0;
+  padding: $spacing-lg $spacing-md;
+  background-color: $stallion-gallery-band-bg;
+  border-radius: $radius-md;
+  overflow: hidden;
 
   .stallion__section-title {
     margin-block-end: $spacing-md;
-    text-align: center;
+    text-align: left;
   }
 }
 
@@ -190,45 +251,49 @@ $stallion-gallery-band-bg: $color-d7-inner-band;
     width: 100%;
     height: $stallion-gallery-card-height;
     margin: 0;
-    padding: 1%;
-    border: 1px solid #000;
-    background-color: $stallion-gallery-band-bg;
+    padding: $spacing-sm;
+    border: 1px solid $color-border;
+    background-color: $color-surface;
+    border-radius: $radius-md;
+    box-shadow: $shadow-sm;
   }
 
-  .stallion-gallery__card > * {
+  // Media wrappers — centre image inside padded card (do not bleed to card edges).
+  .stallion-gallery__card :where(.field, .field__item, .media, a) {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 100%;
     height: 100%;
+    min-width: 0;
+    min-height: 0;
     margin: 0;
   }
 
   img,
   picture {
     display: block;
+    box-sizing: border-box;
     width: auto;
     height: auto;
-    max-width: 98%;
-    max-height: 98%;
+    max-width: 100%;
+    max-height: 100%;
     margin: 0;
-    padding: 0;
+    padding: 0.2rem;
     object-fit: contain;
-    background: transparent;
-    border: 0;
+    background-color: $color-text-inverse;
+    border: 1px solid $color-d7-heading;
+    border-radius: $radius-sm;
   }
 
-  a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
+  .stallion-gallery__lightbox {
+    cursor: zoom-in;
     text-decoration: none;
 
     &:focus-visible {
       outline: 3px solid $color-primary;
       outline-offset: 2px;
+      border-radius: $radius-sm;
     }
   }
 }
@@ -255,14 +320,142 @@ $stallion-gallery-band-bg: $color-d7-inner-band;
   }
 }
 
-.stallion__section--video {
-  :where(.media-oembed-content, iframe) {
+// Video list — stacked cards (icon/thumbnail + title), same pattern as documents.
+.stallion-videos__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stallion-videos__link {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  text-decoration: none;
+  color: $color-d7-heading;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-focus;
+    outline-offset: 2px;
+  }
+}
+
+.stallion-videos__thumb {
+  position: relative;
+  flex: 0 0 auto;
+  width: 3rem;
+  height: 3rem;
+  overflow: hidden;
+  border-radius: $radius-sm;
+  background: linear-gradient(135deg, $wcf-charcoal 0%, rgba($wcf-charcoal, 0.75) 100%);
+
+  img {
     display: block;
     width: 100%;
-    max-width: 100%;
-    aspect-ratio: 16 / 9;
-    border: 0;
+    height: 100%;
+    object-fit: cover;
   }
+}
+
+.stallion-videos__play {
+  position: absolute;
+  z-index: 1;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background: rgba($wcf-charcoal, 0.35);
+
+  &::after {
+    content: '';
+    display: block;
+    width: 0;
+    height: 0;
+    border-top: 0.55rem solid transparent;
+    border-bottom: 0.55rem solid transparent;
+    border-left: 0.9rem solid $color-text-inverse;
+    margin-left: 0.15rem;
+  }
+}
+
+.stallion-videos__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.35;
+  word-break: break-word;
+}
+
+// PDF document list — icon + filename (no file size).
+.stallion-documents__list {
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-sm;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.stallion-documents__link {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm;
+  text-decoration: none;
+  color: $color-d7-heading;
+  background-color: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-sm;
+
+  &:hover,
+  &:focus-visible {
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+
+  &:focus-visible {
+    outline: 3px solid $color-focus;
+    outline-offset: 2px;
+  }
+}
+
+.stallion-documents__icon {
+  flex: 0 0 auto;
+  line-height: 0;
+
+  svg {
+    display: block;
+    width: 3rem;
+    height: 3rem;
+    border-radius: $radius-sm;
+  }
+}
+
+.stallion-documents__label {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 1rem;
+  font-weight: 500;
+  line-height: 1.35;
+  word-break: break-word;
 }
 
 // Hero view mode (listing headers, featured bands) — unchanged.

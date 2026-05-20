@@ -1,0 +1,11 @@
+uuid: a1b2c3d4-e5f6-7890-abcd-ef1234567890
+langcode: en
+status: true
+dependencies: {  }
+name: 'Showcase item'
+type: wcf_showcase_item
+description: 'Horse showcase stories migrated from the legacy Showcase app (wcf_showcase). Each item is one editorial block with description and image gallery on /showcase.'
+help: 'Add a title, story text, and gallery images (up to eight). Lower weight appears first on the Showcase page. Publish when ready.'
+new_revision: true
+preview_mode: 1
+display_submitted: false

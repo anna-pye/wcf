@@ -1,0 +1,28 @@
+{#
+/**
+ * @file
+ * Remote video — gallery view mode (poster thumbnail opens in GLightbox).
+ */
+#}
+{% set video_url = media.field_media_oembed_video.value %}
+{% if stallion_gallery_group and video_url %}
+  <a
+    href="{{ video_url }}"
+    class="stallion-gallery__lightbox stallion-gallery__lightbox--video glightbox"
+    data-gallery="{{ stallion_gallery_group }}"
+    data-type="video"
+    {% if label %}
+      data-title="{{ label }}"
+    {% endif %}
+    aria-label="{{ 'Play video'|t }}"
+  >
+    {% if content.thumbnail %}
+      <span class="stallion-gallery__play" aria-hidden="true"></span>
+      {{ content.thumbnail }}
+    {% else %}
+      <span class="stallion-gallery__play-label">{{ 'Play video'|t }}</span>
+    {% endif %}
+  </a>
+{% elseif content.thumbnail %}
+  {{ content.thumbnail }}
+{% endif %}

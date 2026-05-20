@@ -1,0 +1,21 @@
+uuid: dcc3fee7-4818-433f-99e2-86bc42ec7c53
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_registry_short_name
+field_name: field_registry_short_name
+entity_type: node
+type: string
+settings:
+  max_length: 64
+  case_sensitive: false
+  is_ascii: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

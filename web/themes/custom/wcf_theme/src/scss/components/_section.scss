@@ -1,0 +1,121 @@
+@use '../abstracts/variables' as *;
+@use '../layout/page' as page;
+
+// Shared section wrapper and page hero for listings and basic pages.
+
+.wcf-section {
+  padding-block: $section-spacing;
+  padding-inline: $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    padding-inline: $spacing-md;
+  }
+
+  &--sand {
+    background-color: $color-background-alt;
+  }
+
+  &--cream {
+    background-color: $color-background;
+  }
+
+  &--white {
+    background-color: $color-surface;
+  }
+
+  &--gradient {
+    background: $gradient-section;
+  }
+
+  &__inner {
+    max-width: $section-max-width;
+    margin-inline: auto;
+  }
+
+  &__header {
+    margin-block-end: $spacing-lg;
+    text-align: center;
+  }
+
+  &__title {
+    margin: 0 0 $spacing-sm;
+    font-family: $font-family-display;
+    font-size: clamp(1.75rem, 3.5vw + 0.5rem, 2.75rem);
+    font-weight: 400;
+    line-height: $line-height-tight;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: $color-text;
+  }
+
+  &__lead {
+    margin: 0 auto;
+    max-width: 42rem;
+    font-size: $font-size-lg;
+    line-height: $line-height-base;
+    color: $color-text-muted;
+  }
+}
+
+.page-hero {
+  position: relative;
+  padding: $spacing-xl $spacing-sm $spacing-lg;
+  background: $gradient-section;
+  border-block-end: 1px solid $color-border;
+
+  @media (min-width: $breakpoint-md) {
+    padding-block: $spacing-2xl $spacing-xl;
+    padding-inline: $spacing-md;
+  }
+
+  &__inner {
+    max-width: $content-max-width;
+    margin-inline: auto;
+  }
+
+  &__title {
+    margin: 0 0 $spacing-xs;
+    font-family: $font-family-display;
+    font-size: clamp(2rem, 4vw + 0.75rem, 3.25rem);
+    font-weight: 400;
+    line-height: $line-height-tight;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: $color-text;
+  }
+
+  &__subtitle {
+    margin: 0;
+    max-width: 40rem;
+    font-size: $font-size-lg;
+    color: $color-text-muted;
+  }
+}
+
+// Basic page and webform pages.
+.page-node-type-page,
+.page-node-type-article {
+  .site-main {
+    background-color: $color-background;
+  }
+
+  .node--view-mode-full:not(.homepage):not(.stallion):not(.container-home) {
+    max-width: $content-max-width;
+    margin-inline: auto;
+    padding: $spacing-lg $spacing-sm $spacing-xl;
+    background-color: $color-surface;
+    border-radius: $radius-lg;
+    box-shadow: $shadow-sm;
+
+    @media (min-width: $breakpoint-md) {
+      margin-block: $spacing-lg;
+      padding-inline: $spacing-lg;
+    }
+  }
+}
+
+.path-webform {
+  .site-main {
+    background-color: $color-background;
+  }
+}

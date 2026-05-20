@@ -1,0 +1,25 @@
+uuid: 5897be16-f82a-4828-b996-7e3d743b8912
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_registry_weight
+    - node.type.wcf_registry_logo
+id: node.wcf_registry_logo.field_registry_weight
+field_name: field_registry_weight
+entity_type: node
+bundle: wcf_registry_logo
+label: Weight
+description: 'Lower numbers appear first on the homepage (maximum five published logos).'
+required: false
+translatable: true
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

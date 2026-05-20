@@ -1,0 +1,23 @@
+uuid: b1b2c3d4-4444-4222-8333-444455556666
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_newsletter_legacy_id
+    - node.type.wcf_newsletter
+id: node.wcf_newsletter.field_newsletter_legacy_id
+field_name: field_newsletter_legacy_id
+entity_type: node
+bundle: wcf_newsletter
+label: 'Legacy news ID'
+description: 'D7 wcf_news.id for idempotent imports.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

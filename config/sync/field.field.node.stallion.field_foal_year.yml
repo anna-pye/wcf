@@ -1,0 +1,21 @@
+uuid: b2c3d4e5-f6a7-8901-bcde-f12345678901
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_foal_year
+    - node.type.stallion
+id: node.stallion.field_foal_year
+field_name: field_foal_year
+entity_type: node
+bundle: stallion
+label: 'Foal year'
+description: 'Birth year for foals (legacy D7 product.year). Used on cards, search filters, and foal year navigation.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 1990
+  max: 2100
+field_type: integer

@@ -1,0 +1,23 @@
+uuid: a7b8c9d0-e1f2-3456-0123-567890123456
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_showcase_legacy_id
+    - node.type.wcf_showcase_item
+id: node.wcf_showcase_item.field_showcase_legacy_id
+field_name: field_showcase_legacy_id
+entity_type: node
+bundle: wcf_showcase_item
+label: 'Legacy showcase ID'
+description: 'D7 wcf_showcase.id for idempotent imports.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

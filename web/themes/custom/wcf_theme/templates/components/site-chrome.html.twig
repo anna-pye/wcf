@@ -1,0 +1,99 @@
+{#
+/**
+ * @file
+ * Public site chrome — contact strip, branding, nav band, nomination CTA.
+ *
+ * Variables (from wcf_theme_preprocess_page):
+ * - wcf_chrome_variant: 'front' or 'inner'
+ * - wcf_contact_phone_display, wcf_contact_phone_uri
+ * - wcf_site_mail
+ * - wcf_facebook_url, wcf_instagram_url
+ * - wcf_show_front_nav, wcf_front_nav_links
+ * - wcf_header_nomination_cta: link render array or NULL
+ * - page.header, page.primary_menu, page.secondary_menu
+ */
+#}
+{% if wcf_contact_strip_message or wcf_facebook_url or wcf_instagram_url %}
+  <div class="site-contact-strip">
+    <div class="site-contact-strip__inner">
+      {% if wcf_contact_strip_message and wcf_contact_phone_uri %}
+        <a class="site-contact-strip__message" href="{{ wcf_contact_phone_uri }}">
+          {{ wcf_contact_strip_message }}
+        </a>
+      {% elseif wcf_contact_strip_message %}
+        <p class="site-contact-strip__message">{{ wcf_contact_strip_message }}</p>
+      {% endif %}
+      {% if wcf_facebook_url or wcf_instagram_url %}
+        <div class="site-contact-strip__social">
+          {% if wcf_facebook_url %}
+            <a class="site-contact-strip__social-link" href="{{ wcf_facebook_url }}" target="_blank" rel="noopener noreferrer">
+              <span class="visually-hidden">{{ 'Facebook'|t }}</span>
+              {% include '@wcf_theme/components/wcf-icon.html.twig' with { icon: 'facebook' } only %}
+            </a>
+          {% endif %}
+          {% if wcf_instagram_url %}
+            <a class="site-contact-strip__social-link" href="{{ wcf_instagram_url }}" target="_blank" rel="noopener noreferrer">
+              <span class="visually-hidden">{{ 'Instagram'|t }}</span>
+              {% include '@wcf_theme/components/wcf-icon.html.twig' with { icon: 'instagram' } only %}
+            </a>
+          {% endif %}
+        </div>
+      {% endif %}
+    </div>
+  </div>
+{% endif %}
+
+<div class="site-chrome site-chrome--{{ wcf_chrome_variant }}{% if wcf_show_front_nav %} site-chrome--header-nav{% endif %}">
+  <div class="site-chrome__bar">
+    {% if page.header %}
+      <div class="site-chrome__identity">
+        {{ page.header }}
+      </div>
+    {% endif %}
+
+    {% if wcf_show_front_nav and wcf_front_nav_links is not empty %}
+      <details class="site-chrome__nav-drawer site-chrome__nav-drawer--mobile">
+        <summary class="site-chrome__nav-toggle">
+          <span class="site-chrome__nav-toggle-label">{{ 'Menu'|t }}</span>
+        </summary>
+        <div class="site-chrome__nav-panel site-chrome__nav-panel--mobile">
+          {% include '@wcf_theme/components/wcf-front-nav.html.twig' %}
+        </div>
+      </details>
+    {% elseif page.primary_menu or page.secondary_menu %}
+      <div class="site-chrome__nav-col">
+        <details class="site-chrome__nav-drawer">
+          <summary class="site-chrome__nav-toggle">
+            <span class="site-chrome__nav-toggle-label">{{ 'Menu'|t }}</span>
+          </summary>
+          <div class="site-chrome__nav-panel">
+            <nav class="site-chrome__nav" aria-label="{{ 'Main navigation'|t }}">
+              {% if page.primary_menu %}
+                {{ page.primary_menu }}
+              {% endif %}
+              {% if page.secondary_menu %}
+                {{ page.secondary_menu }}
+              {% endif %}
+            </nav>
+          </div>
+        </details>
+      </div>
+    {% endif %}
+
+    {% if wcf_header_nomination_cta %}
+      <div class="site-chrome__cta-col">
+        <div class="site-chrome__cta">
+          {{ wcf_header_nomination_cta }}
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  {% if wcf_show_front_nav and wcf_front_nav_links is not empty %}
+    <div class="site-chrome__nav-band">
+      <div class="site-chrome__nav-band-inner">
+        {% include '@wcf_theme/components/wcf-front-nav.html.twig' %}
+      </div>
+    </div>
+  {% endif %}
+</div>

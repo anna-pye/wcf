@@ -1,67 +1,27 @@
 {#
 /**
  * @file
- * Front page layout — hero-first with D7-style overlay chrome.
+ * Front page layout — mockup homepage sections with shared public chrome.
  */
 #}
 <div class="layout-container layout-container--front">
-  <header class="site-header site-header--front" role="banner">
-    <div class="site-chrome site-chrome--front">
-      {% if page.header %}
-        <div class="site-chrome__identity site-chrome__identity--overlay">
-          {{ page.header }}
-        </div>
-      {% endif %}
-      {% if page.primary_menu or page.secondary_menu %}
-        <details class="site-chrome__nav-drawer site-chrome__nav-drawer--overlay">
-          <summary class="site-chrome__nav-toggle">
-            <span class="site-chrome__nav-toggle-label">{{ 'Menu'|t }}</span>
-          </summary>
-          <div class="site-chrome__nav-panel">
-            <nav class="site-chrome__nav" aria-label="{{ 'Main navigation'|t }}">
-              {% if page.primary_menu %}
-                {{ page.primary_menu }}
-              {% endif %}
-              {% if page.secondary_menu %}
-                {{ page.secondary_menu }}
-              {% endif %}
-            </nav>
-          </div>
-        </details>
-      {% endif %}
-    </div>
-  </header>
+  {% include '@wcf_theme/layout/partials/wcf-public-header.html.twig' %}
 
   <main id="main-content" class="site-main site-main--front" role="main">
     {{ page.highlighted }}
-    <div class="layout-content layout-content--front">
-      {{ page.content }}
-    </div>
+
+    {% include '@wcf_theme/components/wcf-home-hero.html.twig' %}
+    {% include '@wcf_theme/components/wcf-home-feature-strip.html.twig' %}
+    {% include '@wcf_theme/components/wcf-home-promo-cards.html.twig' %}
+    {% include '@wcf_theme/components/wcf-home-lower-band.html.twig' %}
+
+    {% set homepage_cms = page.content|render|striptags|trim %}
+    {% if homepage_cms is not empty %}
+      <div class="layout-content layout-content--front">
+        {{ page.content }}
+      </div>
+    {% endif %}
   </main>
 
-  {% if page.footer or site_mail %}
-    <footer class="site-footer site-footer--front" role="contentinfo">
-      <div class="site-footer__inner">
-        {% if page.footer %}
-          <div class="site-footer__menus">
-            {{ page.footer }}
-          </div>
-        {% endif %}
-        <div class="site-footer__meta">
-          {% if site_mail %}
-            <p class="site-footer__contact">
-              <span class="site-footer__contact-label">{{ 'Web site contact'|t }}</span>
-              <a href="mailto:{{ site_mail }}">{{ site_mail }}</a>
-            </p>
-          {% endif %}
-          <p class="site-footer__branding">
-            <a href="{{ front_page }}" class="site-footer__site-name">{{ site_name }}</a>
-          </p>
-          <p class="site-footer__copyright">
-            &copy; {{ "now"|date("Y") }} {{ site_name }}. {{ 'All rights reserved.'|t }}
-          </p>
-        </div>
-      </div>
-    </footer>
-  {% endif %}
+  {% include '@wcf_theme/layout/partials/wcf-public-footer.html.twig' %}
 </div>

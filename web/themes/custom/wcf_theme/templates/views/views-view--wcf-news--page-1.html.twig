@@ -1,0 +1,56 @@
+{#
+/**
+ * @file
+ * News / newsletter archive — year accordion (D7 parity).
+ *
+ * Variables:
+ * - wcf_newsletter_years: list of { year, items[] } with month, title, url
+ */
+#}
+{%
+  set classes = [
+    'view',
+    'view-' ~ id|clean_class,
+    'view-id-' ~ id,
+    'view-display-id-' ~ display_id,
+    'wcf-news-page',
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {% if header %}
+    {{ header }}
+  {% endif %}
+
+  {% if wcf_newsletter_years is not empty %}
+    <section class="wcf-news-page__archive white_bg" aria-label="{{ 'Newsletter archive'|t }}">
+      <div class="wcf-news-page__archive-inner">
+        <div class="wcf-news-page__accordion accordion_full">
+          <ul>
+            {% for group in wcf_newsletter_years %}
+              <li class="wcf-news-page__year">
+                <details class="wcf-news-page__year-details">
+                  <summary class="wcf-news-page__year-summary h">
+                    <span class="fl">{{ 'Newsletter'|t }}<span> {{ group.year }}</span></span>
+                  </summary>
+                  <div class="wcf-news-page__year-panel acordian_active">
+                    <ul>
+                      {% for item in group.items %}
+                        <li>
+                          <a href="{{ item.url }}" target="_blank" rel="noopener noreferrer">{{ item.month }}</a>
+                        </li>
+                      {% endfor %}
+                    </ul>
+                  </div>
+                </details>
+              </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </section>
+  {% elseif empty %}
+    <div class="wcf-news-page__empty">
+      {{ empty }}
+    </div>
+  {% endif %}
+</div>

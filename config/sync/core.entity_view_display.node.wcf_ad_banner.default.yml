@@ -1,0 +1,67 @@
+uuid: 946fa4c1-b051-4f87-b303-c68ce8264379
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.wcf_ad_banner.field_banner_caption
+    - field.field.node.wcf_ad_banner.field_banner_categories
+    - field.field.node.wcf_ad_banner.field_banner_image
+    - field.field.node.wcf_ad_banner.field_banner_link
+    - field.field.node.wcf_ad_banner.field_banner_weight
+    - node.type.wcf_ad_banner
+  module:
+    - link
+    - user
+id: node.wcf_ad_banner.default
+targetEntityType: node
+bundle: wcf_ad_banner
+mode: default
+content:
+  field_banner_caption:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_banner_categories:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_banner_image:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: card
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_banner_link:
+    type: link
+    label: above
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  field_banner_weight:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+hidden:
+  links: true
+  search_api_excerpt: true

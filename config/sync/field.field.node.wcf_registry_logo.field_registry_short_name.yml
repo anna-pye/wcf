@@ -1,0 +1,19 @@
+uuid: 476c6b1d-aa56-49db-bf6b-b24bbbdfd8a2
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_registry_short_name
+    - node.type.wcf_registry_logo
+id: node.wcf_registry_logo.field_registry_short_name
+field_name: field_registry_short_name
+entity_type: node
+bundle: wcf_registry_logo
+label: 'Short name'
+description: 'Optional abbreviation shown below the organisation name.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

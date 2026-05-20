@@ -6,14 +6,27 @@
 @use 'layout/page';
 @use 'layout/chrome';
 
+@use 'components/buttons';
+@use 'components/section';
+@use 'components/wcf-icons';
+@use 'components/home-hero';
+@use 'components/home-feature-strip';
+@use 'components/home-promo-cards';
+@use 'components/home-lower-band';
+@use 'components/registry-legend';
+@use 'components/social-follow';
+@use 'components/front-nav';
 @use 'components/hero-slide';
 @use 'components/hero-slider';
 @use 'components/stallion-card';
+@use 'components/stallion-sold-badge';
 @use 'components/testimonial-card';
 @use 'components/feature-card';
+@use 'components/ad-banners';
 @use 'components/featured-stallions';
 @use 'components/featured-content';
 @use 'components/forms';
+@use 'components/pager';
 
 @use 'pages/front';
 @use 'pages/inner-profile';
@@ -21,6 +34,8 @@
 @use 'pages/container-home';
 @use 'pages/stallion-listing';
 @use 'pages/site-search';
+@use 'pages/showcase';
+@use 'pages/news';
 
 // Base document styles.
 body {
@@ -29,12 +44,5 @@ body {
   font-size: variables.$font-size-base;
   line-height: variables.$line-height-base;
   color: variables.$color-text;
-}
-
-.button {
-  cursor: pointer;
-}
-
-.button--primary {
-  // Styled via .hero-slide__cta
+  background-color: variables.$color-background;
 }

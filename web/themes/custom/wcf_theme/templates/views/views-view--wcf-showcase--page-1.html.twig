@@ -1,0 +1,32 @@
+{#
+/**
+ * @file
+ * Showcase listing — profile page chrome, stacked stallion-style stories.
+ */
+#}
+{%
+  set classes = [
+    'view',
+    'view-' ~ id|clean_class,
+    'view-id-' ~ id,
+    'view-display-id-' ~ display_id,
+    'showcase-page',
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {% if header %}
+    <header class="showcase-page__header">
+      {{ header }}
+    </header>
+  {% endif %}
+
+  {% if rows -%}
+    <div class="showcase-page__list">
+      {{ rows }}
+    </div>
+  {% elseif empty -%}
+    <div class="showcase-page__empty">
+      {{ empty }}
+    </div>
+  {% endif %}
+</div>

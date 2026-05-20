@@ -1,0 +1,39 @@
+uuid: 09472223-ddb5-4e42-bbf2-f1e80c618a4a
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+    - options
+id: node.field_registry_colour
+field_name: field_registry_colour
+entity_type: node
+type: list_string
+settings:
+  allowed_values:
+    -
+      value: purple
+      label: Purple
+    -
+      value: coral
+      label: Coral
+    -
+      value: sky
+      label: Sky
+    -
+      value: lilac
+      label: Lilac
+    -
+      value: gold
+      label: Gold
+    -
+      value: teal
+      label: Teal
+  allowed_values_function: ''
+module: options
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

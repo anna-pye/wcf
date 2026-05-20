@@ -133,5 +133,6 @@ Established via `scripts/wcf-business-content-setup.php` (config in sync):
 | `wcf_product` / horse content | `stallion` content type (media-first, revisionable) |
 | `wcf_testimonial` | `testimonial_item` paragraph on `homepage` |
 | `wcf_showcase` / `wcf_banner` | `feature_card` paragraph on `homepage` |
+| `wcf_news` (newsletter PDFs) | `wcf_newsletter` nodes + document media; View `wcf_news` at `/news` |
 
 Stallion node/media migration: `wcf_d7_node_stallion` and related migrations. Category assignment: post-migrate scripts above (Phase 2).

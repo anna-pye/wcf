@@ -1,0 +1,63 @@
+@use '../abstracts/variables' as *;
+
+// Category-aware promotional ad banners — stacked image-only cards.
+
+.wcf-ad-banners {
+  margin-block-start: $spacing-lg;
+
+  &__inner {
+    max-width: $section-max-width;
+    margin-inline: auto;
+  }
+
+  &__stack {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-md;
+    align-items: stretch;
+  }
+}
+
+.wcf-ad-banner {
+  display: block;
+  min-width: 0;
+  border-radius: $radius-lg;
+  background-color: $color-surface;
+  box-shadow: $shadow-sm;
+  overflow: hidden;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+
+  &:hover,
+  &:focus-within {
+    box-shadow: $shadow-md;
+    transform: translateY(-2px);
+  }
+
+  &__link {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    line-height: 0;
+
+    &:focus-visible {
+      outline: 3px solid $color-focus;
+      outline-offset: 3px;
+    }
+
+    // Media banner view mode — image only.
+    .media,
+    .field,
+    .field__item {
+      margin: 0;
+    }
+
+    img,
+    picture {
+      display: block;
+      width: 100%;
+      height: auto;
+      object-fit: cover;
+      background-color: $color-background-alt;
+    }
+  }
+}

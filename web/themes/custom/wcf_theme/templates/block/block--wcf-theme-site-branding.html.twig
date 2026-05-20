@@ -1,0 +1,23 @@
+{#
+/**
+ * @file
+ * Site branding block — WCF logo linked to front page.
+ */
+#}
+{%
+  set classes = [
+    'block',
+    'block-system',
+    'block-system-branding-block',
+    'site-branding',
+  ]
+%}
+<div{{ attributes.addClass(classes) }}>
+  {{ title_prefix }}
+  {% if content %}
+    <a href="{{ path('<front>') }}" rel="home" class="site-branding__logo">
+      {{ content }}
+    </a>
+  {% endif %}
+  {{ title_suffix }}
+</div>

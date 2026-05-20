@@ -48,3 +48,11 @@ processor_configs:
     weights:
       build: 5
     settings: {  }
+  exclude_specified_items:
+    processor_id: exclude_specified_items
+    weights:
+      build: 40
+    settings:
+      exclude: 'ASB Stallions,Stallions,Sold Stallions,For Sale,Foals,Broodmares,Show Mares,Show mares'
+      regex: false
+      invert: true

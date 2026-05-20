@@ -136,9 +136,11 @@ elements: |-
         November: November
         December: December
     preferred_stallion:
-      '#type': textfield
+      '#type': select
       '#title': 'Preferred stallion'
       '#required': true
+      '#options':
+        '': Select
   contact_details:
     '#type': fieldset
     '#title': 'Your details'

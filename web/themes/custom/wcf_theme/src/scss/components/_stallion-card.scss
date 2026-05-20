@@ -7,6 +7,9 @@
   background: #fff;
   height: 100%;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
 
 .stallion-card--no-media {
@@ -18,6 +21,8 @@
 .stallion-card__link {
   display: flex;
   flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
   height: 100%;
   color: inherit;
   text-decoration: none;
@@ -36,22 +41,33 @@
 }
 
 .stallion-card__media {
+  flex: 0 0 auto;
   margin: 0;
+  width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
+  position: relative;
+  background-color: rgba($color-text, 0.04);
 
-  img,
+  img:not(.stallion-sold-badge__image),
   picture {
     width: 100%;
     height: 100%;
     object-fit: cover;
     display: block;
+    border-radius: $radius-sm $radius-sm 0 0;
   }
 }
 
+.stallion-card__media--placeholder img:not(.stallion-sold-badge__image) {
+  object-fit: contain;
+  padding: $spacing-xs;
+  background-color: $color-text-inverse;
+}
+
 .stallion-card__body {
+  flex: 0 0 auto;
   padding: $spacing-sm;
-  flex: 1;
   display: flex;
   flex-direction: column;
   gap: $spacing-xs;
@@ -70,6 +86,25 @@
   margin: 0;
   font-size: 1.125rem;
   line-height: 1.3;
+  font-weight: 600;
+  text-align: center;
+  color: $color-d7-heading;
+}
+
+.stallion-card__year {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-align: center;
+  color: $wcf-teal;
+}
+
+.stallion-card__subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.35;
   font-weight: 400;
   text-align: center;
   color: $color-d7-title-muted;
@@ -81,13 +116,13 @@
   line-height: 1.5;
   text-align: left;
   color: $color-text-muted;
-  flex: 1;
 }
 
 .stallion-card__status {
   font-size: 0.8125rem;
   font-weight: 600;
   text-transform: capitalize;
+  margin-block-start: auto;
 
   &--sold {
     color: $color-sold;
@@ -99,5 +134,28 @@
 
   &--active {
     color: $color-primary;
+  }
+
+  &--for-sale {
+    display: inline-block;
+    align-self: center;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $color-text-inverse;
+    background-color: $wcf-coral;
+    border-radius: $radius-pill;
+  }
+}
+
+// Grid items must allow flex children to size correctly.
+.stallion-listing__grid > li {
+  display: flex;
+  min-height: 0;
+
+  > .stallion-card {
+    width: 100%;
   }
 }

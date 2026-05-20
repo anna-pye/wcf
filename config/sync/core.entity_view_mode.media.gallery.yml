@@ -1,0 +1,11 @@
+uuid: 8f3c2a1e-9b4d-4e6f-a821-6d5e9c0b1a42
+langcode: en
+status: true
+dependencies:
+  module:
+    - media
+id: media.gallery
+label: Gallery
+description: 'Gallery thumbnail with lightbox link to full image.'
+targetEntityType: media
+cache: true

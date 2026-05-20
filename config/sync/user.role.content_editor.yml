@@ -5,6 +5,10 @@ dependencies:
   config:
     - node.type.article
     - node.type.page
+    - node.type.wcf_ad_banner
+    - node.type.wcf_registry_logo
+    - node.type.wcf_newsletter
+    - node.type.wcf_showcase_item
     - taxonomy.vocabulary.categories
   module:
     - comment
@@ -31,14 +35,26 @@ permissions:
   - 'create article content'
   - 'create page content'
   - 'create url aliases'
+  - 'create wcf_ad_banner content'
+  - 'create wcf_registry_logo content'
+  - 'create wcf_newsletter content'
+  - 'create wcf_showcase_item content'
   - 'delete article revisions'
   - 'delete own article content'
   - 'delete own files'
   - 'delete own page content'
+  - 'delete own wcf_ad_banner content'
+  - 'delete own wcf_registry_logo content'
+  - 'delete own wcf_newsletter content'
+  - 'delete own wcf_showcase_item content'
   - 'delete page revisions'
   - 'edit own article content'
   - 'edit own comments'
   - 'edit own page content'
+  - 'edit own wcf_ad_banner content'
+  - 'edit own wcf_registry_logo content'
+  - 'edit own wcf_newsletter content'
+  - 'edit own wcf_showcase_item content'
   - 'edit terms in categories'
   - 'revert all revisions'
   - 'view all revisions'
