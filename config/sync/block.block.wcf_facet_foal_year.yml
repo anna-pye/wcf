@@ -1,0 +1,30 @@
+uuid: d4e5f6a7-b8c9-0123-def4-567890abcdef
+langcode: en
+status: true
+dependencies:
+  config:
+    - facets.facet.foal_year
+  module:
+    - facets
+    - system
+  theme:
+    - wcf_theme
+id: wcf_facet_foal_year
+theme: wcf_theme
+region: sidebar_first
+weight: 2
+provider: null
+plugin: 'facet_block:foal_year'
+settings:
+  id: 'facet_block:foal_year'
+  label: ''
+  label_display: visible
+  provider: facets
+  context_mapping: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: |-
+      /search
+      /search*

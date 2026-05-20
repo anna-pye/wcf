@@ -1,0 +1,44 @@
+{#
+/**
+ * @file
+ * Showcase story — stallion profile layout (intro copy + gallery band).
+ *
+ * Variables:
+ * - showcase_gallery_group: GLightbox group id for this story's images.
+ */
+#}
+{%
+  set classes = [
+    'node',
+    'node--type-' ~ node.bundle|clean_class,
+    'node--view-mode-' ~ view_mode|clean_class,
+    'stallion',
+    'showcase-story',
+    'stallion--no-main-image',
+  ]
+%}
+<article{{ attributes.addClass(classes) }}{% if showcase_gallery_group %} data-gallery-group="{{ showcase_gallery_group }}"{% endif %}>
+  <header class="stallion__header">
+    <div class="stallion__intro">
+      <h2 class="stallion__subtitle stallion__subtitle--primary">{{ label }}</h2>
+      {% if content.body %}
+        <div class="stallion__body stallion__section--body">
+          {{ content.body }}
+        </div>
+      {% endif %}
+    </div>
+  </header>
+
+  {% if content.field_gallery %}
+    <div class="stallion__content">
+      <section class="stallion__section stallion__section--gallery" aria-labelledby="showcase-gallery-heading-{{ node.id }}">
+        <div class="stallion__gallery-band">
+          <h3 id="showcase-gallery-heading-{{ node.id }}" class="stallion__section-title">{{ 'Gallery'|t }}</h3>
+          <div class="stallion__gallery">
+            {{ content.field_gallery }}
+          </div>
+        </div>
+      </section>
+    </div>
+  {% endif %}
+</article>

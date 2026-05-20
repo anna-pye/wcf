@@ -5,9 +5,14 @@
  *
  * Variables (preprocess):
  * - stallion_display_name: Horse name from field_display_name (D7 product_name).
- * - stallion_status_label, stallion_featured, stallion_nomination_cta_link
+ * - stallion_featured, stallion_nomination_cta_link (Stallions/ASB Stallions, not sold); sold = image badge only
  * - stallion_is_foals: TRUE when category term is Foals.
- * - stallion_foal_year_links: Year filter links for Foals (empty until year field exists).
+ * - stallion_placeholder_image: Theme placeholder when field_main_image is empty.
+ * - stallion_gallery_group: GLightbox group id when gallery and/or video media exist.
+ * - stallion_video_items: Video rows (thumbnail + title, GLightbox playback).
+ * - stallion_video_group: GLightbox group id for video rows.
+ * - stallion_document_items: PDF document rows for custom documents list.
+ * - wcf_ad_banners: Category-matched ad banner grid render array (full view only).
  */
 #}
 {%
@@ -17,27 +22,34 @@
     'node--view-mode-' ~ view_mode|clean_class,
     'stallion',
     stallion_is_foals ? 'stallion--foals',
+    stallion_is_sold ? 'stallion--sold',
+    node.field_main_image.isEmpty() ? 'stallion--no-main-image',
   ]
 %}
-<article{{ attributes.addClass(classes) }}>
-  {% if stallion_foal_year_links %}
-    <nav class="stallion__year-nav" aria-label="{{ 'Foal year'|t }}">
-      <ul class="stallion__year-nav-list">
-        {% for item in stallion_foal_year_links %}
-          <li class="stallion__year-nav-item">
-            <a href="{{ item.url }}" class="stallion__year-nav-link{{ item.active ? ' is-active' : '' }}">{{ item.label }}</a>
-          </li>
-        {% endfor %}
-      </ul>
-    </nav>
-  {% endif %}
-
+<article{{ attributes.addClass(classes) }}{% if stallion_gallery_group %} data-gallery-group="{{ stallion_gallery_group }}"{% endif %}>
   <header class="stallion__header">
-    {% if content.field_main_image %}
-      <div class="stallion__media">
-        {{ content.field_main_image }}
+    <div class="stallion__media">
+      <div class="stallion__media-frame">
+        {% if not node.field_main_image.isEmpty() and content.field_main_image %}
+          {{ content.field_main_image }}
+        {% else %}
+          <img
+            class="stallion__placeholder-image"
+            src="{{ stallion_placeholder_image }}"
+            alt="{{ 'Image coming soon'|t }}"
+            width="300"
+            height="300"
+            loading="eager"
+            decoding="async"
+          >
+        {% endif %}
+        {% if stallion_is_sold %}
+          {% include '@wcf_theme/components/stallion-sold-badge.html.twig' with {
+            sold_badge_image: stallion_sold_badge_image,
+          } only %}
+        {% endif %}
       </div>
-    {% endif %}
+    </div>
     <div class="stallion__intro">
       {% if stallion_display_name %}
         <h1 class="stallion__name">
@@ -46,13 +58,6 @@
         <p class="stallion__subtitle">{{ label }}</p>
       {% else %}
         <h1 class="stallion__subtitle stallion__subtitle--primary">{{ label }}</h1>
-      {% endif %}
-
-      {% if stallion_status_label %}
-        <p class="stallion__status stallion__status--{{ stallion_status_label|clean_class }}">
-          <span class="visually-hidden">{{ 'Status'|t }}: </span>
-          {{ stallion_status_label }}
-        </p>
       {% endif %}
 
       {% if stallion_featured %}
@@ -79,10 +84,31 @@
   </header>
 
   <div class="stallion__content">
-    {% if not node.field_video.isEmpty() %}
+    {% if stallion_video_items is not empty %}
       <section class="stallion__section stallion__section--video" aria-labelledby="stallion-video-heading">
-        <h2 id="stallion-video-heading" class="stallion__section-title">{{ 'Video'|t }}</h2>
-        {{ content.field_video }}
+        <h2 id="stallion-video-heading" class="stallion__section-title">{{ stallion_video_items|length > 1 ? 'Videos'|t : 'Video'|t }}</h2>
+        <ul class="stallion-videos__list" role="list" data-gallery-group="{{ stallion_video_group }}">
+          {% for video in stallion_video_items %}
+            <li class="stallion-videos__item" role="listitem">
+              <a
+                class="stallion-videos__link glightbox"
+                href="{{ video.url }}"
+                data-gallery="{{ stallion_video_group }}"
+                data-type="video"
+                data-title="{{ video.label }}"
+                aria-label="{{ 'Play video: @title'|t({'@title': video.label}) }}"
+              >
+                <span class="stallion-videos__thumb" aria-hidden="true">
+                  {% if video.thumbnail %}
+                    <img src="{{ video.thumbnail }}" alt="" width="48" height="48" loading="lazy" decoding="async">
+                  {% endif %}
+                  <span class="stallion-videos__play"></span>
+                </span>
+                <span class="stallion-videos__label">{{ video.label }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
       </section>
     {% endif %}
 
@@ -97,14 +123,32 @@
       </section>
     {% endif %}
 
-    {% if not node.field_documents.isEmpty() %}
+    {% if stallion_document_items is not empty %}
       <section class="stallion__section stallion__section--documents" aria-labelledby="stallion-documents-heading">
         <h2 id="stallion-documents-heading" class="stallion__section-title">{{ 'Documents'|t }}</h2>
         {% if stallion_display_name %}
           <p class="stallion__documents-lead">{{ 'The attached is more information on @name.'|t({'@name': stallion_display_name}) }}</p>
         {% endif %}
-        {{ content.field_documents }}
+        <ul class="stallion-documents__list" role="list">
+          {% for document in stallion_document_items %}
+            <li class="stallion-documents__item" role="listitem">
+              <a class="stallion-documents__link" href="{{ document.url }}" target="_blank" rel="noopener noreferrer">
+                <span class="stallion-documents__icon" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" focusable="false">
+                    <path fill="#e8463a" d="M10 4h20l8 8v32a2 2 0 0 1-2 2H10a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+                    <path fill="#fff" d="M30 4v8h8"/>
+                    <text x="24" y="33" text-anchor="middle" font-family="Arial,sans-serif" font-size="11" font-weight="700" fill="#fff">PDF</text>
+                  </svg>
+                </span>
+                <span class="stallion-documents__label">{{ document.label }}</span>
+              </a>
+            </li>
+          {% endfor %}
+        </ul>
       </section>
     {% endif %}
   </div>
+
+  {# Ad banners: place after nomination CTA / before registry when those promo sections exist. #}
+  {% include '@wcf_theme/components/wcf-ad-banners.html.twig' %}
 </article>

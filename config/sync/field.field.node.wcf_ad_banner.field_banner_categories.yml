@@ -1,0 +1,24 @@
+uuid: 31256ddd-2b85-4231-a1d6-dfba2d2bab4f
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_banner_categories
+    - node.type.wcf_ad_banner
+    - taxonomy.vocabulary.categories
+id: node.wcf_ad_banner.field_banner_categories
+field_name: field_banner_categories
+entity_type: node
+bundle: wcf_ad_banner
+label: Categories
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      categories: categories
+field_type: entity_reference

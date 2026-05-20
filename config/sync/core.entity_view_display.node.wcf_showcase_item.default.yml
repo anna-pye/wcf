@@ -1,0 +1,40 @@
+uuid: c9d0e1f2-a3b4-5678-2345-789012345678
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.gallery
+    - field.field.node.wcf_showcase_item.body
+    - field.field.node.wcf_showcase_item.field_gallery
+    - field.field.node.wcf_showcase_item.field_showcase_legacy_id
+    - field.field.node.wcf_showcase_item.field_showcase_weight
+    - node.type.wcf_showcase_item
+  module:
+    - text
+    - user
+id: node.wcf_showcase_item.default
+targetEntityType: node
+bundle: wcf_showcase_item
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  field_gallery:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: gallery
+      link: false
+    third_party_settings: {  }
+    weight: 1
+    region: content
+hidden:
+  field_showcase_legacy_id: true
+  field_showcase_weight: true
+  links: true
+  search_api_excerpt: true

@@ -1,0 +1,24 @@
+uuid: 82690ca8-90b9-444d-b828-71ea6331086e
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_banner_image
+    - media.type.image
+    - node.type.wcf_ad_banner
+id: node.wcf_ad_banner.field_banner_image
+field_name: field_banner_image
+entity_type: node
+bundle: wcf_ad_banner
+label: Image
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      image: image
+field_type: entity_reference

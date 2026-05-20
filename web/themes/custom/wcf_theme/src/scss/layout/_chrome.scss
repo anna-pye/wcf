@@ -1,82 +1,272 @@
 @use '../abstracts/variables' as *;
-@use 'page' as page;
+@use '../layout/page' as page;
 
-// —— Public site chrome (D7 banner + right nav patterns) ——
+// —— Contact strip ——
+
+.site-contact-strip {
+  background-color: $wcf-purple;
+  color: $color-text-inverse;
+  font-size: 0.875rem;
+
+  &__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $spacing-sm $spacing-md;
+    max-width: $content-max-width;
+    margin-inline: auto;
+    padding: $spacing-xs $spacing-sm;
+  }
+
+  &__message {
+    margin: 0;
+    min-height: page.$touch-target-min;
+    display: inline-flex;
+    align-items: center;
+    color: inherit;
+    text-decoration: none;
+    font-weight: 600;
+
+    &:hover {
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
+    }
+
+    &:focus-visible {
+      outline: 3px solid $wcf-white;
+      outline-offset: 2px;
+    }
+  }
+
+  &__social {
+    display: flex;
+    align-items: center;
+    gap: $spacing-xs;
+    margin-inline-start: auto;
+  }
+
+  &__social-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: page.$touch-target-min;
+    min-height: page.$touch-target-min;
+    padding: $spacing-xs;
+    color: $wcf-white;
+    border-radius: $radius-pill;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: rgba($wcf-white, 0.15);
+    }
+
+    &:focus-visible {
+      outline: 3px solid $wcf-white;
+      outline-offset: 2px;
+    }
+  }
+}
+
+// —— Site chrome (header row) ——
 
 .site-chrome {
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: $spacing-sm;
   width: 100%;
 }
 
 .site-chrome--inner {
+  background-color: $color-surface;
+  border-block-end: 1px solid $color-border;
+  box-shadow: $shadow-sm;
+}
+
+.site-chrome--front {
+  width: 100%;
+}
+
+.site-chrome__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $spacing-sm;
+  width: 100%;
+}
+
+.site-chrome--front .site-chrome__bar,
+.site-chrome--header-nav .site-chrome__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-sm;
   max-width: $content-max-width;
   margin-inline: auto;
-  padding: $spacing-md $spacing-sm;
-  background-color: $color-d7-inner-band;
-  border-block-end: 1px solid $color-border;
+  padding: $spacing-sm;
+  width: 100%;
 
   @media (min-width: $breakpoint-md) {
-    padding-inline: $spacing-md;
-    align-items: center;
+    flex-wrap: nowrap;
+    padding: $spacing-sm $spacing-md;
   }
+}
+
+.site-chrome--header-nav {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 .site-chrome__identity {
-  flex: 1 1 12rem;
+  flex: 0 1 auto;
   min-width: 0;
-}
 
-// Front: left overlay panel on hero (D7 .banner_bg — gradient, no image asset).
-.site-chrome--front {
-  position: relative;
-  z-index: 3;
-  width: 100%;
-  min-height: 0;
-  pointer-events: none;
+  .site-chrome--front &,
+  .site-chrome--header-nav & {
+    flex: 0 0 auto;
+    margin-inline-end: auto;
+  }
 
-  > * {
-    pointer-events: auto;
+  #block-wcf-theme-site-branding {
+    margin: 0;
   }
 }
 
-.site-chrome__identity--overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 4;
-  width: min(100%, 17.5rem);
-  min-height: 12rem;
-  padding: $spacing-md $spacing-sm $spacing-lg;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.94) 0%,
-    rgba(255, 255, 255, 0.82) 55%,
-    rgba(255, 255, 255, 0) 100%
-  );
-
-  .site-branding__name {
-    font-family: $font-family-display;
-    font-size: clamp(1.25rem, 2vw + 0.5rem, 1.75rem);
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
+.site-chrome--header-nav #block-wcf-theme-site-branding img {
+  @media (min-width: $breakpoint-md) {
+    max-width: 8.25rem;
+    max-height: 4.5rem;
   }
+
+  @media (min-width: $breakpoint-lg) {
+    max-width: 9.25rem;
+    max-height: 5rem;
+  }
+}
+
+.site-chrome__nav-col {
+  display: flex;
+  justify-content: center;
+  min-width: 0;
+
+}
+
+.site-chrome--header-nav .site-chrome__nav-drawer--mobile {
+  flex: 0 0 auto;
+  margin-inline-start: auto;
+  margin-inline-end: $spacing-sm;
 
   @media (min-width: $breakpoint-md) {
-    width: min(28rem, 38vw);
-    min-height: 14rem;
-    padding: $spacing-lg $spacing-md;
+    display: none;
   }
 }
 
-// —— Navigation drawer (D7 right panel; mobile collapsible via <details>) ——
+.site-chrome--inner:not(.site-chrome--header-nav) .site-chrome__nav-col {
+  margin-inline-start: auto;
+}
+
+.site-chrome__cta-col {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .site-chrome--front &,
+  .site-chrome--header-nav & {
+    flex: 0 0 auto;
+    margin-inline-start: auto;
+  }
+}
+
+// Full-width primary nav band (desktop) — keeps all items on one line.
+.site-chrome__nav-band {
+  display: none;
+  width: 100%;
+  overflow: visible;
+  background-color: $wcf-header-bg;
+  border-block-start: 1px solid $wcf-header-border;
+  position: relative;
+  z-index: 30;
+
+  @media (min-width: $breakpoint-md) {
+    display: block;
+  }
+}
+
+.site-chrome__nav-band-inner {
+  max-width: 100%;
+  margin-inline: auto;
+  padding: 0.15rem $spacing-sm;
+  overflow: visible;
+
+  @media (min-width: $breakpoint-lg) {
+    padding-inline: $spacing-md;
+  }
+}
+
+.site-chrome--inner .site-chrome__identity {
+  flex: 0 0 auto;
+  margin-inline-end: auto;
+}
+
+.site-chrome--inner .site-chrome__bar {
+  max-width: $content-max-width;
+  margin-inline: auto;
+  padding: $spacing-md $spacing-sm;
+
+  @media (min-width: $breakpoint-md) {
+    padding-inline: $spacing-md;
+  }
+}
+
+.site-chrome--inner .site-chrome__cta-col {
+  margin-inline-start: auto;
+}
+
+.site-chrome__cta {
+  flex-shrink: 0;
+}
+
+.site-chrome__cta-link {
+  white-space: nowrap;
+}
+
+.site-chrome--front .site-chrome__cta .button,
+.site-chrome--header-nav .site-chrome__cta .button {
+  min-height: page.$touch-target-min;
+  padding-inline: $spacing-md;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: none;
+  white-space: nowrap;
+
+  @media (min-width: $breakpoint-md) {
+    padding-inline: $spacing-sm $spacing-md;
+    font-size: 0.75rem;
+  }
+  color: $color-text-inverse;
+  background-color: $wcf-coral;
+  border-color: $wcf-coral;
+
+  &:hover {
+    color: $color-text-inverse;
+    background-color: $color-primary-hover;
+    border-color: $color-primary-hover;
+  }
+
+  &:focus-visible {
+    outline-color: $color-focus;
+  }
+}
+
+// —— Navigation drawer ——
 
 .site-chrome__nav-drawer {
   margin: 0;
-  margin-inline-start: auto;
 }
 
 .site-chrome__nav-toggle {
@@ -89,12 +279,12 @@
   list-style: none;
   cursor: pointer;
   font-family: $font-family-base;
-  font-size: 0.6875rem;
-  font-weight: 600;
+  font-size: 0.75rem;
+  font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: $color-text-muted;
-  background: $color-text-inverse;
+  color: $color-secondary;
+  background: $color-background;
   border: 1px solid $color-border;
   border-radius: $radius-sm;
 
@@ -111,7 +301,17 @@
 
 .site-chrome__nav-panel {
   display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 20;
+  min-width: 14rem;
   margin-block-start: $spacing-xs;
+  padding: $spacing-sm;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  border-radius: $radius-md;
+  box-shadow: $shadow-lg;
 
   .site-chrome__nav-drawer[open] & {
     display: block;
@@ -119,58 +319,14 @@
 
   @media (min-width: $breakpoint-md) {
     display: block;
-    margin-block-start: 0;
-  }
-}
-
-.site-chrome__nav-drawer--overlay {
-  position: absolute;
-  top: $spacing-sm;
-  right: 0;
-  z-index: 5;
-
-  @media (min-width: $breakpoint-md) {
-    top: 0;
-    right: 0;
-    width: 11.5rem;
-    min-height: 100%;
-  }
-
-  .site-chrome__nav-panel {
-    @media (min-width: $breakpoint-md) {
-      position: fixed;
-      top: 0;
-      right: 0;
-      width: 11.5rem;
-      min-height: 100vh;
-      padding: $spacing-xl $spacing-sm $spacing-lg;
-      background: $color-text-inverse;
-      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.12);
-      overflow-y: auto;
-    }
-  }
-
-  .site-chrome__nav-toggle {
-    @media (min-width: $breakpoint-md) {
-      position: fixed;
-      top: $spacing-md;
-      right: 11.5rem;
-      z-index: 6;
-      display: none;
-    }
-  }
-}
-
-.layout-container--inner .site-chrome__nav {
-  @media (min-width: $breakpoint-md) {
-    min-width: 11rem;
-  }
-}
-
-.layout-container--inner .site-chrome__nav a {
-  @media (min-width: $breakpoint-md) {
-    padding-block: 0.7rem;
-    font-size: 0.875rem;
+    position: static;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 }
 
@@ -183,6 +339,13 @@
     margin: 0;
     padding: 0;
     list-style: none;
+
+    @media (min-width: $breakpoint-md) {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: $spacing-xs;
+    }
   }
 
   .menu-item,
@@ -192,77 +355,121 @@
   }
 
   a {
-    display: block;
-    padding: 0.65rem $spacing-xs;
-    font-size: 0.8125rem;
-    font-weight: 400;
-    line-height: 1.35;
-    color: #525252;
+    display: flex;
+    align-items: center;
+    min-height: page.$touch-target-min;
+    padding: $spacing-xs $spacing-sm;
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: $line-height-tight;
+    color: $color-text;
     text-decoration: none;
-    text-transform: capitalize;
-    text-align: center;
     border-radius: $radius-sm;
 
     &:hover {
-      color: $color-accent;
+      color: $color-primary;
+      background-color: rgba($wcf-coral, 0.08);
     }
 
     &.is-active {
-      color: $color-accent;
-      font-weight: 600;
+      color: $color-secondary;
+      background-color: rgba($wcf-purple, 0.1);
     }
 
     @include page.focus-visible-ring;
   }
 
-  .menu-item--expanded > a::before {
-    content: '› ';
-    opacity: 0.6;
+  .site-chrome--front & a {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $wcf-purple;
+
+    &:hover {
+      color: $wcf-coral;
+      background-color: rgba($wcf-coral, 0.1);
+    }
+
+    &.is-active {
+      color: $wcf-coral;
+      background-color: rgba($wcf-coral, 0.12);
+    }
   }
 
   .menu .menu {
     margin-block-start: 0;
-    padding-inline-start: 0;
-    background: rgba(0, 0, 0, 0.03);
+    padding-inline-start: $spacing-sm;
+    background: $color-background;
     border-radius: $radius-sm;
 
+    @media (min-width: $breakpoint-md) {
+      position: absolute;
+      padding: $spacing-xs;
+    }
+
     a {
-      font-size: 0.75rem;
-      padding-block: 0.5rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
     }
   }
 }
 
-// —— Front header positioning over hero ——
+// —— Public header: static cream bar (all customer-facing pages) ——
 
-.layout-container--front .site-header--front {
-  position: absolute;
-  inset-inline: 0;
-  top: 0;
+.layout-container .site-header--front {
+  position: relative;
   z-index: 10;
-  border: none;
-  background: transparent;
-  padding: 0;
-  pointer-events: none;
+  background-color: $wcf-header-bg;
+  border-block-end: 1px solid $wcf-header-border;
+  box-shadow: $wcf-header-shadow;
+}
 
-  .site-chrome--front {
-    min-height: 4rem;
-    pointer-events: none;
+.layout-container .site-contact-strip {
+  position: relative;
+  z-index: 11;
+}
 
-    > * {
-      pointer-events: auto;
+// Admin toolbar: header flows below toolbar offset (no absolute overlap).
+body.toolbar-fixed,
+body.toolbar-horizontal,
+body.gin--horizontal-toolbar {
+  .layout-container .site-header--front {
+    margin-block-start: 0;
+  }
+}
+
+// —— Footer ——
+
+.site-footer {
+  background-color: $wcf-sand;
+  color: $color-text;
+  border-block-start: 1px solid $color-border;
+
+  a {
+    color: $wcf-purple;
+
+    &:hover {
+      color: $wcf-coral;
     }
   }
 }
 
-// —— Footer (D7 columns + meta) ——
+.site-footer--front {
+  margin-block-start: 0;
+}
 
 .site-footer__inner {
   max-width: $content-max-width;
   margin-inline: auto;
-  padding: $spacing-xl $spacing-sm $spacing-lg;
+  padding: $spacing-lg $spacing-sm $spacing-xl;
   display: grid;
-  gap: $spacing-lg;
+  gap: $spacing-md;
+
+  @media (min-width: $breakpoint-md) {
+    padding: $spacing-xl $spacing-md $spacing-2xl;
+    gap: $spacing-lg;
+  }
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
@@ -290,15 +497,15 @@
 }
 
 .navigation-footer__heading {
-  margin: 0 0 10px;
+  margin: 0 0 $spacing-sm;
   padding: 0;
-  font-family: $font-family-base;
-  font-size: 1.125rem;
-  font-weight: 600;
-  line-height: 1.3;
+  font-family: $font-family-display;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: $line-height-tight;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
-  color: #171717;
+  letter-spacing: 0.06em;
+  color: $wcf-purple;
 }
 
 .navigation-footer__menu,
@@ -312,19 +519,6 @@
 .site-footer__menus > .menu .menu-item {
   margin: 0;
   padding: 0;
-  position: relative;
-  padding-inline-start: $spacing-md;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0.65em;
-    width: 0.35rem;
-    height: 0.35rem;
-    border-radius: 50%;
-    background-color: $color-accent;
-  }
 }
 
 .navigation-footer__menu a,
@@ -333,18 +527,19 @@
   align-items: center;
   min-height: page.$touch-target-min;
   padding-block: $spacing-xs;
-  color: $color-d7-heading;
-  font-size: 0.75rem;
-  font-weight: 400;
+  color: $color-text-muted;
+  font-size: 0.8125rem;
+  font-weight: 500;
   text-decoration: none;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.02em;
 
   &:hover {
-    color: $color-text-muted;
+    color: $wcf-coral;
   }
 
-  @include page.focus-visible-ring;
+  &:focus-visible {
+    outline-color: $color-focus;
+  }
 }
 
 .site-footer__meta {
@@ -362,36 +557,17 @@
 .site-footer__contact {
   margin: 0;
   font-size: 0.875rem;
-  line-height: 1.5;
-  color: $color-text;
+  line-height: $line-height-base;
 }
 
 .site-footer__contact-label {
   display: block;
-  margin-bottom: 0.25rem;
-  font-size: 0.75rem;
+  margin-bottom: 0.2rem;
+  font-size: 0.6875rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: $color-d7-heading;
-}
-
-.site-footer__contact a {
-  color: $color-text;
-  font-weight: 600;
-  text-decoration: none;
-
-  &:hover {
-    color: $color-accent;
-    text-decoration: underline;
-    text-underline-offset: 0.15em;
-  }
-
-  @include page.focus-visible-ring;
-}
-
-.site-footer__branding {
-  margin: 0;
+  letter-spacing: 0.08em;
+  color: $wcf-purple;
 }
 
 .site-footer__site-name {
@@ -401,13 +577,6 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-decoration: none;
-  color: $color-d7-heading;
-
-  &:hover {
-    color: $color-accent;
-  }
-
-  @include page.focus-visible-ring;
 }
 
 .site-footer__copyright {

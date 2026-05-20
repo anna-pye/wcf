@@ -1,0 +1,23 @@
+uuid: b1b2c3d4-1111-4222-8333-444455556666
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_newsletter_year
+    - node.type.wcf_newsletter
+id: node.wcf_newsletter.field_newsletter_year
+field_name: field_newsletter_year
+entity_type: node
+bundle: wcf_newsletter
+label: Year
+description: 'Calendar year for grouping on the News page (e.g. 2014).'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: 2000
+  max: 2100
+  prefix: ''
+  suffix: ''
+field_type: integer

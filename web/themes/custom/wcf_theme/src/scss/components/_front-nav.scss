@@ -1,0 +1,188 @@
+@use '../abstracts/variables' as *;
+@use '../layout/page' as page;
+
+// Primary navigation — full-width band below logo row (desktop), drawer on mobile.
+
+.wcf-front-nav {
+  width: 100%;
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    margin: 0;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  &__link,
+  &__summary {
+    display: inline-flex;
+    align-items: center;
+    min-height: page.$touch-target-min;
+    padding: $spacing-xs $spacing-sm;
+    font-family: $font-family-base;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: $color-text;
+    background: transparent;
+    border: 0;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    list-style: none;
+    width: 100%;
+    white-space: nowrap;
+    transition: color 0.15s ease;
+
+    &:hover,
+    &:focus-visible {
+      color: $wcf-coral;
+    }
+
+    @include page.focus-visible-ring;
+  }
+
+  &__summary {
+    color: $wcf-purple;
+    gap: 0.2rem;
+
+    &::after {
+      content: '';
+      width: 0.35rem;
+      height: 0.35rem;
+      margin-block-start: 0.1rem;
+      border-inline-end: 2px solid currentColor;
+      border-block-end: 2px solid currentColor;
+      transform: rotate(45deg);
+    }
+  }
+
+  &__dropdown {
+    position: relative;
+    width: 100%;
+  }
+
+  &__sublist {
+    display: none;
+    margin: 0;
+    padding: 0 $spacing-sm $spacing-xs;
+    list-style: none;
+  }
+
+  &__dropdown[open] &__summary,
+  &__dropdown:hover &__summary,
+  &__dropdown:focus-within &__summary {
+    color: $wcf-coral;
+  }
+
+  &__dropdown[open] &__sublist,
+  &__dropdown:hover &__sublist,
+  &__dropdown:focus-within &__sublist {
+    display: block;
+  }
+
+  &__sublink {
+    display: block;
+    padding: $spacing-xs $spacing-sm;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    color: $color-text;
+    border-radius: $radius-sm;
+
+    &:hover {
+      color: $wcf-coral;
+      background: rgba($wcf-coral, 0.08);
+    }
+  }
+}
+
+// Desktop: centred single-line menu in the nav band.
+.site-chrome__nav-band .wcf-front-nav {
+  &__list {
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: max-content;
+    min-width: min(100%, max-content);
+    margin-inline: auto;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+
+    &--has-children {
+      position: relative;
+    }
+
+    &:not(:last-child)::after {
+      content: '';
+      display: inline-block;
+      width: 1px;
+      height: 1.1rem;
+      margin-inline: 0.15rem;
+      background: rgba($wcf-purple, 0.18);
+      flex-shrink: 0;
+    }
+  }
+
+  &__link,
+  &__summary {
+    width: auto;
+    min-height: 2.5rem;
+    padding: 0.45rem 0.65rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.11em;
+    color: rgba($wcf-charcoal, 0.9);
+  }
+
+  &__summary {
+    color: $wcf-purple;
+  }
+
+  &__dropdown {
+    width: auto;
+  }
+
+  &__sublist {
+    position: absolute;
+    top: calc(100% + 0.15rem);
+    left: 0;
+    z-index: 50;
+    display: none;
+    min-width: 11rem;
+    padding: $spacing-xs;
+    background: $color-surface;
+    border: 1px solid $color-border;
+    border-radius: $radius-md;
+    box-shadow: $shadow-md;
+  }
+
+  &__dropdown[open] &__sublist,
+  &__dropdown:hover &__sublist,
+  &__dropdown:focus-within &__sublist {
+    display: block;
+  }
+}
+
+// Mobile drawer panel.
+.site-chrome__nav-panel--mobile .wcf-front-nav {
+  &__list {
+    gap: 0;
+  }
+}

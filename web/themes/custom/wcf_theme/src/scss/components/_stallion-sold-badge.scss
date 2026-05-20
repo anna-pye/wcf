@@ -1,0 +1,31 @@
+@use '../abstracts/variables' as *;
+
+// Shared sold overlay — search cards and full horse profile.
+
+.stallion-sold-badge {
+  position: absolute;
+  z-index: 5;
+  top: 8px;
+  left: 0;
+  width: clamp(2.5rem, 14vw, 4.5rem);
+  line-height: 0;
+  pointer-events: none;
+}
+
+.stallion__media-frame .stallion-sold-badge {
+  width: clamp(3.75rem, 16vw, 5.6875rem);
+}
+
+.stallion-sold-badge__image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 0;
+  background: none;
+  object-fit: contain;
+}

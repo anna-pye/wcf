@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Category-aware promotional ad banners (stacked, image-only).
+ *
+ * Variables:
+ * - wcf_ad_banners: Render array of banner cards (preprocess); omit wrapper when empty.
+ */
+#}
+{% if wcf_ad_banners %}
+  <section class="wcf-ad-banners wcf-section wcf-section--cream" aria-labelledby="wcf-ad-banners-title">
+    <div class="wcf-ad-banners__inner wcf-section__inner">
+      <h2 id="wcf-ad-banners-title" class="wcf-section__title">{{ 'Featured services'|t }}</h2>
+      {{ wcf_ad_banners }}
+    </div>
+  </section>
+{% endif %}

@@ -1,0 +1,11 @@
+uuid: f1e2d3c4-b5a6-7890-fedc-ba9876543210
+langcode: en
+status: true
+dependencies: {  }
+name: Newsletter
+type: wcf_newsletter
+description: 'Monthly newsletter PDF issues migrated from legacy wcf_news. Listed on /news grouped by year.'
+help: 'Set year, month label, and PDF document. Lower weight sorts earlier within the same year. Publish when the file is ready.'
+new_revision: true
+preview_mode: 1
+display_submitted: false

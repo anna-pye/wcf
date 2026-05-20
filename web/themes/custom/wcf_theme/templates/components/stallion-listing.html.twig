@@ -5,32 +5,46 @@
  *
  * Variables:
  * - title: Page title.
+ * - tagline: Optional intro line under the title.
  * - exposed: Exposed filters render array.
  * - listing: Main View content render array.
  * - pager: Optional pager render array.
  * - empty: Optional empty-state render array.
  */
 #}
-<div class="stallion-listing-page">
-  {% if title %}
-    <header class="stallion-listing-page__header">
-      <h1 class="stallion-listing-page__title">{{ title }}</h1>
-    </header>
-  {% endif %}
-  {% if exposed %}
-    <div class="stallion-listing-page__filters" role="search" aria-label="{{ 'Filter stallions'|t }}">
-      {{ exposed }}
+<div class="stallion-listing-page site-search">
+  {% if title or tagline or exposed %}
+    <div class="stallion-listing-page__intro site-search__intro">
+      {% if title or tagline %}
+        <header class="stallion-listing-page__header site-search__page-header">
+          <div class="stallion-listing-page__lead site-search__lead">
+            {% if title %}
+              <h1 class="stallion-listing-page__title site-search__title">{{ title }}</h1>
+            {% endif %}
+            {% if tagline %}
+              <p class="stallion-listing-page__tagline site-search__tagline">{{ tagline }}</p>
+            {% endif %}
+          </div>
+        </header>
+      {% endif %}
+      {% if exposed %}
+        <div class="stallion-listing-page__filters" role="search" aria-label="{{ 'Filter stallions'|t }}">
+          {{ exposed }}
+        </div>
+      {% endif %}
     </div>
   {% endif %}
   {% if listing %}
-    <div class="stallion-listing-page__results">
+    <div class="stallion-listing-page__results site-search__results">
       {{ listing }}
       {% if pager %}
-        {{ pager }}
+        <nav class="stallion-listing-page__pager site-search__pager" aria-label="{{ 'Stallion listing pages'|t }}">
+          {{ pager }}
+        </nav>
       {% endif %}
     </div>
   {% elseif empty %}
-    <div class="stallion-listing-page__results">
+    <div class="stallion-listing-page__results site-search__results" role="status">
       {{ empty }}
     </div>
   {% endif %}

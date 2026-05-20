@@ -50,6 +50,7 @@ class WcfD7Product extends DrupalSqlBase {
       'id' => $this->t('Product ID'),
       'product_name' => $this->t('Name'),
       'title_with_year' => $this->t('Title with year'),
+      'year' => $this->t('Foal year'),
       'alias' => $this->t('URL alias slug'),
       'description' => $this->t('Description'),
       'product_img' => $this->t('Main image filename'),
@@ -96,6 +97,14 @@ class WcfD7Product extends DrupalSqlBase {
     }
     $row->setSourceProperty('title', $title);
     $row->setSourceProperty('display_name', self::normalizeDisplayName($row->getSourceProperty('product_name')));
+
+    $year = trim((string) $row->getSourceProperty('year'));
+    if ($year !== '' && ctype_digit($year) && strlen($year) === 4) {
+      $row->setSourceProperty('foal_year', (int) $year);
+    }
+    else {
+      $row->setSourceProperty('foal_year', NULL);
+    }
 
     $main = trim((string) $row->getSourceProperty('product_img'));
     $row->setSourceProperty('main_image_filename', $main);

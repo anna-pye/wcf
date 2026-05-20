@@ -1,0 +1,50 @@
+{#
+/**
+ * @file
+ * Recognised bloodlines registry grid.
+ *
+ * Variables:
+ * - wcf_home_registry_items: list of name, short_name, tone, logo (render array), url
+ */
+#}
+{% if wcf_home_registry_items is not empty %}
+  <section class="wcf-registry wcf-section" aria-labelledby="wcf-registry-title">
+    <div class="wcf-section__inner">
+      <header class="wcf-section__header">
+        <h2 id="wcf-registry-title" class="wcf-section__title">{{ 'Recognised bloodlines'|t }}</h2>
+        <p class="wcf-section__lead">
+          {{ 'We breed and stand horses recognised across Australian and international stud books and disciplines.'|t }}
+        </p>
+      </header>
+      <ul class="wcf-registry__grid">
+        {% for item in wcf_home_registry_items %}
+          <li class="wcf-registry__item">
+            {% if item.url %}
+              <a class="wcf-registry__card wcf-registry__card--linked" href="{{ item.url }}">
+            {% else %}
+              <div class="wcf-registry__card">
+            {% endif %}
+              <div class="wcf-registry__visual">
+                {% if item.logo %}
+                  {{ item.logo }}
+                {% else %}
+                  <span class="wcf-registry__swatch wcf-registry__swatch--{{ item.tone }}" aria-hidden="true"></span>
+                {% endif %}
+              </div>
+              <div class="wcf-registry__labels">
+                <p class="wcf-registry__label">{{ item.name }}</p>
+                {% if item.short_name %}
+                  <p class="wcf-registry__short">{{ item.short_name }}</p>
+                {% endif %}
+              </div>
+            {% if item.url %}
+              </a>
+            {% else %}
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </section>
+{% endif %}

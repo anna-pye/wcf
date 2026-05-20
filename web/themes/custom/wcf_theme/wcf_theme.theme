@@ -7,9 +7,17 @@
 
 declare(strict_types=1);
 
+use Drupal\Core\Cache\Cache;
+use Drupal\Core\Render\Element;
 use Drupal\Core\Url;
+use Drupal\media\MediaInterface;
+use Drupal\taxonomy\TermInterface;
+use Drupal\responsive_image\Entity\ResponsiveImageStyle;
 use Drupal\node\NodeInterface;
 use Drupal\paragraphs\ParagraphInterface;
+use Drupal\search_api\Query\ConditionGroupInterface;
+use Drupal\search_api\Query\ConditionInterface;
+use Drupal\search_api\Query\QueryInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 
@@ -50,28 +58,1429 @@ function wcf_theme_build_paragraph_cta_link(ParagraphInterface $paragraph): ?arr
 }
 
 /**
+ * Builds a nomination webform CTA link when the current user may access it.
+ *
+ * @param string|null $title
+ *   Link text; defaults to stallion detail copy.
+ * @param list<string> $classes
+ *   Additional CSS classes.
+ *
+ * @return array<string, mixed>|null
+ *   Link render array or NULL when the webform is unavailable.
+ */
+function wcf_theme_build_nomination_cta_link(?string $title = NULL, array $classes = []): ?array {
+  $url = Url::fromRoute('entity.webform.canonical', ['webform' => 'wcf_nomination']);
+  if ($url->isRouted() && !$url->access()) {
+    return NULL;
+  }
+
+  $link_classes = array_merge(['button', 'button--primary'], $classes);
+
+  return [
+    '#type' => 'link',
+    '#title' => $title ?? (string) t('Nominate this stallion'),
+    '#url' => $url,
+    '#attributes' => [
+      'class' => $link_classes,
+    ],
+    '#cache' => [
+      'tags' => ['config:webform.webform.wcf_nomination'],
+    ],
+  ];
+}
+
+/**
  * Builds the stallion detail nomination CTA link render array.
  *
  * @return array<string, mixed>|null
  *   Link render array or NULL when the webform is unavailable.
  */
 function wcf_theme_build_stallion_nomination_cta_link(): ?array {
-  $url = Url::fromRoute('entity.webform.canonical', ['webform' => 'wcf_nomination']);
+  return wcf_theme_build_nomination_cta_link((string) t('Nominate this stallion'), ['stallion__nomination-cta']);
+}
+
+/**
+ * Whether the stallion detail page should show the nomination CTA.
+ *
+ * Shown only for standing inventory (Stallions or ASB Stallions) that is not sold.
+ */
+function wcf_theme_stallion_shows_nomination_cta(NodeInterface $node): bool {
+  if ($node->bundle() !== 'stallion') {
+    return FALSE;
+  }
+  if ($node->get('field_status')->value === 'sold') {
+    return FALSE;
+  }
+  if ($node->get('field_category')->isEmpty()) {
+    return FALSE;
+  }
+  $term = $node->get('field_category')->entity;
+  if ($term === NULL) {
+    return FALSE;
+  }
+
+  return in_array($term->label(), ['Stallions', 'ASB Stallions'], TRUE);
+}
+
+/**
+ * Category term IDs for nomination stallion choices (Stallions, ASB Stallions).
+ *
+ * @return array<string, int>
+ *   Keys are category labels, values are term IDs.
+ */
+function wcf_theme_nomination_stallion_category_term_ids(): array {
+  static $cache = NULL;
+  if ($cache !== NULL) {
+    return $cache;
+  }
+
+  $cache = [];
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  foreach (['Stallions', 'ASB Stallions'] as $label) {
+    $tids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('vid', 'categories')
+      ->condition('name', $label)
+      ->range(0, 1)
+      ->execute();
+    if ($tids !== []) {
+      $cache[$label] = (int) reset($tids);
+    }
+  }
+
+  return $cache;
+}
+
+/**
+ * Human-readable label for a stallion on the nomination form.
+ */
+function wcf_theme_stallion_nomination_label(NodeInterface $node): string {
+  if ($node->hasField('field_display_name') && !$node->get('field_display_name')->isEmpty()) {
+    $name = trim((string) $node->get('field_display_name')->value);
+    if ($name !== '') {
+      return $name;
+    }
+  }
+
+  return $node->label();
+}
+
+/**
+ * Select options for active standing stallions (Stallions + ASB Stallions).
+ *
+ * @return array<int|string, string|array<int|string, string>>
+ *   Options suitable for a #type select element (may use optgroups).
+ */
+function wcf_theme_nomination_stallion_options(bool $include_empty = TRUE): array {
+  $category_ids = wcf_theme_nomination_stallion_category_term_ids();
+  if ($category_ids === []) {
+    return $include_empty ? ['' => (string) t('- Select -')] : [];
+  }
+
+  $nids = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('type', 'stallion')
+    ->condition('status', 1)
+    ->condition('field_status', 'active')
+    ->condition('field_category', array_values($category_ids), 'IN')
+    ->sort('title')
+    ->execute();
+
+  $grouped = [];
+  $nodes = $nids !== [] ? \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids) : [];
+  foreach ($nodes as $node) {
+    if (!$node instanceof NodeInterface) {
+      continue;
+    }
+    $term = $node->get('field_category')->entity;
+    $category = $term instanceof TermInterface ? $term->label() : (string) t('Stallions');
+    $label = wcf_theme_stallion_nomination_label($node);
+    $grouped[$category][$label] = $label;
+  }
+
+  $flat = [];
+  $category_order = ['Stallions', 'ASB Stallions'];
+  foreach ($category_order as $category) {
+    if (empty($grouped[$category])) {
+      continue;
+    }
+    ksort($grouped[$category], SORT_NATURAL | SORT_FLAG_CASE);
+    foreach ($grouped[$category] as $label => $value) {
+      $flat[$label] = $value;
+    }
+  }
+
+  foreach ($grouped as $category => $items) {
+    if (in_array($category, $category_order, TRUE)) {
+      continue;
+    }
+    ksort($items, SORT_NATURAL | SORT_FLAG_CASE);
+    foreach ($items as $label => $value) {
+      $flat[$label] = $value;
+    }
+  }
+
+  $options = $include_empty ? ['' => (string) t('- Select -')] : [];
+  return $options + $flat;
+}
+
+/**
+ * Flat list of allowed submitted values for preferred_stallion.
+ *
+ * @return list<string>
+ */
+function wcf_theme_nomination_stallion_allowed_values(): array {
+  $allowed = [];
+  foreach (wcf_theme_nomination_stallion_options(FALSE) as $key => $value) {
+    if (is_array($value)) {
+      foreach ($value as $option_key => $option_label) {
+        $allowed[] = is_int($option_key) ? (string) $option_label : (string) $option_key;
+      }
+    }
+    else {
+      $allowed[] = is_int($key) ? (string) $value : (string) $key;
+    }
+  }
+
+  return array_values(array_unique($allowed));
+}
+
+/**
+ * Applies dynamic stallion options after the webform element is built.
+ */
+function wcf_theme_webform_preferred_stallion_after_build(array $element, \Drupal\Core\Form\FormStateInterface $form_state): array {
+  $element['#options'] = wcf_theme_nomination_stallion_options();
+  return $element;
+}
+
+/**
+ * Alters the preferred stallion element in a webform render array (recursive).
+ */
+function wcf_theme_webform_alter_preferred_stallion_element(array &$form): bool {
+  if (isset($form['preferred_stallion']) && is_array($form['preferred_stallion'])) {
+    $form['preferred_stallion']['#type'] = 'select';
+    $form['preferred_stallion']['#options'] = wcf_theme_nomination_stallion_options();
+    $form['preferred_stallion']['#validated'] = TRUE;
+    $form['preferred_stallion']['#after_build'][] = 'wcf_theme_webform_preferred_stallion_after_build';
+    $form['preferred_stallion']['#element_validate'][] = 'wcf_theme_webform_nomination_validate_preferred_stallion';
+    $form['preferred_stallion']['#cache'] = [
+      'tags' => Cache::mergeTags(
+        ['node_list:stallion'],
+        array_map(
+          static fn (int $tid): string => 'taxonomy_term:' . $tid,
+          array_values(wcf_theme_nomination_stallion_category_term_ids()),
+        ),
+      ),
+      'contexts' => ['user.permissions'],
+    ];
+    return TRUE;
+  }
+
+  foreach (Element::children($form) as $child_key) {
+    if (!is_array($form[$child_key])) {
+      continue;
+    }
+    if (wcf_theme_webform_alter_preferred_stallion_element($form[$child_key])) {
+      return TRUE;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Alters the nomination webform preferred stallion field into a dynamic select.
+ */
+function wcf_theme_webform_nomination_form_alter(array &$form): void {
+  wcf_theme_webform_alter_preferred_stallion_element($form);
+}
+
+/**
+ * Validates that the preferred stallion choice is from the current standing list.
+ */
+function wcf_theme_webform_nomination_validate_preferred_stallion(array &$element, \Drupal\Core\Form\FormStateInterface $form_state, array &$form): void {
+  $value = trim((string) ($element['#value'] ?? ''));
+  if ($value === '') {
+    return;
+  }
+
+  if (!in_array($value, wcf_theme_nomination_stallion_allowed_values(), TRUE)) {
+    $form_state->setError($element, (string) t('Please select a valid stallion from the list.'));
+  }
+}
+
+/**
+ * Governed category labels for the stallions listing and search facets.
+ *
+ * @return list<string>
+ */
+function wcf_theme_stallion_listing_category_labels(): array {
+  return [
+    'ASB Stallions',
+    'Stallions',
+    'Sold Stallions',
+  ];
+}
+
+/**
+ * Taxonomy term IDs for stallion listing category filters (by label).
+ *
+ * @return list<int>
+ */
+function wcf_theme_stallion_listing_category_term_ids(): array {
+  static $cache = NULL;
+  if ($cache !== NULL) {
+    return $cache;
+  }
+
+  $cache = [];
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  foreach (wcf_theme_stallion_listing_category_labels() as $label) {
+    $tids = $storage->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('vid', 'categories')
+      ->condition('name', $label)
+      ->range(0, 1)
+      ->execute();
+    if ($tids !== []) {
+      $cache[] = (int) reset($tids);
+    }
+  }
+
+  return $cache;
+}
+
+/**
+ * Restricts exposed category options on the stallions listing.
+ */
+function wcf_theme_limit_stallion_listing_category_options(array &$form): void {
+  if (!isset($form['stallion_category']['#options']) || !is_array($form['stallion_category']['#options'])) {
+    return;
+  }
+
+  $allowed = array_fill_keys(wcf_theme_stallion_listing_category_term_ids(), TRUE);
+  $filtered = [];
+  foreach ($form['stallion_category']['#options'] as $key => $label) {
+    if ($key === '' || $key === 'All' || $key === '_none') {
+      $filtered[$key] = $label;
+      continue;
+    }
+    if (isset($allowed[(int) $key])) {
+      $filtered[$key] = $label;
+    }
+  }
+  $form['stallion_category']['#options'] = $filtered;
+}
+
+/**
+ * Applies WCF exposed-filter styling on the stallions listing page.
+ */
+function wcf_theme_stallion_listing_exposed_form_alter(array &$form): void {
+  $form['#attributes']['class'][] = 'stallion-listing-page__form';
+  $form['#attributes']['role'] = 'search';
+  $form['#attributes']['aria-label'] = (string) t('Filter stallions');
+
+  foreach (['stallion_status', 'stallion_category'] as $field) {
+    if (!isset($form[$field])) {
+      continue;
+    }
+    $form[$field]['#attributes']['class'][] = 'stallion-listing-page__select';
+  }
+
+  if (isset($form['actions']['submit'])) {
+    $form['actions']['submit']['#attributes']['class'][] = 'button--primary';
+    $form['actions']['submit']['#attributes']['class'][] = 'stallion-listing-page__apply';
+    $form['actions']['submit']['#value'] = (string) t('Apply');
+  }
+  if (isset($form['actions']['reset'])) {
+    $form['actions']['reset']['#attributes']['class'][] = 'button--outline';
+    $form['actions']['reset']['#attributes']['class'][] = 'stallion-listing-page__reset';
+  }
+}
+
+/**
+ * Builds a link render array when the route exists and is accessible.
+ *
+ * @param array<string, mixed> $options
+ *   Url::fromRoute() options (e.g. query).
+ * @param list<string> $classes
+ *   CSS classes on the anchor.
+ *
+ * @return array<string, mixed>|null
+ */
+function wcf_theme_build_route_link(string $route_name, array $route_parameters, string $title, array $classes = [], array $options = []): ?array {
+  try {
+    $url = Url::fromRoute($route_name, $route_parameters, $options);
+  }
+  catch (\Exception) {
+    return NULL;
+  }
+
   if ($url->isRouted() && !$url->access()) {
+    return NULL;
+  }
+
+  $link = [
+    '#type' => 'link',
+    '#title' => $title,
+    '#url' => $url,
+    '#attributes' => [
+      'class' => $classes,
+    ],
+  ];
+
+  if ($url->isRouted()) {
+    $link['#cache']['contexts'][] = 'user.permissions';
+  }
+
+  return $link;
+}
+
+/**
+ * Returns a string URL when the URL is accessible, or NULL.
+ */
+function wcf_theme_safe_url_string(Url $url): ?string {
+  if ($url->isRouted() && !$url->access()) {
+    return NULL;
+  }
+
+  return $url->toString();
+}
+
+/**
+ * Returns a route URL string when accessible.
+ */
+function wcf_theme_safe_route_url(string $route_name, array $route_parameters = [], array $options = []): ?string {
+  try {
+    $url = Url::fromRoute($route_name, $route_parameters, $options);
+  }
+  catch (\Exception) {
+    return NULL;
+  }
+
+  return wcf_theme_safe_url_string($url);
+}
+
+/**
+ * Returns an internal path URL string when accessible.
+ */
+function wcf_theme_safe_internal_url(string $path, array $options = []): ?string {
+  try {
+    $url = Url::fromUserInput($path, $options);
+  }
+  catch (\Exception) {
+    return NULL;
+  }
+
+  return wcf_theme_safe_url_string($url);
+}
+
+/**
+ * Builds a link from an internal path when accessible.
+ *
+ * @param list<string> $classes
+ *
+ * @return array<string, mixed>|null
+ */
+function wcf_theme_build_internal_path_link(string $path, string $title, array $classes = [], array $options = []): ?array {
+  try {
+    $url = Url::fromUserInput($path, $options);
+  }
+  catch (\Exception) {
+    return NULL;
+  }
+
+  if (!$url->access()) {
     return NULL;
   }
 
   return [
     '#type' => 'link',
-    '#title' => (string) t('Nominate this stallion'),
+    '#title' => $title,
     '#url' => $url,
     '#attributes' => [
-      'class' => ['stallion__nomination-cta', 'button', 'button--primary'],
+      'class' => $classes,
     ],
     '#cache' => [
-      'tags' => ['config:webform.webform.wcf_nomination'],
+      'contexts' => ['user.permissions'],
     ],
   ];
+}
+
+/**
+ * Returns the front-page homepage node, if configured and viewable.
+ */
+function wcf_theme_load_front_homepage_node(): ?NodeInterface {
+  $front = (string) \Drupal::config('system.site')->get('page.front');
+  if (!preg_match('/^\/node\/(\d+)$/', $front, $matches)) {
+    return NULL;
+  }
+
+  $node = \Drupal::entityTypeManager()->getStorage('node')->load((int) $matches[1]);
+  if (!$node instanceof NodeInterface || $node->bundle() !== 'homepage' || !$node->isPublished()) {
+    return NULL;
+  }
+  if (!$node->access('view')) {
+    return NULL;
+  }
+
+  return $node;
+}
+
+/**
+ * Public URL for a theme image under images/.
+ */
+function wcf_theme_theme_image_url(string $relative_path): string {
+  return base_path() . \Drupal::theme()->getActiveTheme()->getPath() . '/images/' . ltrim($relative_path, '/');
+}
+
+/**
+ * Public URL for the homepage hero background image.
+ */
+function wcf_theme_home_hero_image_url(): string {
+  return wcf_theme_theme_image_url('home-hero-broodmares.jpg');
+}
+
+/**
+ * Builds hero background image render array for the front page.
+ *
+ * @return array<string, mixed>|null
+ */
+function wcf_theme_build_homepage_hero_background(): ?array {
+  return [
+    '#type' => 'html_tag',
+    '#tag' => 'img',
+    '#attributes' => [
+      'class' => ['wcf-home-hero__image'],
+      'src' => wcf_theme_home_hero_image_url(),
+      'alt' => (string) t('Two Winning Colours Farm broodmares trotting on the track'),
+      'width' => '1024',
+      'height' => '689',
+      'loading' => 'eager',
+      'fetchpriority' => 'high',
+      'decoding' => 'async',
+    ],
+    '#cache' => [
+      'tags' => ['config:system.site'],
+      'contexts' => ['languages:language_interface'],
+    ],
+  ];
+}
+
+/**
+ * Attaches homepage mockup variables for the front page.
+ */
+function wcf_theme_attach_homepage_variables(array &$variables): void {
+  $stallions_link = wcf_theme_build_route_link(
+    'view.stallions.page_1',
+    [],
+    (string) t('Our Stallions'),
+    ['button', 'button--primary', 'wcf-home-hero__button'],
+  );
+  $search_link = wcf_theme_build_category_search_link(
+    'For Sale',
+    (string) t('Browse For Sale'),
+    ['button', 'button--ghost', 'wcf-home-hero__button'],
+  ) ?? wcf_theme_build_route_link(
+    'view.search_stallions.page_1',
+    [],
+    (string) t('Browse For Sale'),
+    ['button', 'button--ghost', 'wcf-home-hero__button'],
+  );
+
+  $hero_actions = array_values(array_filter([$stallions_link, $search_link]));
+
+  $variables['wcf_home_hero'] = [
+    'logo_url' => base_path() . \Drupal::theme()->getActiveTheme()->getPath() . '/logo.png',
+    'heading_line_1' => (string) t('PROVEN BLOODLINES.'),
+    'heading_line_2' => (string) t('BRIGHTER FUTURES.'),
+    'intro' => (string) t('At Winning Colours Farm, we are passionate about producing quality horses with exceptional temperament, conformation and performance.'),
+    'background' => wcf_theme_build_homepage_hero_background(),
+    'actions' => $hero_actions,
+    '#cache' => [
+      'tags' => ['config:system.site'],
+      'contexts' => ['user.permissions', 'languages:language_interface'],
+    ],
+  ];
+
+  $feature_links = wcf_theme_build_homepage_feature_links();
+  $variables['wcf_home_feature_links'] = $feature_links;
+  foreach (['Foals', 'For Sale'] as $category_name) {
+    $term = wcf_theme_load_category_term_by_name($category_name);
+    if ($term !== NULL) {
+      $variables['#cache']['tags'] = Cache::mergeTags(
+        $variables['#cache']['tags'] ?? [],
+        $term->getCacheTags(),
+      );
+    }
+  }
+  $variables['wcf_home_promo_cards'] = wcf_theme_build_homepage_promo_cards();
+  $registry = wcf_theme_build_homepage_registry_items();
+  $variables['wcf_home_registry_items'] = $registry['items'];
+  if (!empty($registry['cache_tags'])) {
+    $variables['#cache']['tags'] = Cache::mergeTags(
+      $variables['#cache']['tags'] ?? [],
+      $registry['cache_tags'],
+    );
+  }
+}
+
+/**
+ * Homepage feature strip link definitions.
+ *
+ * @return list<array<string, mixed>>
+ */
+function wcf_theme_build_homepage_feature_links(): array {
+  $nomination_url = wcf_theme_safe_route_url('entity.webform.canonical', ['webform' => 'wcf_nomination']);
+  $foals_url = wcf_theme_build_category_search_url('Foals');
+
+  $items = [
+    [
+      'title' => (string) t('Quality Stallions'),
+      'text' => (string) t('Carefully selected stallions with proven performance and outstanding pedigrees.'),
+      'icon' => 'horse-head',
+      'tone' => 'purple',
+      'url' => wcf_theme_safe_route_url('view.stallions.page_1'),
+    ],
+    [
+      'title' => (string) t('Foals & Youngstock'),
+      'text' => (string) t('Beautiful foals bred for type, movement and trainability with bright futures.'),
+      'icon' => 'foal',
+      'tone' => 'coral',
+      'url' => $foals_url ?? '',
+    ],
+    [
+      'title' => (string) t('Nominate Your Mare'),
+      'text' => (string) t('Give your mare the opportunity to produce her best foal yet this season.'),
+      'icon' => 'document',
+      'tone' => 'sky',
+      'url' => $nomination_url,
+    ],
+    [
+      'title' => (string) t('Container Homes'),
+      'text' => (string) t('Quality, affordable and customisable container homes for any lifestyle.'),
+      'icon' => 'home',
+      'tone' => 'lilac',
+      'url' => wcf_theme_safe_internal_url('/compliant-container-homes'),
+    ],
+    [
+      'title' => (string) t('Get In Touch'),
+      'text' => (string) t('Speak with Peta today about your stallion or future horse.'),
+      'icon' => 'phone',
+      'tone' => 'gold',
+      'url' => wcf_theme_safe_route_url('entity.webform.canonical', ['webform' => 'wcf_contact']),
+    ],
+  ];
+
+  return array_values(array_filter($items, static fn(array $item): bool => ($item['url'] ?? '') !== ''));
+}
+
+/**
+ * Homepage promotional card definitions.
+ *
+ * @return list<array<string, mixed>>
+ */
+function wcf_theme_build_homepage_promo_cards(): array {
+  $cards = [
+    [
+      'title' => (string) t('Nominations Now Open'),
+      'text' => (string) t('Secure your mare’s booking with our proven stallions for the upcoming season.'),
+      'cta_label' => (string) t('Application Form'),
+      'tone' => 'coral',
+      'image_url' => wcf_theme_theme_image_url('promo/nominations.jpg'),
+      'image_alt' => (string) t('Broodmares at Winning Colours Farm'),
+      'link' => wcf_theme_build_nomination_cta_link((string) t('Application Form'), ['wcf-home-promo-cards__cta', 'button', 'button--primary']),
+    ],
+    [
+      'title' => (string) t('For Sale Quality Horses'),
+      'text' => (string) t('Browse horses for sale — thoroughbreds, sport horses, and youngstock with exceptional pedigrees.'),
+      'cta_label' => (string) t('View Horses'),
+      'tone' => 'sky',
+      'image_url' => wcf_theme_theme_image_url('promo/for-sale.jpg'),
+      'image_alt' => (string) t('Horse for sale at Winning Colours Farm'),
+      'link' => wcf_theme_build_category_search_link(
+        'For Sale',
+        (string) t('View Horses'),
+        ['wcf-home-promo-cards__cta', 'button', 'button--primary'],
+      ) ?? wcf_theme_build_route_link('view.search_stallions.page_1', [], (string) t('View Horses'), ['wcf-home-promo-cards__cta', 'button', 'button--primary']),
+    ],
+    [
+      'title' => (string) t('Container Homes'),
+      'text' => (string) t('Compliant container homes designed for durability, comfort, and Australian conditions.'),
+      'cta_label' => (string) t('Learn More'),
+      'tone' => 'purple',
+      'image_url' => wcf_theme_theme_image_url('promo/container-homes.jpg'),
+      'image_alt' => (string) t('Compliant container home'),
+      'link' => wcf_theme_build_internal_path_link('/compliant-container-homes', (string) t('Learn More'), ['wcf-home-promo-cards__cta', 'button', 'button--primary']),
+    ],
+  ];
+
+  return array_values(array_filter($cards, static fn(array $card): bool => $card['link'] !== NULL));
+}
+
+/**
+ * Allowed WCF palette tokens for registry fallback swatches.
+ *
+ * @return list<string>
+ */
+function wcf_theme_registry_colour_tokens(): array {
+  return ['purple', 'coral', 'sky', 'lilac', 'gold', 'teal'];
+}
+
+/**
+ * Normalises a registry colour token for CSS modifiers.
+ */
+function wcf_theme_registry_colour_tone(?string $value, string $default = 'purple'): string {
+  $tone = $value !== NULL && $value !== '' ? $value : $default;
+  return in_array($tone, wcf_theme_registry_colour_tokens(), TRUE) ? $tone : $default;
+}
+
+/**
+ * Builds a registry logo image render array from uploaded media.
+ *
+ * @return array<string, mixed>|null
+ */
+function wcf_theme_build_registry_logo_image(MediaInterface $media, string $alt): ?array {
+  if ($media->bundle() !== 'image' || $media->get('field_media_image')->isEmpty()) {
+    return NULL;
+  }
+
+  $file = $media->get('field_media_image')->entity;
+  if ($file === NULL) {
+    return NULL;
+  }
+
+  return [
+    '#theme' => 'image_style',
+    '#style_name' => 'medium',
+    '#uri' => $file->getFileUri(),
+    '#alt' => $alt,
+    '#attributes' => [
+      'class' => ['wcf-registry__logo'],
+      'loading' => 'lazy',
+      'decoding' => 'async',
+    ],
+    '#cache' => [
+      'tags' => $media->getCacheTags(),
+    ],
+  ];
+}
+
+/**
+ * Builds one homepage registry card from a registry logo node.
+ *
+ * @return array<string, mixed>|null
+ */
+function wcf_theme_build_registry_logo_card(NodeInterface $node): ?array {
+  if ($node->bundle() !== 'wcf_registry_logo' || !$node->isPublished()) {
+    return NULL;
+  }
+  if (!$node->access('view')) {
+    return NULL;
+  }
+
+  $name = $node->get('field_registry_name')->value;
+  if ($name === NULL || trim($name) === '') {
+    $name = $node->label();
+  }
+  $name = trim((string) $name);
+
+  $short_raw = $node->get('field_registry_short_name')->value;
+  $short_name = $short_raw !== NULL && trim($short_raw) !== '' ? trim($short_raw) : NULL;
+
+  $tone = wcf_theme_registry_colour_tone(
+    $node->get('field_registry_colour')->isEmpty() ? NULL : (string) $node->get('field_registry_colour')->value,
+  );
+
+  $logo = NULL;
+  if (!$node->get('field_registry_logo')->isEmpty()) {
+    $media = $node->get('field_registry_logo')->entity;
+    if ($media instanceof MediaInterface) {
+      $logo = wcf_theme_build_registry_logo_image($media, $name);
+    }
+  }
+
+  $url = NULL;
+  if (!$node->get('field_registry_link')->isEmpty()) {
+    $link_item = $node->get('field_registry_link')->first();
+    if ($link_item !== NULL) {
+      $link_url = $link_item->getUrl();
+      $url = wcf_theme_safe_url_string($link_url);
+    }
+  }
+
+  return [
+    'name' => $name,
+    'short_name' => $short_name,
+    'tone' => $tone,
+    'logo' => $logo,
+    'url' => $url,
+  ];
+}
+
+/**
+ * Static fallback registry cards when no published logo nodes exist.
+ *
+ * @return list<array<string, mixed>>
+ */
+function wcf_theme_homepage_registry_fallback_items(): array {
+  return [
+    [
+      'name' => (string) t('Australian Studbook'),
+      'short_name' => NULL,
+      'tone' => 'purple',
+      'logo' => NULL,
+      'url' => NULL,
+    ],
+    [
+      'name' => (string) t('Arabian Horse Society of Australia'),
+      'short_name' => (string) t('AHSA'),
+      'tone' => 'coral',
+      'logo' => NULL,
+      'url' => NULL,
+    ],
+    [
+      'name' => (string) t('Australian Pony Stud Book Society / Riding Pony / Welsh Pony'),
+      'short_name' => NULL,
+      'tone' => 'sky',
+      'logo' => NULL,
+      'url' => NULL,
+    ],
+    [
+      'name' => (string) t('Australian Stock Horse Society'),
+      'short_name' => NULL,
+      'tone' => 'lilac',
+      'logo' => NULL,
+      'url' => NULL,
+    ],
+    [
+      'name' => (string) t('Australian Warmblood Horse Association'),
+      'short_name' => (string) t('AWHA'),
+      'tone' => 'gold',
+      'logo' => NULL,
+      'url' => NULL,
+    ],
+  ];
+}
+
+/**
+ * Loads published registry logo nodes for the homepage bloodlines grid.
+ *
+ * @return array{items: list<array<string, mixed>>, cache_tags: list<string>}
+ */
+function wcf_theme_build_homepage_registry_items(): array {
+  $cache_tags = ['node_list:wcf_registry_logo'];
+
+  $nids = \Drupal::entityQuery('node')
+    ->accessCheck(TRUE)
+    ->condition('type', 'wcf_registry_logo')
+    ->condition('status', 1)
+    ->sort('field_registry_weight', 'ASC')
+    ->sort('title', 'ASC')
+    ->range(0, 5)
+    ->execute();
+
+  if ($nids === []) {
+    return [
+      'items' => wcf_theme_homepage_registry_fallback_items(),
+      'cache_tags' => $cache_tags,
+    ];
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $nodes = $storage->loadMultiple($nids);
+  $items = [];
+
+  foreach ($nids as $nid) {
+    if (!isset($nodes[$nid])) {
+      continue;
+    }
+    $card = wcf_theme_build_registry_logo_card($nodes[$nid]);
+    if ($card === NULL) {
+      continue;
+    }
+    $items[] = $card;
+    $cache_tags = Cache::mergeTags($cache_tags, $nodes[$nid]->getCacheTags());
+    if ($card['logo'] !== NULL && isset($card['logo']['#cache']['tags'])) {
+      $cache_tags = Cache::mergeTags($cache_tags, $card['logo']['#cache']['tags']);
+    }
+  }
+
+  if ($items === []) {
+    return [
+      'items' => wcf_theme_homepage_registry_fallback_items(),
+      'cache_tags' => $cache_tags,
+    ];
+  }
+
+  return [
+    'items' => $items,
+    'cache_tags' => $cache_tags,
+  ];
+}
+
+/**
+ * Canonical WCF Facebook page URL.
+ */
+function wcf_theme_facebook_page_url(): string {
+  return 'https://www.facebook.com/pages/Winning-Colours-Farm/353221651451104';
+}
+
+/**
+ * Public contact email for footer and site chrome.
+ */
+function wcf_theme_footer_contact_email(): string {
+  $mail = \Drupal::config('system.site')->get('mail');
+  if (is_string($mail) && $mail !== '') {
+    return $mail;
+  }
+
+  return 'info@winningcoloursfarm.com.au';
+}
+
+/**
+ * Facebook follow panel variables.
+ *
+ * @return array<string, mixed>
+ */
+function wcf_theme_build_homepage_social_follow(array $variables): array {
+  $facebook_url = $variables['wcf_facebook_url'] ?? wcf_theme_facebook_page_url();
+
+  return [
+    'title' => (string) t('Love Our Horses?'),
+    'text' => (string) t('Follow Winning Colours Farm for updates, foals, stallions and sale horses.'),
+    'cta_label' => (string) t('Follow us on Facebook'),
+    'url' => is_string($facebook_url) && $facebook_url !== '' ? $facebook_url : NULL,
+  ];
+}
+
+/**
+ * Front-page primary navigation (mockup-aligned).
+ *
+ * @return list<array<string, mixed>>
+ */
+function wcf_theme_build_front_nav_links(): array {
+  $stallions_url = wcf_theme_build_stallions_listing_url('Stallions')
+    ?? wcf_theme_safe_route_url('view.stallions.page_1')
+    ?? '/stallions';
+  $asb_url = wcf_theme_build_category_and_status_search_url('ASB Stallions', 'active') ?? $stallions_url;
+  $for_sale_url = wcf_theme_build_category_search_url('For Sale') ?? wcf_theme_safe_route_url('view.search_stallions.page_1') ?? '/search';
+  $foals_url = wcf_theme_build_category_and_status_search_url('Foals', 'active') ?? '/search';
+  $nomination_url = wcf_theme_safe_route_url('entity.webform.canonical', ['webform' => 'wcf_nomination']) ?? '/nomination';
+  $contact_url = wcf_theme_safe_route_url('entity.webform.canonical', ['webform' => 'wcf_contact']) ?? '/contact-us';
+  $news_url = wcf_theme_safe_route_url('view.wcf_news.page_1') ?? '/news';
+
+  $for_sale_children = array_values(array_filter([
+    ['title' => (string) t('Brood Mares'), 'url' => wcf_theme_build_category_and_status_search_url('Broodmares', 'active') ?? ''],
+    ['title' => (string) t('Show Mares'), 'url' => wcf_theme_build_category_and_status_search_url('Show Mares', 'active') ?? ''],
+    ['title' => (string) t('Foals'), 'url' => wcf_theme_build_category_and_status_search_url('Foals', 'active') ?? ''],
+    [
+      'title' => (string) t('Stallions'),
+      'url' => wcf_theme_build_categories_and_status_search_url(['ASB Stallions', 'Stallions'], 'active') ?? '',
+    ],
+  ], static fn(array $child): bool => ($child['url'] ?? '') !== ''));
+
+  $items = [
+    [
+      'title' => (string) t('Stallions'),
+      'url' => $stallions_url,
+      'children' => [
+        ['title' => (string) t('ASB Stallions'), 'url' => $asb_url],
+        ['title' => (string) t('Stallions'), 'url' => $stallions_url],
+      ],
+    ],
+    ['title' => (string) t('Foals'), 'url' => $foals_url],
+    [
+      'title' => (string) t('For Sale'),
+      'url' => $for_sale_url,
+      'children' => $for_sale_children,
+    ],
+    ['title' => (string) t('Nomination'), 'url' => $nomination_url],
+    ['title' => (string) t('News'), 'url' => $news_url],
+    ['title' => (string) t('Contact Us'), 'url' => $contact_url],
+  ];
+
+  return array_values(array_filter($items, static fn(array $item): bool => ($item['url'] ?? '') !== ''));
+}
+
+/**
+ * Public footer utility links (same structure and URLs as header nav).
+ *
+ * @return list<array<string, mixed>>
+ */
+function wcf_theme_build_front_footer_links(): array {
+  $home = [
+    'title' => (string) t('Home'),
+    'url' => wcf_theme_safe_internal_url('/') ?? '/',
+  ];
+
+  return array_values(array_filter(
+    array_merge([$home], wcf_theme_build_front_nav_links()),
+    static fn(array $item): bool => ($item['url'] ?? '') !== '',
+  ));
+}
+
+/**
+ * Attaches shared public footer variables (mockup layout on all pages).
+ */
+function wcf_theme_attach_public_footer_variables(array &$variables): void {
+  $variables['wcf_front_footer_links'] = wcf_theme_build_front_footer_links();
+  $variables['wcf_theme_logo_url'] = base_path() . \Drupal::theme()->getActiveTheme()->getPath() . '/logo.png';
+  $variables['wcf_footer_contact_email'] = wcf_theme_footer_contact_email();
+  $variables['wcf_home_social_follow'] = wcf_theme_build_homepage_social_follow($variables);
+}
+
+/**
+ * Attaches shared public chrome variables (contact strip, header CTA).
+ */
+function wcf_theme_attach_chrome_variables(array &$variables): void {
+  $site_config = \Drupal::config('system.site');
+  $variables['wcf_site_mail'] = $site_config->get('mail');
+  $variables['wcf_contact_phone_display'] = '0411 826 965';
+  $variables['wcf_contact_phone_uri'] = 'tel:+61411826965';
+  $variables['wcf_contact_strip_message'] = (string) t('Call Peta: @phone to discuss your future horse.', [
+    '@phone' => '0411 826 965',
+  ]);
+  $variables['wcf_facebook_url'] = wcf_theme_facebook_page_url();
+  $variables['wcf_instagram_url'] = wcf_theme_instagram_page_url();
+  $variables['wcf_header_nomination_cta'] = wcf_theme_build_nomination_cta_link(
+    (string) t('Nominate Your Mare'),
+    ['site-chrome__cta-link'],
+  );
+}
+
+/**
+ * Canonical WCF Instagram profile URL (optional third-party link).
+ */
+function wcf_theme_instagram_page_url(): ?string {
+  return 'https://www.instagram.com/winningcoloursfarm/';
+}
+
+/**
+ * Bundles that support category-aware ad banner placement.
+ *
+ * @return list<string>
+ */
+function wcf_theme_ad_banner_host_bundles(): array {
+  return ['stallion', 'container_home'];
+}
+
+/**
+ * Loads a published categories term by exact label (case-insensitive).
+ */
+function wcf_theme_load_category_term_by_name(string $name): ?TermInterface {
+  $key = mb_strtolower(trim($name));
+  if ($key === '') {
+    return NULL;
+  }
+
+  static $cache = [];
+  if (array_key_exists($key, $cache)) {
+    return $cache[$key];
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_term');
+  $tids = $storage->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('vid', 'categories')
+    ->condition('status', 1)
+    ->execute();
+
+  $cache[$key] = NULL;
+  if ($tids === []) {
+    return NULL;
+  }
+
+  /** @var \Drupal\taxonomy\TermInterface[] $terms */
+  $terms = $storage->loadMultiple($tids);
+  foreach ($terms as $term) {
+    if ($term instanceof TermInterface && mb_strtolower(trim($term->label())) === $key) {
+      $cache[$key] = $term;
+      break;
+    }
+  }
+
+  return $cache[$key];
+}
+
+/**
+ * Builds a /search URL filtered by stallion lifecycle status (Search API facet).
+ */
+function wcf_theme_build_stallion_status_search_url(string $status): ?string {
+  return wcf_theme_safe_internal_url('/search', [
+    'query' => ['f' => ['stallion_status:' . $status]],
+  ]);
+}
+
+/**
+ * Builds /stallions listing URL with Views exposed filters.
+ *
+ * @param string|null $category_name
+ *   Governed category label (e.g. "Stallions", "ASB Stallions"); NULL for unfiltered.
+ */
+function wcf_theme_build_stallions_listing_url(?string $category_name = NULL, string $status = 'active'): ?string {
+  $query = ['stallion_status' => $status];
+  if ($category_name !== NULL && $category_name !== '') {
+    $term = wcf_theme_load_category_term_by_name($category_name);
+    if ($term === NULL) {
+      return NULL;
+    }
+    $query['stallion_category'] = (string) $term->id();
+  }
+
+  return wcf_theme_safe_route_url('view.stallions.page_1', [], ['query' => $query])
+    ?? wcf_theme_safe_internal_url('/stallions', ['query' => $query]);
+}
+
+/**
+ * Builds a /search URL with category and stallion_status facets.
+ */
+function wcf_theme_build_category_and_status_search_url(string $category_name, string $status = 'active'): ?string {
+  if ($category_name === 'For Sale') {
+    return wcf_theme_build_stallion_status_search_url($status);
+  }
+
+  $term = wcf_theme_load_category_term_by_name($category_name);
+  if ($term === NULL) {
+    return NULL;
+  }
+
+  return wcf_theme_safe_internal_url('/search', [
+    'query' => [
+      'f' => [
+        'category:' . $term->id(),
+        'stallion_status:' . $status,
+      ],
+    ],
+  ]);
+}
+
+/**
+ * Builds a /search URL with multiple category facets and stallion_status.
+ *
+ * @param list<string> $category_names
+ *   Governed category labels (e.g. "ASB Stallions", "Stallions").
+ */
+function wcf_theme_build_categories_and_status_search_url(array $category_names, string $status = 'active'): ?string {
+  $facets = [];
+  foreach ($category_names as $category_name) {
+    $term = wcf_theme_load_category_term_by_name($category_name);
+    if ($term === NULL) {
+      return NULL;
+    }
+    $facets[] = 'category:' . $term->id();
+  }
+  $facets[] = 'stallion_status:' . $status;
+
+  return wcf_theme_safe_internal_url('/search', [
+    'query' => ['f' => $facets],
+  ]);
+}
+
+/**
+ * Builds a /search URL with a category facet for a governed term name.
+ */
+function wcf_theme_build_category_search_url(string $category_name): ?string {
+  // D7 for-sale listings used sold = 0; legacy category_id=2 is entirely sold=1.
+  if ($category_name === 'For Sale') {
+    return wcf_theme_build_stallion_status_search_url('active');
+  }
+
+  $term = wcf_theme_load_category_term_by_name($category_name);
+  if ($term === NULL) {
+    return NULL;
+  }
+
+  return wcf_theme_safe_internal_url('/search', [
+    'query' => ['f' => ['category:' . $term->id()]],
+  ]);
+}
+
+/**
+ * Builds a /search link filtered by category facet for a governed term name.
+ *
+ * @param list<string> $classes
+ *
+ * @return array<string, mixed>|null
+ */
+function wcf_theme_build_category_search_link(string $category_name, string $title, array $classes = []): ?array {
+  if ($category_name === 'For Sale') {
+    return wcf_theme_build_internal_path_link('/search', $title, $classes, [
+      'query' => ['f' => ['stallion_status:active']],
+    ]);
+  }
+
+  $term = wcf_theme_load_category_term_by_name($category_name);
+  if ($term === NULL) {
+    return NULL;
+  }
+
+  $link = wcf_theme_build_internal_path_link('/search', $title, $classes, [
+    'query' => ['f' => ['category:' . $term->id()]],
+  ]);
+  if ($link !== NULL) {
+    $link['#cache']['tags'] = Cache::mergeTags(
+      $link['#cache']['tags'] ?? [],
+      $term->getCacheTags(),
+    );
+  }
+
+  return $link;
+}
+
+/**
+ * Returns the category term ID for nodes that expose field_category.
+ */
+function wcf_theme_get_node_category_term_id(NodeInterface $node): ?int {
+  if (!in_array($node->bundle(), wcf_theme_ad_banner_host_bundles(), TRUE)) {
+    return NULL;
+  }
+  if (!$node->hasField('field_category') || $node->get('field_category')->isEmpty()) {
+    return NULL;
+  }
+  $term = $node->get('field_category')->entity;
+  return $term !== NULL ? (int) $term->id() : NULL;
+}
+
+/**
+ * Whether an image file has readable dimensions for responsive srcset building.
+ */
+function wcf_theme_image_uri_has_dimensions(string $uri): bool {
+  $image = \Drupal::service('image.factory')->get($uri);
+  return $image->isValid() && (int) $image->getWidth() > 0 && (int) $image->getHeight() > 0;
+}
+
+/**
+ * Whether a media image can be scaled for display (JPEG, PNG, WebP, etc.).
+ *
+ * Rejects mislabeled files (e.g. HEIC saved with a .png extension) that break
+ * image style and responsive image rendering.
+ */
+function wcf_theme_media_image_is_renderable(MediaInterface $media): bool {
+  if ($media->bundle() !== 'image' || $media->get('field_media_image')->isEmpty()) {
+    return FALSE;
+  }
+
+  $item = $media->get('field_media_image')->first();
+  if ($item === NULL || empty($item->uri)) {
+    return FALSE;
+  }
+
+  return wcf_theme_image_uri_has_dimensions($item->uri);
+}
+
+/**
+ * Implements hook_preprocess_responsive_image_formatter().
+ *
+ * Falls back to a single styled image when the source file cannot be measured.
+ * Prevents LogicException from responsive_image "sizes" mappings on corrupt or
+ * mislabeled uploads (e.g. HEIC saved with a .png extension).
+ */
+function wcf_theme_preprocess_responsive_image_formatter(array &$variables): void {
+  $item = $variables['item'] ?? NULL;
+  if ($item === NULL) {
+    return;
+  }
+
+  $uri = NULL;
+  if (!empty($item->entity) && empty($item->uri)) {
+    $uri = $item->entity->getFileUri();
+  }
+  elseif (!empty($item->uri)) {
+    $uri = $item->uri;
+  }
+  if ($uri === NULL || $uri === '') {
+    return;
+  }
+
+  if (wcf_theme_image_uri_has_dimensions($uri)) {
+    return;
+  }
+
+  $style_id = $variables['responsive_image_style_id'] ?? '';
+  $fallback_style = 'thumbnail';
+  $responsive_style = is_string($style_id) && $style_id !== ''
+    ? ResponsiveImageStyle::load($style_id)
+    : NULL;
+  if ($responsive_style instanceof ResponsiveImageStyle) {
+    $fallback_style = $responsive_style->getFallbackImageStyle();
+  }
+
+  \Drupal::logger('wcf_theme')->warning(
+    'Responsive image skipped for unreadable file @uri (style @style); using fallback @fallback.',
+    [
+      '@uri' => $uri,
+      '@style' => $style_id,
+      '@fallback' => $fallback_style,
+    ],
+  );
+
+  $attributes = $variables['attributes'] ?? [];
+  if (!empty($variables['item_attributes'])) {
+    $attributes = array_merge($attributes, $variables['item_attributes']);
+  }
+  if (!is_null($item->title) && mb_strlen((string) $item->title) !== 0) {
+    $attributes['title'] = $item->title;
+  }
+  $attributes['alt'] = $item->alt ?? '';
+
+  $variables['responsive_image'] = [
+    '#theme' => 'image_style',
+    '#uri' => $uri,
+    '#style_name' => $fallback_style,
+    '#attributes' => $attributes,
+  ];
+}
+
+/**
+ * Builds a clickable ad banner card render array for the banner view mode.
+ *
+ * @return array<string, mixed>|null
+ *   Card render array or NULL when required data or access is missing.
+ */
+function wcf_theme_build_ad_banner_card(NodeInterface $banner): ?array {
+  if ($banner->bundle() !== 'wcf_ad_banner' || !$banner->isPublished()) {
+    return NULL;
+  }
+  if (!$banner->access('view')) {
+    return NULL;
+  }
+  if ($banner->get('field_banner_link')->isEmpty() || $banner->get('field_banner_image')->isEmpty()) {
+    return NULL;
+  }
+
+  $link_item = $banner->get('field_banner_link')->first();
+  if ($link_item === NULL) {
+    return NULL;
+  }
+
+  $url = $link_item->getUrl();
+  if ($url->isRouted() && !$url->access()) {
+    return NULL;
+  }
+
+  $media = $banner->get('field_banner_image')->entity;
+  if (!$media instanceof MediaInterface) {
+    return NULL;
+  }
+  if (!wcf_theme_media_image_is_renderable($media)) {
+    \Drupal::logger('wcf_theme')->warning('Skipping ad banner @nid: media @mid image is not a supported web format.', [
+      '@nid' => $banner->id(),
+      '@mid' => $media->id(),
+    ]);
+    return NULL;
+  }
+
+  $image = \Drupal::entityTypeManager()->getViewBuilder('media')->view($media, 'banner');
+
+  $caption_raw = $banner->get('field_banner_caption')->value;
+  $aria_label = ($caption_raw !== NULL && $caption_raw !== '')
+    ? $caption_raw
+    : (string) t('Promotional banner');
+
+  $link = [
+    '#type' => 'link',
+    '#title' => $image,
+    '#url' => $url,
+    '#attributes' => [
+      'class' => ['wcf-ad-banner__link'],
+      'aria-label' => $aria_label,
+    ],
+  ];
+
+  return [
+    '#theme' => 'wcf_ad_banner_card',
+    '#banner_link' => $link,
+    '#cache' => [
+      'tags' => Cache::mergeTags($banner->getCacheTags(), $media->getCacheTags()),
+      'contexts' => ['user.permissions', 'languages:language_interface'],
+    ],
+  ];
+}
+
+/**
+ * Loads published ad banner node IDs for a category term.
+ *
+ * @return list<int|string>
+ */
+function wcf_theme_load_ad_banner_nids(int $category_tid): array {
+  $nids = \Drupal::entityQuery('node')
+    ->accessCheck(TRUE)
+    ->condition('type', 'wcf_ad_banner')
+    ->condition('status', 1)
+    ->condition('field_banner_categories', $category_tid)
+    ->sort('field_banner_weight', 'ASC')
+    ->sort('created', 'DESC')
+    ->range(0, 4)
+    ->execute();
+
+  return array_values($nids);
+}
+
+/**
+ * Builds the ad banners grid render array for a host node, or NULL when empty.
+ *
+ * @return array<string, mixed>|null
+ */
+function wcf_theme_build_ad_banners_renderable(NodeInterface $node): ?array {
+  $category_tid = wcf_theme_get_node_category_term_id($node);
+  if ($category_tid === NULL) {
+    return NULL;
+  }
+
+  $nids = wcf_theme_load_ad_banner_nids($category_tid);
+  if ($nids === []) {
+    return NULL;
+  }
+
+  $storage = \Drupal::entityTypeManager()->getStorage('node');
+  $banners = $storage->loadMultiple($nids);
+  $items = [];
+  $cache_tags = [
+    'node_list:wcf_ad_banner',
+    'taxonomy_term:' . $category_tid,
+    'node:' . $node->id(),
+  ];
+
+  foreach ($nids as $nid) {
+    if (!isset($banners[$nid])) {
+      continue;
+    }
+    $card = wcf_theme_build_ad_banner_card($banners[$nid]);
+    if ($card === NULL) {
+      continue;
+    }
+    $items[] = $card;
+    $cache_tags = Cache::mergeTags($cache_tags, $banners[$nid]->getCacheTags());
+  }
+
+  if ($items === []) {
+    return NULL;
+  }
+
+  $build = [
+    '#type' => 'container',
+    '#attributes' => ['class' => ['wcf-ad-banners__stack']],
+    '#cache' => [
+      'tags' => $cache_tags,
+      'contexts' => ['route', 'user.permissions', 'languages:language_interface'],
+    ],
+  ];
+  foreach ($items as $delta => $item) {
+    $build[$delta] = $item;
+  }
+
+  return $build;
+}
+
+/**
+ * Attaches category-aware ad banners for supported full-page host nodes.
+ */
+function wcf_theme_attach_ad_banners(array &$variables, NodeInterface $node): void {
+  if (($variables['view_mode'] ?? '') !== 'full') {
+    return;
+  }
+  $variables['wcf_ad_banners'] = wcf_theme_build_ad_banners_renderable($node);
 }
 
 /**
@@ -182,6 +1591,32 @@ function wcf_theme_metatags_alter(array &$metatags, array &$context): void {
 }
 
 /**
+ * Status label for stallion cards (search maps active → "For Sale").
+ */
+function wcf_theme_stallion_card_status_label(NodeInterface $node, string $view_mode): ?string {
+  if ($view_mode === 'full') {
+    return NULL;
+  }
+
+  if (wcf_theme_stallion_is_sold($node)) {
+    return NULL;
+  }
+
+  if (!in_array($view_mode, ['card', 'teaser'], TRUE)) {
+    return wcf_theme_list_field_label($node, 'field_status');
+  }
+
+  if (wcf_theme_is_site_search_page()
+    && $node->hasField('field_status')
+    && !$node->get('field_status')->isEmpty()
+    && $node->get('field_status')->value === 'active') {
+    return (string) t('For Sale');
+  }
+
+  return wcf_theme_list_field_label($node, 'field_status');
+}
+
+/**
  * Returns a list field label for display.
  */
 function wcf_theme_list_field_label(NodeInterface $node, string $field_name): ?string {
@@ -282,6 +1717,350 @@ function wcf_theme_preprocess_paragraph__testimonial_item(array &$variables): vo
 }
 
 /**
+ * Public URL for the stallion "image coming soon" placeholder asset.
+ */
+function wcf_theme_stallion_placeholder_image_url(): string {
+  return base_path() . \Drupal::theme()->getActiveTheme()->getPath() . '/images/placeholder-horse.png';
+}
+
+/**
+ * Public URL for the sold overlay badge on stallion main images.
+ */
+function wcf_theme_stallion_sold_badge_image_url(): string {
+  return base_path() . \Drupal::theme()->getActiveTheme()->getPath() . '/images/sold-badge.png';
+}
+
+/**
+ * Whether the stallion should show the sold badge (matches search cards).
+ */
+function wcf_theme_stallion_is_sold(NodeInterface $node): bool {
+  if ($node->bundle() !== 'stallion') {
+    return FALSE;
+  }
+
+  if ($node->hasField('field_status') && !$node->get('field_status')->isEmpty()) {
+    if ($node->get('field_status')->value === 'sold') {
+      return TRUE;
+    }
+  }
+
+  if ($node->hasField('field_category') && !$node->get('field_category')->isEmpty()) {
+    $term = $node->get('field_category')->entity;
+    if ($term instanceof TermInterface) {
+      $label = mb_strtolower(trim($term->label()));
+      if (in_array($label, ['sold', 'sold stallions'], TRUE)) {
+        return TRUE;
+      }
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Builds document link rows for the stallion full-page documents field.
+ *
+ * @return list<array{label: string, url: string}>
+ */
+function wcf_theme_stallion_document_items(NodeInterface $node): array {
+  if (!$node->hasField('field_documents') || $node->get('field_documents')->isEmpty()) {
+    return [];
+  }
+
+  $items = [];
+  $file_url_generator = \Drupal::service('file_url_generator');
+  foreach ($node->get('field_documents') as $reference) {
+    $media = $reference->entity;
+    if ($media === NULL || $media->bundle() !== 'document') {
+      continue;
+    }
+    if ($media->get('field_media_document')->isEmpty()) {
+      continue;
+    }
+    $file = $media->get('field_media_document')->entity;
+    if ($file === NULL) {
+      continue;
+    }
+    $label = trim($media->label());
+    if ($label === '') {
+      $label = $file->getFilename();
+    }
+    $items[] = [
+      'label' => $label,
+      'url' => $file_url_generator->generateAbsoluteString($file->getFileUri()),
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Builds video rows for the stallion full-page videos section.
+ *
+ * @return list<array{label: string, url: string, thumbnail: string|null}>
+ */
+function wcf_theme_stallion_video_items(NodeInterface $node): array {
+  if (!$node->hasField('field_video') || $node->get('field_video')->isEmpty()) {
+    return [];
+  }
+
+  $file_url_generator = \Drupal::service('file_url_generator');
+  $items = [];
+  foreach ($node->get('field_video') as $reference) {
+    $media = $reference->entity;
+    if ($media === NULL || $media->bundle() !== 'remote_video') {
+      continue;
+    }
+    if ($media->get('field_media_oembed_video')->isEmpty()) {
+      continue;
+    }
+    $video_url = trim((string) $media->get('field_media_oembed_video')->value);
+    if ($video_url === '') {
+      continue;
+    }
+
+    $label = trim($media->label());
+    if ($label === '') {
+      $label = (string) t('Video');
+    }
+
+    $thumbnail = NULL;
+    if (!$media->get('thumbnail')->isEmpty()) {
+      $thumb_file = $media->get('thumbnail')->entity;
+      if ($thumb_file !== NULL) {
+        $thumbnail = $file_url_generator->generateAbsoluteString($thumb_file->getFileUri());
+      }
+    }
+
+    $items[] = [
+      'label' => $label,
+      'url' => $video_url,
+      'thumbnail' => $thumbnail,
+    ];
+  }
+
+  return $items;
+}
+
+/**
+ * Whether the stallion is in the Foals category.
+ */
+function wcf_theme_stallion_is_foals(NodeInterface $node): bool {
+  if (!$node->hasField('field_category') || $node->get('field_category')->isEmpty()) {
+    return FALSE;
+  }
+  $term = $node->get('field_category')->entity;
+  return $term !== NULL && $term->label() === 'Foals';
+}
+
+/**
+ * Returns the foal year for a stallion (field value or title prefix).
+ */
+function wcf_theme_stallion_foal_year(NodeInterface $node): ?int {
+  if ($node->hasField('field_foal_year') && !$node->get('field_foal_year')->isEmpty()) {
+    return (int) $node->get('field_foal_year')->value;
+  }
+  if (preg_match('/^\s*(\d{4})\b/', $node->label(), $matches) === 1) {
+    return (int) $matches[1];
+  }
+  return NULL;
+}
+
+/**
+ * Breed / sex line for cards (node title without leading year).
+ */
+function wcf_theme_stallion_card_detail_line(NodeInterface $node): ?string {
+  $label = trim($node->label());
+  if ($label === '') {
+    return NULL;
+  }
+  if (preg_match('/^\s*\d{4}\s+(.+)$/s', $label, $matches) === 1) {
+    return trim($matches[1]);
+  }
+  return $label;
+}
+
+/**
+ * Active foal year from search facet query (f[]=foal_year:YYYY or foal_year param).
+ */
+function wcf_theme_search_active_foal_year(): ?int {
+  $request = \Drupal::request();
+  $foal_year = $request->query->get('foal_year');
+  if (is_numeric($foal_year)) {
+    return (int) $foal_year;
+  }
+  $filters = $request->query->all('f');
+  if (!is_array($filters)) {
+    return NULL;
+  }
+  foreach ($filters as $filter) {
+    if (is_string($filter) && preg_match('/^foal_year:(\d{4})$/', $filter, $matches) === 1) {
+      return (int) $matches[1];
+    }
+  }
+  return NULL;
+}
+
+/**
+ * Whether the site search request has a category facet active for the given name.
+ */
+function wcf_theme_search_has_category_facet(string $category_name): bool {
+  $term = wcf_theme_load_category_term_by_name($category_name);
+  if ($term === NULL) {
+    return FALSE;
+  }
+  $tid = (int) $term->id();
+
+  $request = \Drupal::request();
+  $category = $request->query->get('category');
+  if ($category !== NULL && $category !== '') {
+    $values = is_array($category) ? $category : [$category];
+    foreach ($values as $value) {
+      if (strcasecmp(trim((string) $value), $category_name) === 0) {
+        return TRUE;
+      }
+    }
+  }
+
+  $filters = $request->query->all('f');
+  if (!is_array($filters)) {
+    return FALSE;
+  }
+  foreach ($filters as $filter) {
+    if (!is_string($filter)) {
+      continue;
+    }
+    if (preg_match('/^category:(\d+)$/', $filter, $matches) === 1) {
+      return (int) $matches[1] === $tid;
+    }
+  }
+
+  return FALSE;
+}
+
+/**
+ * Whether the site search request has the Foals category facet active.
+ */
+function wcf_theme_search_has_foals_category(): bool {
+  return wcf_theme_search_has_category_facet('Foals');
+}
+
+/**
+ * Removes Search API conditions for a field from a condition group (recursive).
+ */
+function wcf_theme_search_api_query_remove_field_conditions(ConditionGroupInterface $group, string $field): void {
+  $conditions = &$group->getConditions();
+  foreach ($conditions as $key => $condition) {
+    if ($condition instanceof ConditionGroupInterface) {
+      wcf_theme_search_api_query_remove_field_conditions($condition, $field);
+      if ($condition->isEmpty()) {
+        unset($conditions[$key]);
+      }
+      continue;
+    }
+    if ($condition instanceof ConditionInterface && $condition->getField() === $field) {
+      unset($conditions[$key]);
+    }
+  }
+}
+
+/**
+ * Implements hook_search_api_query_alter().
+ *
+ * Legacy "For Sale" category facet: D7 used sold = 0, not category_id = 2 (all sold=1).
+ */
+function wcf_theme_search_api_query_alter(QueryInterface $query): void {
+  if (!wcf_theme_search_has_category_facet('For Sale')) {
+    return;
+  }
+  $group = $query->getConditionGroup();
+  if ($group instanceof ConditionGroupInterface) {
+    wcf_theme_search_api_query_remove_field_conditions($group, 'category');
+  }
+  $query->addCondition('status', 'active');
+}
+
+/**
+ * Whether the current request is the site search page at /search.
+ */
+function wcf_theme_is_site_search_page(): bool {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if (in_array($route_name, ['view.search_stallions.page_1', 'search.view'], TRUE)) {
+    return TRUE;
+  }
+  return \Drupal::service('path.current')->getPath() === '/search';
+}
+
+/**
+ * Whether foal year should show on stallion cards (site search + Foals facet only).
+ */
+function wcf_theme_show_foal_year_on_cards(): bool {
+  return wcf_theme_is_site_search_page() && wcf_theme_search_has_foals_category();
+}
+
+/**
+ * Builds foal year pill links for site search when Foals category is active.
+ *
+ * @return list<array{label: string, url: string, active: bool}>
+ */
+function wcf_theme_build_foal_search_year_links(): array {
+  if (!wcf_theme_search_has_foals_category()) {
+    return [];
+  }
+
+  $foals_term = wcf_theme_load_category_term_by_name('Foals');
+  if ($foals_term === NULL) {
+    return [];
+  }
+
+  $years = \Drupal::database()->query(
+    'SELECT DISTINCT f.field_foal_year_value AS year
+     FROM {node__field_foal_year} f
+     INNER JOIN {node_field_data} n ON n.nid = f.entity_id
+     INNER JOIN {node__field_category} c ON c.entity_id = n.nid
+     WHERE n.type = :type AND n.status = 1
+       AND c.field_category_target_id = :tid
+       AND f.field_foal_year_value IS NOT NULL
+     ORDER BY year DESC',
+    [
+      ':type' => 'stallion',
+      ':tid' => (int) $foals_term->id(),
+    ]
+  )->fetchCol();
+
+  if ($years === []) {
+    return [];
+  }
+
+  $request = \Drupal::request();
+  $active_year = wcf_theme_search_active_foal_year();
+  $keywords = $request->query->get('keywords');
+
+  $links = [];
+  foreach ($years as $year) {
+    $year = (int) $year;
+    $query = [
+      'category' => 'Foals',
+      'f' => ["foal_year:$year"],
+    ];
+    if (is_string($keywords) && $keywords !== '') {
+      $query['keywords'] = $keywords;
+    }
+    $url = wcf_theme_safe_route_url('view.search_stallions.page_1', [], ['query' => $query]);
+    if ($url === NULL) {
+      continue;
+    }
+    $links[] = [
+      'label' => (string) $year,
+      'url' => $url,
+      'active' => $active_year === $year,
+    ];
+  }
+
+  return $links;
+}
+
+/**
  * Implements hook_preprocess_node__stallion().
  */
 function wcf_theme_preprocess_node__stallion(array &$variables): void {
@@ -290,12 +2069,27 @@ function wcf_theme_preprocess_node__stallion(array &$variables): void {
     return;
   }
 
-  $variables['stallion_status_label'] = wcf_theme_list_field_label($node, 'field_status');
+  $variables['stallion_placeholder_image'] = wcf_theme_stallion_placeholder_image_url();
+  $variables['stallion_sold_badge_image'] = wcf_theme_stallion_sold_badge_image_url();
+  $variables['stallion_is_sold'] = wcf_theme_stallion_is_sold($node);
+  // Full page: sold is indicated by the image badge only, not a text status line.
+  $view_mode = $variables['view_mode'] ?? 'default';
+  $variables['stallion_status_label'] = $view_mode === 'full'
+    ? NULL
+    : wcf_theme_stallion_card_status_label($node, $view_mode);
   $variables['stallion_featured'] = (bool) $node->get('field_featured')->value;
   $variables['stallion_summary_fallback'] = wcf_theme_stallion_summary_fallback($node, 120);
   $variables['node_summary_fallback'] = $variables['stallion_summary_fallback'];
-  $variables['stallion_is_foals'] = FALSE;
-  $variables['stallion_foal_year_links'] = [];
+  $variables['stallion_is_foals'] = wcf_theme_stallion_is_foals($node);
+  $variables['stallion_foal_year'] = NULL;
+  if (wcf_theme_show_foal_year_on_cards() && $variables['stallion_is_foals']) {
+    $variables['stallion_foal_year'] = wcf_theme_stallion_foal_year($node);
+    $variables['#cache']['contexts'] = Cache::mergeContexts(
+      $variables['#cache']['contexts'] ?? [],
+      ['url.query_args:category', 'url.query_args:f'],
+    );
+  }
+  $variables['stallion_card_detail_line'] = NULL;
   $variables['stallion_display_name'] = NULL;
   if ($node->hasField('field_display_name') && !$node->get('field_display_name')->isEmpty()) {
     $variables['stallion_display_name'] = trim((string) $node->get('field_display_name')->value);
@@ -304,15 +2098,255 @@ function wcf_theme_preprocess_node__stallion(array &$variables): void {
     }
   }
 
-  if (($variables['view_mode'] ?? '') === 'full') {
-    $variables['stallion_nomination_cta_link'] = wcf_theme_build_stallion_nomination_cta_link();
+  if ($variables['stallion_display_name'] !== NULL) {
+    $variables['stallion_card_detail_line'] = wcf_theme_stallion_card_detail_line($node);
+  }
 
-    if (!$node->get('field_category')->isEmpty()) {
-      $term = $node->get('field_category')->entity;
-      if ($term !== NULL) {
-        $variables['stallion_is_foals'] = $term->label() === 'Foals';
+  if (($variables['view_mode'] ?? '') === 'full') {
+    $variables['stallion_nomination_cta_link'] = wcf_theme_stallion_shows_nomination_cta($node)
+      ? wcf_theme_build_stallion_nomination_cta_link()
+      : NULL;
+
+    wcf_theme_attach_ad_banners($variables, $node);
+
+    wcf_theme_attach_stallion_media_lightbox($variables, $node);
+
+    $variables['stallion_document_items'] = wcf_theme_stallion_document_items($node);
+    $variables['stallion_video_items'] = wcf_theme_stallion_video_items($node);
+    if ($variables['stallion_video_items'] !== []) {
+      $variables['stallion_video_group'] = wcf_theme_stallion_video_lightbox_group($node);
+      $variables['#attached']['library'][] = 'wcf_theme/gallery-lightbox';
+    }
+  }
+}
+
+/**
+ * Returns the GLightbox group id for stallion gallery images.
+ */
+function wcf_theme_stallion_media_lightbox_group(NodeInterface $node): string {
+  return 'stallion-gallery-' . $node->id();
+}
+
+/**
+ * Returns the GLightbox group id for stallion video rows.
+ */
+function wcf_theme_stallion_video_lightbox_group(NodeInterface $node): string {
+  return 'stallion-video-' . $node->id();
+}
+
+/**
+ * Attaches the stallion media lightbox library when gallery or video exists.
+ */
+function wcf_theme_attach_stallion_media_lightbox(array &$variables, NodeInterface $node): void {
+  if ($node->get('field_gallery')->isEmpty() && $node->get('field_video')->isEmpty()) {
+    return;
+  }
+
+  $variables['stallion_gallery_group'] = wcf_theme_stallion_media_lightbox_group($node);
+  $variables['#attached']['library'][] = 'wcf_theme/gallery-lightbox';
+}
+
+/**
+ * Implements hook_preprocess_field__node__field_gallery__stallion().
+ */
+function wcf_theme_preprocess_field__node__field_gallery__stallion(array &$variables): void {
+  $node = $variables['element']['#object'] ?? NULL;
+  if (!$node instanceof NodeInterface) {
+    return;
+  }
+
+  wcf_theme_attach_stallion_media_lightbox($variables, $node);
+  $variables['stallion_gallery_group'] = wcf_theme_stallion_media_lightbox_group($node);
+
+  $total = count($variables['items']);
+  foreach ($variables['items'] as $delta => &$item) {
+    if (!isset($item['content']) || !is_array($item['content'])) {
+      continue;
+    }
+    $item['content']['#stallion_gallery_group'] = $variables['stallion_gallery_group'];
+    $item['content']['#stallion_gallery_index'] = $delta + 1;
+    $item['content']['#stallion_gallery_total'] = $total;
+  }
+}
+
+/**
+ * Implements hook_preprocess_media__image__gallery().
+ */
+function wcf_theme_preprocess_media__image__gallery(array &$variables): void {
+  wcf_theme_preprocess_media_gallery_lightbox($variables);
+}
+
+/**
+ * Implements hook_preprocess_media__remote_video__gallery().
+ */
+function wcf_theme_preprocess_media__remote_video__gallery(array &$variables): void {
+  wcf_theme_preprocess_media_gallery_lightbox($variables);
+}
+
+/**
+ * Shared preprocess for stallion gallery / video lightbox media view modes.
+ *
+ * @param array<string, mixed> $variables
+ *   Media preprocess variables.
+ */
+function wcf_theme_preprocess_media_gallery_lightbox(array &$variables): void {
+  $elements = $variables['elements'] ?? [];
+  $variables['stallion_gallery_group'] = $elements['#stallion_gallery_group'] ?? NULL;
+  $variables['showcase_gallery_group'] = $elements['#showcase_gallery_group'] ?? NULL;
+  $variables['stallion_gallery_index'] = $elements['#stallion_gallery_index'] ?? NULL;
+  $variables['stallion_gallery_total'] = $elements['#stallion_gallery_total'] ?? NULL;
+
+  if ($variables['stallion_gallery_group'] === NULL && $variables['showcase_gallery_group'] === NULL) {
+    $node = \Drupal::routeMatch()->getParameter('node');
+    if ($node instanceof NodeInterface) {
+      if ($node->bundle() === 'stallion') {
+        $variables['stallion_gallery_group'] = wcf_theme_stallion_media_lightbox_group($node);
+      }
+      elseif ($node->bundle() === 'wcf_showcase_item') {
+        $variables['showcase_gallery_group'] = wcf_theme_showcase_gallery_group($node);
       }
     }
+  }
+}
+
+/**
+ * Implements hook_preprocess_field__node__field_video__stallion().
+ */
+function wcf_theme_preprocess_field__node__field_video__stallion(array &$variables): void {
+  $node = $variables['element']['#object'] ?? NULL;
+  if ($node instanceof NodeInterface) {
+    $variables['stallion_video_items'] = wcf_theme_stallion_video_items($node);
+  }
+}
+
+/**
+ * Returns the GLightbox group id for a showcase story node.
+ */
+function wcf_theme_showcase_gallery_group(NodeInterface $node): string {
+  return 'showcase-' . $node->id();
+}
+
+/**
+ * Implements hook_preprocess_node__wcf_showcase_item().
+ */
+function wcf_theme_preprocess_node__wcf_showcase_item(array &$variables): void {
+  $node = $variables['node'] ?? NULL;
+  if (!$node instanceof NodeInterface || $node->get('field_gallery')->isEmpty()) {
+    return;
+  }
+  $variables['showcase_gallery_group'] = wcf_theme_showcase_gallery_group($node);
+  $variables['#attached']['library'][] = 'wcf_theme/gallery-lightbox';
+}
+
+/**
+ * Implements hook_preprocess_field__node__field_gallery__wcf_showcase_item().
+ */
+function wcf_theme_preprocess_field__node__field_gallery__wcf_showcase_item(array &$variables): void {
+  $node = $variables['element']['#object'] ?? NULL;
+  if (!$node instanceof NodeInterface) {
+    return;
+  }
+  $group = wcf_theme_showcase_gallery_group($node);
+  $variables['showcase_gallery_group'] = $group;
+  $variables['stallion_gallery_group'] = $group;
+  $variables['#attached']['library'][] = 'wcf_theme/gallery-lightbox';
+  $total = count($variables['items']);
+  foreach ($variables['items'] as $delta => &$item) {
+    if (!isset($item['content']) || !is_array($item['content'])) {
+      continue;
+    }
+    $item['content']['#showcase_gallery_group'] = $group;
+    $item['content']['#stallion_gallery_group'] = $group;
+    $item['content']['#stallion_gallery_index'] = $delta + 1;
+    $item['content']['#stallion_gallery_total'] = $total;
+  }
+}
+
+/**
+ * Implements hook_preprocess_views_view__wcf_showcase().
+ */
+function wcf_theme_preprocess_views_view__wcf_showcase(array &$variables): void {
+  $variables['#attached']['library'][] = 'wcf_theme/gallery-lightbox';
+}
+
+/**
+ * Returns the public download URL for a newsletter node's document media.
+ */
+function wcf_theme_newsletter_file_url(NodeInterface $node): ?string {
+  if ($node->bundle() !== 'wcf_newsletter' || !$node->hasField('field_newsletter_file') || $node->get('field_newsletter_file')->isEmpty()) {
+    return NULL;
+  }
+  $media = $node->get('field_newsletter_file')->entity;
+  if ($media === NULL || $media->bundle() !== 'document' || $media->get('field_media_document')->isEmpty()) {
+    return NULL;
+  }
+  $file = $media->get('field_media_document')->entity;
+  if ($file === NULL) {
+    return NULL;
+  }
+  return \Drupal::service('file_url_generator')->generateAbsoluteString($file->getFileUri());
+}
+
+/**
+ * Builds year-grouped newsletter rows for the /news accordion.
+ *
+ * @return list<array{year: int, items: list<array{month: string, title: string, url: string}>}>
+ */
+function wcf_theme_build_newsletter_year_groups(): array {
+  $nids = \Drupal::entityTypeManager()->getStorage('node')->getQuery()
+    ->accessCheck(TRUE)
+    ->condition('type', 'wcf_newsletter')
+    ->condition('status', 1)
+    ->sort('field_newsletter_year', 'DESC')
+    ->sort('field_newsletter_weight', 'ASC')
+    ->execute();
+
+  if ($nids === []) {
+    return [];
+  }
+
+  $nodes = \Drupal::entityTypeManager()->getStorage('node')->loadMultiple($nids);
+  $groups = [];
+  foreach ($nodes as $node) {
+    if (!$node instanceof NodeInterface) {
+      continue;
+    }
+    $url = wcf_theme_newsletter_file_url($node);
+    if ($url === NULL) {
+      continue;
+    }
+    $year = (int) $node->get('field_newsletter_year')->value;
+    $month = trim((string) $node->get('field_newsletter_month')->value);
+    if ($year <= 0 || $month === '') {
+      continue;
+    }
+    $groups[$year]['year'] = $year;
+    $groups[$year]['items'][] = [
+      'month' => $month,
+      'title' => $node->label(),
+      'url' => $url,
+    ];
+  }
+
+  krsort($groups, SORT_NUMERIC);
+  return array_values($groups);
+}
+
+/**
+ * Implements hook_preprocess_views_view__wcf_news().
+ */
+function wcf_theme_preprocess_views_view__wcf_news(array &$variables): void {
+  $variables['wcf_newsletter_years'] = wcf_theme_build_newsletter_year_groups();
+  $variables['#cache']['tags'][] = 'node_list:wcf_newsletter';
+}
+
+/**
+ * Implements hook_preprocess_field__node__field_documents__stallion().
+ */
+function wcf_theme_preprocess_field__node__field_documents__stallion(array &$variables): void {
+  $node = $variables['element']['#object'] ?? NULL;
+  if ($node instanceof NodeInterface) {
+    $variables['stallion_document_items'] = wcf_theme_stallion_document_items($node);
   }
 }
 
@@ -329,6 +2363,7 @@ function wcf_theme_preprocess_node__container_home(array &$variables): void {
     ? (string) t('Sold')
     : NULL;
   $variables['node_summary_fallback'] = wcf_theme_node_summary_fallback($node, 120);
+  wcf_theme_attach_ad_banners($variables, $node);
 }
 
 /**
@@ -344,17 +2379,49 @@ function wcf_theme_preprocess_field__node__field_hero_slides(array &$variables):
 }
 
 /**
- * Implements hook_preprocess_node__homepage().
- */
-function wcf_theme_preprocess_node__homepage(array &$variables): void {
-  $variables['#attached']['library'][] = 'wcf_theme/global';
-}
-
-/**
  * Implements hook_preprocess_views_view__stallions().
  */
 function wcf_theme_preprocess_views_view__stallions(array &$variables): void {
   $variables['attributes']['class'][] = 'stallion-listing';
+  if (($variables['view']->current_display ?? '') === 'page_1') {
+    $variables['#attached']['library'][] = 'wcf_theme/site-search';
+    $variables['stallion_listing_tagline'] = (string) t('Browse standing stallions, ASB stallions, and sold stallions.');
+  }
+}
+
+/**
+ * Builds the search active-filters summary without a block placement.
+ *
+ * @return array<string, mixed>|null
+ *   Render array or NULL when empty / inaccessible.
+ */
+function wcf_theme_build_search_facets_summary(): ?array {
+  $block_manager = \Drupal::service('plugin.manager.block');
+  $plugin = $block_manager->createInstance('facets_summary_block:search_active_filters', []);
+  if ($plugin === NULL || !$plugin->access(\Drupal::currentUser())) {
+    return NULL;
+  }
+
+  $build = $plugin->build();
+  if ($build === []) {
+    return NULL;
+  }
+
+  $build['#contextual_links'] = [];
+
+  return [
+    '#type' => 'container',
+    '#attributes' => ['class' => ['site-search__active-filters']],
+    'inner' => [
+      '#type' => 'container',
+      '#attributes' => [
+        'class' => ['site-search__active-filters-inner'],
+        'role' => 'status',
+        'aria-live' => 'polite',
+      ],
+      'content' => $build,
+    ],
+  ];
 }
 
 /**
@@ -367,6 +2434,11 @@ function wcf_theme_preprocess_views_view__search_stallions(array &$variables): v
   if (!empty($variables['header'])) {
     $variables['title'] = t('Search');
   }
+  $variables['facets_summary'] = wcf_theme_build_search_facets_summary();
+
+  $variables['stallion_foal_year_links'] = wcf_theme_show_foal_year_on_cards()
+    ? wcf_theme_build_foal_search_year_links()
+    : [];
 }
 
 /**
@@ -374,6 +2446,32 @@ function wcf_theme_preprocess_views_view__search_stallions(array &$variables): v
  */
 function wcf_theme_preprocess_page__search(array &$variables): void {
   $variables['attributes']['class'][] = 'page--search';
+
+  if (wcf_theme_search_has_foals_category()) {
+    return;
+  }
+
+  if (isset($variables['page']['sidebar_first']['wcf_facet_foal_year'])) {
+    unset($variables['page']['sidebar_first']['wcf_facet_foal_year']);
+    $variables['#cache']['contexts'] = Cache::mergeContexts(
+      $variables['#cache']['contexts'] ?? [],
+      ['url.query_args:category', 'url.query_args:f'],
+    );
+  }
+}
+
+/**
+ * Implements hook_form_webform_submission_wcf_nomination_add_form_alter().
+ */
+function wcf_theme_form_webform_submission_wcf_nomination_add_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, string $form_id): void {
+  wcf_theme_webform_nomination_form_alter($form);
+}
+
+/**
+ * Implements hook_form_webform_submission_wcf_nomination_edit_form_alter().
+ */
+function wcf_theme_form_webform_submission_wcf_nomination_edit_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface $form_state, string $form_id): void {
+  wcf_theme_webform_nomination_form_alter($form);
 }
 
 /**
@@ -390,17 +2488,52 @@ function wcf_theme_form_alter(array &$form, \Drupal\Core\Form\FormStateInterface
     wcf_theme_apply_editorial_field_help($form, $form_state);
   }
 
+  if (in_array($form_id, ['media_image_add_form', 'media_image_edit_form'], TRUE)) {
+    wcf_theme_media_image_form_add_upload_validators($form);
+  }
+
+  if ($form_id === 'views_exposed_form' && isset($form['stallion_category'])) {
+    wcf_theme_limit_stallion_listing_category_options($form);
+    wcf_theme_stallion_listing_exposed_form_alter($form);
+  }
+
   if ($form_id === 'views_exposed_form' && isset($form['#id']) && str_contains((string) $form['#id'], 'search-stallions')) {
     $form['#attributes']['class'][] = 'site-search__form';
+    $form['#attributes']['class'][] = 'site-search__form--inline';
     $form['#attributes']['role'] = 'search';
     $form['#attributes']['aria-label'] = t('Keyword search');
     if (isset($form['keywords'])) {
+      $form['keywords']['#title_display'] = 'invisible';
       $form['keywords']['#attributes']['placeholder'] = t('Search by keyword');
-      $form['keywords']['#title_display'] = 'before';
+      $form['keywords']['#attributes']['class'][] = 'site-search__input';
+      $form['keywords']['#description_display'] = 'invisible';
+      unset($form['keywords']['#description']);
+    }
+    if (isset($form['actions']['submit'])) {
+      $form['actions']['submit']['#attributes']['class'][] = 'button--primary';
+      $form['actions']['submit']['#attributes']['class'][] = 'site-search__submit';
+      $form['actions']['submit']['#value'] = t('Search');
     }
     if (isset($form['actions']['reset'])) {
+      $form['actions']['reset']['#attributes']['class'][] = 'button--outline';
       $form['actions']['reset']['#attributes']['class'][] = 'site-search__reset';
     }
+  }
+}
+
+/**
+ * Ensures media image uploads are readable by GD/ImageMagick (blocks mislabeled HEIC).
+ */
+function wcf_theme_media_image_form_add_upload_validators(array &$form): void {
+  if (!isset($form['field_media_image']['widget'][0]['#upload_validators'])) {
+    return;
+  }
+  $form['field_media_image']['widget'][0]['#upload_validators']['FileIsImage'] = [];
+  if (isset($form['field_media_image']['widget'][0]['#description'])) {
+    $form['field_media_image']['widget'][0]['#description'] .= ' ' . t('Use JPEG, PNG, or WebP only. Convert HEIC/iPhone photos before uploading.');
+  }
+  else {
+    $form['field_media_image']['widget'][0]['#description'] = t('Use JPEG, PNG, or WebP only. Convert HEIC/iPhone photos before uploading.');
   }
 }
 
@@ -419,7 +2552,7 @@ function wcf_theme_apply_editorial_field_help(array &$form, \Drupal\Core\Form\Fo
   }
 
   $bundle = $entity->bundle();
-  if (!in_array($bundle, ['stallion', 'container_home', 'article'], TRUE)) {
+  if (!in_array($bundle, ['stallion', 'container_home', 'article', 'wcf_ad_banner', 'wcf_registry_logo', 'wcf_newsletter', 'wcf_showcase_item'], TRUE)) {
     return;
   }
 
@@ -444,18 +2577,110 @@ function wcf_theme_apply_editorial_field_help(array &$form, \Drupal\Core\Form\Fo
   if ($bundle === 'container_home' && isset($form['field_sold'])) {
     $form['field_sold']['#description'] = t('Marks this container home as sold. Use this flag instead of taxonomy for sold inventory.');
   }
+  if ($bundle === 'wcf_registry_logo') {
+    if (isset($form['field_registry_logo'])) {
+      $form['field_registry_logo']['#description'] = t('Upload only client-approved logos via Media. See docs/registry-logo-editorial-guidance.md.');
+    }
+    if (isset($form['field_registry_colour'])) {
+      $form['field_registry_colour']['#description'] = t('Placeholder swatch colour when no logo image is uploaded.');
+    }
+    if (isset($form['field_registry_link'])) {
+      $form['field_registry_link']['#description'] = t('Optional official website. The homepage card links only when this URL is accessible.');
+    }
+    if (isset($form['field_registry_weight'])) {
+      $form['field_registry_weight']['#description'] = t('Lower numbers appear first. Up to five published registry logos display on the homepage.');
+    }
+  }
+  if ($bundle === 'wcf_newsletter') {
+    if (isset($form['field_newsletter_file'])) {
+      $form['field_newsletter_file']['#description'] = t('Upload the monthly newsletter PDF via Document media.');
+    }
+    if (isset($form['field_newsletter_year'])) {
+      $form['field_newsletter_year']['#description'] = t('Used to group issues on the News page (/news).');
+    }
+    if (isset($form['field_newsletter_month'])) {
+      $form['field_newsletter_month']['#description'] = t('Public link label (e.g. January, April).');
+    }
+    if (isset($form['field_newsletter_weight'])) {
+      $form['field_newsletter_weight']['#description'] = t('Sort order within the same year (lower appears first).');
+    }
+  }
+  if ($bundle === 'wcf_ad_banner') {
+    if (isset($form['field_banner_image'])) {
+      $form['field_banner_image']['#description'] = t('Upload or select a JPEG, PNG, or WebP banner from the Media Library. HEIC and other phone formats must be converted before upload.');
+    }
+    if (isset($form['field_banner_link'])) {
+      $form['field_banner_link']['#description'] = t('Destination when the banner is clicked. Internal pages and external URLs are supported.');
+    }
+    if (isset($form['field_banner_categories'])) {
+      $form['field_banner_categories']['#description'] = t('Select one or more categories. The banner appears on stallion and container home pages that share a category. Leave empty to hide on all pages.');
+    }
+    if (isset($form['field_banner_weight'])) {
+      $form['field_banner_weight']['#description'] = t('Lower numbers appear first. Up to four banners show per page.');
+    }
+    if (isset($form['field_banner_caption'])) {
+      $form['field_banner_caption']['#description'] = t('Optional caption below the image. Also used for screen reader link text when set.');
+    }
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function wcf_theme_theme(): array {
+  return [
+    'wcf_ad_banner_card' => [
+      'variables' => [
+        'banner_link' => NULL,
+      ],
+      'template' => 'wcf-ad-banner-card',
+    ],
+  ];
 }
 
 /**
  * Implements hook_preprocess_page().
  */
 function wcf_theme_preprocess_page(array &$variables): void {
-  if (!empty($variables['is_front'])) {
-    $variables['#attached']['library'][] = 'wcf_theme/global';
-  }
-
   $site_config = \Drupal::config('system.site');
   $variables['site_mail'] = $site_config->get('mail');
+  wcf_theme_attach_chrome_variables($variables);
+  wcf_theme_attach_public_footer_variables($variables);
+
+  // Mockup-aligned primary nav in the header (all public pages).
+  $variables['wcf_show_front_nav'] = TRUE;
+  $variables['wcf_front_nav_links'] = wcf_theme_build_front_nav_links();
+
+  if (!empty($variables['is_front'])) {
+    $variables['#attached']['library'][] = 'wcf_theme/global';
+    wcf_theme_attach_homepage_variables($variables);
+  }
+}
+
+/**
+ * Removes featured stallions paragraphs from homepage feature section output.
+ */
+function wcf_theme_strip_homepage_featured_stallions(array &$variables): void {
+  if (!isset($variables['content']['field_feature_sections']) || !is_array($variables['content']['field_feature_sections'])) {
+    return;
+  }
+
+  $build = &$variables['content']['field_feature_sections'];
+  foreach (Element::children($build) as $delta) {
+    $paragraph = $build[$delta]['#paragraph'] ?? NULL;
+    if ($paragraph instanceof ParagraphInterface && $paragraph->bundle() === 'featured_stallions') {
+      unset($build[$delta]);
+    }
+  }
+}
+
+/**
+ * Implements hook_preprocess_node__homepage().
+ */
+function wcf_theme_preprocess_node__homepage(array &$variables): void {
+  $variables['#attached']['library'][] = 'wcf_theme/global';
+  wcf_theme_attach_chrome_variables($variables);
+  wcf_theme_strip_homepage_featured_stallions($variables);
 }
 
 /**

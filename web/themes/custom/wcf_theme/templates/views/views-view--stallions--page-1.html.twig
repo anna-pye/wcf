@@ -6,6 +6,7 @@
 #}
 {% include '@wcf_theme/components/stallion-listing.html.twig' with {
   title: view.getTitle()|default('Stallions'|t),
+  tagline: stallion_listing_tagline,
   exposed: exposed,
   listing: rows,
   pager: pager,

@@ -1,0 +1,27 @@
+uuid: b1b2c3d4-3333-4222-8333-444455556666
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_newsletter_file
+    - media.type.document
+    - node.type.wcf_newsletter
+id: node.wcf_newsletter.field_newsletter_file
+field_name: field_newsletter_file
+entity_type: node
+bundle: wcf_newsletter
+label: 'Newsletter PDF'
+description: 'Document media for the monthly newsletter file.'
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:media'
+  handler_settings:
+    target_bundles:
+      document: document
+    sort:
+      field: _none
+    auto_create: false
+field_type: entity_reference

@@ -15,19 +15,36 @@
 <div{{ attributes.addClass(classes) }}>
   <div class="site-search__layout">
     <div class="site-search__main">
-      <header class="stallion-listing-page__header">
-        <h1 class="stallion-listing-page__title">{{ view.getTitle()|default('Search'|t) }}</h1>
-      </header>
-      {% if header %}
-        <header class="site-search__header" aria-live="polite">
-          {{ header }}
+      <div class="site-search__intro">
+        {% if facets_summary %}
+          {{ facets_summary }}
+        {% endif %}
+        <header class="site-search__page-header">
+          <div class="site-search__lead">
+            <h1 class="site-search__title">{{ view.getTitle()|default('Search'|t) }}</h1>
+            <p class="site-search__tagline">{{ 'Find stallions, container homes, and articles across the farm.'|t }}</p>
+          </div>
+          {% if header %}
+            <div class="site-search__range" aria-live="polite">{{ header }}</div>
+          {% endif %}
         </header>
-      {% endif %}
-      {% if exposed %}
-        <div class="site-search__keywords">
-          {{ exposed }}
-        </div>
-      {% endif %}
+        {% if exposed %}
+          <div class="site-search__keywords">
+            {{ exposed }}
+          </div>
+        {% endif %}
+        {% if stallion_foal_year_links is not empty %}
+          <nav class="site-search__year-nav stallion__year-nav" aria-label="{{ 'Foal year'|t }}">
+            <ul class="stallion__year-nav-list">
+              {% for item in stallion_foal_year_links %}
+                <li class="stallion__year-nav-item">
+                  <a href="{{ item.url }}" class="stallion__year-nav-link{{ item.active ? ' is-active' : '' }}">{{ item.label }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </nav>
+        {% endif %}
+      </div>
       {% if rows %}
         <section class="site-search__results" aria-label="{{ 'Search results'|t }}">
           {{ rows }}

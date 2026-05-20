@@ -1,0 +1,136 @@
+uuid: n1e2w3s4-a5b6-7890-cdef-0123456789ab
+langcode: en
+status: true
+dependencies:
+  config:
+    - node.type.wcf_newsletter
+  module:
+    - node
+    - user
+id: wcf_news
+label: News
+module: views
+description: 'Legacy /news page — newsletter archive grouped by year.'
+tag: wcf
+base_table: node_field_data
+base_field: nid
+display:
+  default:
+    id: default
+    display_title: Default
+    display_plugin: default
+    position: 0
+    display_options:
+      title: News
+      fields: {  }
+      pager:
+        type: none
+        options:
+          offset: 0
+      access:
+        type: perm
+        options:
+          perm: 'access content'
+      cache:
+        type: tag
+        options: {  }
+      empty:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          plugin_id: text_custom
+          empty: true
+          content: '<p class="wcf-news-page__empty">No newsletters are published yet.</p>'
+      sorts:
+        field_newsletter_year_value:
+          id: field_newsletter_year_value
+          table: node__field_newsletter_year
+          field: field_newsletter_year_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: DESC
+          exposed: false
+        field_newsletter_weight_value:
+          id: field_newsletter_weight_value
+          table: node__field_newsletter_weight
+          field: field_newsletter_weight_value
+          relationship: none
+          group_type: group
+          admin_label: ''
+          plugin_id: standard
+          order: ASC
+          exposed: false
+      filters:
+        status:
+          id: status
+          table: node_field_data
+          field: status
+          entity_type: node
+          entity_field: status
+          plugin_id: boolean
+          value: '1'
+          group: 1
+        type:
+          id: type
+          table: node_field_data
+          field: type
+          entity_type: node
+          entity_field: type
+          plugin_id: bundle
+          value:
+            wcf_newsletter: wcf_newsletter
+          group: 1
+      style:
+        type: default
+        options:
+          grouping: {  }
+          row_class: ''
+          default_row_class: false
+      row:
+        type: 'entity:node'
+        options:
+          view_mode: default
+      header:
+        area_text_custom:
+          id: area_text_custom
+          table: views
+          field: area_text_custom
+          plugin_id: text_custom
+          empty: false
+          content: |-
+            <div class="wcf-news-page__intro news_sec">
+              <h2>There is plenty going on every day at WCF. <span>We are so busy with the horses</span> we have not had time to do newsletters of late. Please see our Facebook page for updates or feel free to pick up the phone and give us a call.</h2>
+            </div>
+            <div class="wcf-news-page__subscribe news_section">
+              <p>Please sign up for our newsletter if you would like it delivered to your inbox.</p>
+              <p class="wcf-news-page__subscribe-note"><em>Online signup will be available here soon. Call <a href="tel:+61411826965">0411 826 965</a> or visit our <a href="https://www.facebook.com/pages/Winning-Colours-Farm/353221651451104" rel="noopener noreferrer">Facebook page</a> for updates.</em></p>
+            </div>
+      css_class: wcf-news-page
+      display_extenders: {  }
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }
+  page_1:
+    id: page_1
+    display_title: Page
+    display_plugin: page
+    position: 1
+    display_options:
+      display_extenders: {  }
+      path: news
+      menu:
+        type: none
+    cache_metadata:
+      max-age: -1
+      contexts:
+        - 'languages:language_interface'
+        - 'user.node_grants:view'
+        - user.permissions
+      tags: {  }

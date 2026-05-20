@@ -1,7 +1,9 @@
 {#
 /**
  * @file
- * Homepage node — hero and future sections.
+ * Homepage node — CMS feature sections and testimonials only.
+ *
+ * Hero, feature strip, promos, registry, and social panels render in page--front.
  */
 #}
 {%
@@ -15,6 +17,18 @@
 <article{{ attributes.addClass(classes) }}>
   <h1 class="visually-hidden">{{ label }}</h1>
   <div class="homepage__content">
-    {{ content|without('links') }}
+    {% if content.field_feature_sections|render|trim is not empty %}
+      <div class="homepage-feature-sections">
+        {{ content.field_feature_sections }}
+      </div>
+    {% endif %}
+
+    {% if content.field_testimonials|render|trim is not empty %}
+      <section class="wcf-section wcf-section--white" aria-label="{{ 'Testimonials'|t }}">
+        <div class="wcf-section__inner">
+          {{ content.field_testimonials }}
+        </div>
+      </section>
+    {% endif %}
   </div>
 </article>

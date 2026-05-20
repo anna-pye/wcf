@@ -3,6 +3,7 @@ type: theme
 description: 'Custom Drupal 11 theme for Winning Colours Farm rebuild.'
 core_version_requirement: ^11
 base theme: false
+logo: logo.png
 libraries:
   - wcf_theme/global
 regions:

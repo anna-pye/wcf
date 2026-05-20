@@ -6,19 +6,46 @@
  * Variables:
  * - node: The stallion node entity.
  * - url: Canonical URL string.
- * - title: Node title.
+ * - title: Primary card heading (horse name when available).
+ * - foal_year: Foal birth year when category is Foals (optional).
+ * - detail_line: Breed / sex line without leading year (optional).
+ * - subtitle: Secondary line fallback when detail_line is not set.
  * - image: Render array for main image (card view mode).
+ * - placeholder_image: Theme placeholder URL when main image is empty (optional).
  * - summary: Rendered body field (card view mode uses summary-or-trimmed).
  * - summary_fallback: Plain-text fallback when body summary is empty (optional).
- * - status: Status label string.
+ * - status: Status label string (omit for sold — use is_sold overlay instead).
+ * - is_sold: TRUE when field_status is sold (optional).
+ * - sold_badge_image: Theme sold badge URL when is_sold (optional).
  * - featured: Boolean whether stallion is featured.
  */
 #}
-<article class="stallion-card{{ image ? '' : ' stallion-card--no-media' }}">
+<article class="stallion-card{{ image or placeholder_image ? '' : ' stallion-card--no-media' }}{{ is_sold ? ' stallion-card--sold' : '' }}">
   <a class="stallion-card__link" href="{{ url }}" aria-labelledby="stallion-card-title-{{ node.id }}">
     {% if image %}
       <figure class="stallion-card__media">
         {{ image }}
+        {% if is_sold and sold_badge_image %}
+          {% include '@wcf_theme/components/stallion-sold-badge.html.twig' with {
+            sold_badge_image: sold_badge_image,
+          } only %}
+        {% endif %}
+      </figure>
+    {% elseif placeholder_image %}
+      <figure class="stallion-card__media stallion-card__media--placeholder">
+        <img
+          src="{{ placeholder_image }}"
+          alt="{{ 'Image coming soon'|t }}"
+          width="300"
+          height="300"
+          loading="lazy"
+          decoding="async"
+        >
+        {% if is_sold and sold_badge_image %}
+          {% include '@wcf_theme/components/stallion-sold-badge.html.twig' with {
+            sold_badge_image: sold_badge_image,
+          } only %}
+        {% endif %}
       </figure>
     {% endif %}
     <div class="stallion-card__body">
@@ -26,6 +53,14 @@
         <span class="stallion-card__badge">{{ 'Featured'|t }}</span>
       {% endif %}
       <h3 id="stallion-card-title-{{ node.id }}" class="stallion-card__title">{{ title }}</h3>
+      {% if foal_year %}
+        <p class="stallion-card__year">{{ foal_year }}</p>
+      {% endif %}
+      {% if detail_line %}
+        <p class="stallion-card__subtitle">{{ detail_line }}</p>
+      {% elseif subtitle %}
+        <p class="stallion-card__subtitle">{{ subtitle }}</p>
+      {% endif %}
       {% if summary %}
         <div class="stallion-card__summary">{{ summary }}</div>
       {% elseif summary_fallback %}

@@ -1,0 +1,29 @@
+{#
+/**
+ * @file
+ * Image media — gallery view mode (thumbnail + lightbox link to full file).
+ *
+ * Variables:
+ * - stallion_gallery_group: GLightbox group id (stallion detail pages).
+ * - showcase_gallery_group: GLightbox group id (showcase page stories).
+ */
+#}
+{% if content.field_media_image %}
+  {% set image_file = media.field_media_image.entity %}
+  {% set gallery_group = showcase_gallery_group ?? stallion_gallery_group %}
+  {% if gallery_group and image_file %}
+    <a
+      href="{{ file_url(image_file.uri.value) }}"
+      class="stallion-gallery__lightbox glightbox"
+      data-gallery="{{ gallery_group }}"
+      {% if media.field_media_image.alt %}
+        data-title="{{ media.field_media_image.alt }}"
+      {% endif %}
+      aria-label="{{ 'View full size image'|t }}"
+    >
+      {{ content.field_media_image }}
+    </a>
+  {% else %}
+    {{ content.field_media_image }}
+  {% endif %}
+{% endif %}

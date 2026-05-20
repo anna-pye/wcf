@@ -1,0 +1,32 @@
+uuid: 6c1d8e4f-2a9b-4c7e-b831-5f0a2d9e6b73
+langcode: en
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.media.gallery
+    - field.field.media.remote_video.field_media_oembed_video
+    - image.style.large
+    - media.type.remote_video
+  module:
+    - image
+id: media.remote_video.gallery
+targetEntityType: media
+bundle: remote_video
+mode: gallery
+content:
+  thumbnail:
+    type: image
+    label: visually_hidden
+    settings:
+      image_style: large
+      image_link: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  created: true
+  field_media_oembed_video: true
+  name: true
+  uid: true

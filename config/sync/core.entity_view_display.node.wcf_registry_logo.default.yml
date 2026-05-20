@@ -1,0 +1,37 @@
+uuid: a03aeca5-f3e0-4377-bc44-96353f7865ca
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.wcf_registry_logo.field_registry_colour
+    - field.field.node.wcf_registry_logo.field_registry_link
+    - field.field.node.wcf_registry_logo.field_registry_logo
+    - field.field.node.wcf_registry_logo.field_registry_name
+    - field.field.node.wcf_registry_logo.field_registry_short_name
+    - field.field.node.wcf_registry_logo.field_registry_weight
+    - node.type.wcf_registry_logo
+  module:
+    - link
+    - user
+id: node.wcf_registry_logo.default
+targetEntityType: node
+bundle: wcf_registry_logo
+mode: default
+content:
+  field_registry_logo:
+    type: entity_reference_entity_view
+    label: hidden
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  field_registry_colour: true
+  field_registry_link: true
+  field_registry_name: true
+  field_registry_short_name: true
+  field_registry_weight: true
+  links: true
+  search_api_excerpt: true

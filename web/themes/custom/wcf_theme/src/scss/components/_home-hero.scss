@@ -1,0 +1,177 @@
+@use '../abstracts/variables' as *;
+@use '../layout/page' as page;
+
+.wcf-home-hero {
+  overflow: hidden;
+  background-color: $wcf-cream;
+  border-block-start: 1px solid rgba($wcf-purple, 0.08);
+
+  &__layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 16rem;
+
+    @media (min-width: $breakpoint-sm) {
+      min-height: 19.25rem;
+    }
+
+    @media (min-width: $breakpoint-md) {
+      grid-template-columns: minmax(0, 38rem) minmax(0, 1fr);
+      min-height: 28.75rem;
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      grid-template-columns: minmax(0, 40rem) minmax(0, 1fr);
+      min-height: 33.6rem;
+    }
+  }
+
+  &__panel {
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    padding: $spacing-md $spacing-sm;
+    background-color: $wcf-cream;
+
+    @media (min-width: $breakpoint-md) {
+      padding: $spacing-lg $spacing-md $spacing-xl $spacing-md;
+    }
+
+    @media (min-width: $breakpoint-lg) {
+      padding-inline: $spacing-lg;
+    }
+  }
+
+  &__inner {
+    width: 100%;
+    max-width: 32rem;
+    padding: 0;
+    color: $color-text;
+  }
+
+  &__logo {
+    display: inline-block;
+    margin-block-end: $spacing-md;
+    line-height: 0;
+    text-decoration: none;
+
+    @include page.focus-visible-ring;
+  }
+
+  &__logo-image {
+    display: block;
+    width: auto;
+    height: auto;
+    max-width: min(9.5rem, 52vw);
+    max-height: 5.25rem;
+    aspect-ratio: 163 / 90;
+    object-fit: contain;
+  }
+
+  &__media {
+    position: relative;
+    z-index: 0;
+    min-height: 14rem;
+    overflow: hidden;
+    background-color: $wcf-sand;
+
+    @media (min-width: $breakpoint-md) {
+      min-height: 100%;
+    }
+
+    img,
+    picture {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: inherit;
+      object-fit: cover;
+      object-position: 72% 40%;
+
+      @media (min-width: $breakpoint-lg) {
+        object-position: 78% 38%;
+      }
+    }
+  }
+
+  // Fade from solid cream at the panel edge into the photograph.
+  &__media-fade {
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: 1;
+    width: min(42%, 18rem);
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      $wcf-cream 0%,
+      rgba($wcf-cream, 0.98) 18%,
+      rgba($wcf-cream, 0.75) 42%,
+      rgba($wcf-cream, 0.25) 68%,
+      transparent 100%
+    );
+
+    @media (max-width: #{$breakpoint-md - 0.0625rem}) {
+      width: 100%;
+      height: 45%;
+      inset: 0 0 auto 0;
+      background: linear-gradient(
+        180deg,
+        $wcf-cream 0%,
+        rgba($wcf-cream, 0.92) 35%,
+        rgba($wcf-cream, 0.4) 60%,
+        transparent 100%
+      );
+    }
+  }
+
+  &__heading {
+    margin: 0 0 $spacing-md;
+    display: flex;
+    flex-direction: column;
+    gap: 0.08em;
+    font-family: $font-family-display;
+    font-size: clamp(1.85rem, 4.8vw + 0.5rem, 3.35rem);
+    font-weight: 400;
+    line-height: 1.06;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  &__heading-line--purple {
+    color: $wcf-purple;
+  }
+
+  &__heading-line--coral {
+    color: $wcf-coral;
+  }
+
+  &__intro {
+    margin: 0 0 $spacing-md;
+    max-width: 32rem;
+    font-size: clamp(0.975rem, 1.6vw, 1.125rem);
+    line-height: 1.55;
+    color: $color-text;
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $spacing-sm;
+  }
+
+  &__button {
+    min-height: page.$touch-target-min;
+    min-width: min(100%, 12.5rem);
+    padding-inline: $spacing-md;
+
+    @media (max-width: $breakpoint-sm) {
+      flex: 1 1 100%;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wcf-home-hero__media img {
+    transform: none !important;
+  }
+}

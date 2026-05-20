@@ -52,7 +52,7 @@ $legacy_redirects = [
   'category/broodmares' => 'internal:/stallions',
   'category/for-sale' => 'internal:/stallions',
   'category/sold' => 'internal:/stallions',
-  'showcase' => 'internal:/',
+  'showcase' => 'internal:/showcase',
   'sold-stallions' => 'internal:/stallions',
 ];
 

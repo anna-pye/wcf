@@ -1,0 +1,69 @@
+{#
+/**
+ * @file
+ * Public site footer — nav, Facebook card, contact + logo + copyright.
+ *
+ * Variables:
+ * - wcf_front_footer_links: list of title, url, optional children[]
+ * - wcf_home_social_follow: title, text, cta_label, url
+ * - wcf_footer_contact_email: contact email address
+ * - wcf_theme_logo_url: theme logo path
+ */
+#}
+<footer class="site-footer site-footer--front" role="contentinfo">
+  <div class="site-footer__inner site-footer__inner--mockup">
+    {% if wcf_front_footer_links is not empty %}
+      <nav class="site-footer__utility" aria-label="{{ 'Footer'|t }}">
+        <ul class="site-footer__utility-list">
+          {% for link in wcf_front_footer_links %}
+            <li class="site-footer__utility-item{% if link.children is not empty %} site-footer__utility-item--has-children{% endif %}">
+              {% if link.children is not empty %}
+                <details class="site-footer__utility-dropdown">
+                  <summary class="site-footer__utility-link site-footer__utility-summary">
+                    <span>{{ link.title }}</span>
+                  </summary>
+                  <ul class="site-footer__utility-sublist">
+                    {% for child in link.children %}
+                      <li class="site-footer__utility-subitem">
+                        <a class="site-footer__utility-sublink" href="{{ child.url }}">{{ child.title }}</a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </details>
+              {% else %}
+                <a class="site-footer__utility-link" href="{{ link.url }}">{{ link.title }}</a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endif %}
+
+    {% if wcf_home_social_follow %}
+      <div class="site-footer__facebook">
+        {% include '@wcf_theme/components/wcf-social-follow.html.twig' with {
+          wcf_social_follow_variant: 'footer',
+        } %}
+      </div>
+    {% endif %}
+
+    <div class="site-footer__brand">
+      {% if wcf_footer_contact_email %}
+        <div class="site-footer__contact">
+          <p class="site-footer__contact-heading">{{ 'Web site contact'|t }}</p>
+          <p class="site-footer__contact-email">
+            <a href="mailto:{{ wcf_footer_contact_email }}">{{ wcf_footer_contact_email }}</a>
+          </p>
+        </div>
+      {% endif %}
+      {% if wcf_theme_logo_url %}
+        <a class="site-footer__logo-mark" href="{{ front_page }}" rel="home">
+          <img src="{{ wcf_theme_logo_url }}" alt="{{ site_name }}" width="120" height="66" loading="lazy" decoding="async">
+        </a>
+      {% endif %}
+      <p class="site-footer__copyright site-footer__copyright--mockup">
+        &copy; {{ "now"|date("Y") }} {{ site_name }}. {{ 'All rights reserved.'|t }}
+      </p>
+    </div>
+  </div>
+</footer>

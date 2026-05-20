@@ -7,7 +7,6 @@ dependencies:
     - node.type.homepage
     - paragraphs.paragraphs_type.feature_card
     - paragraphs.paragraphs_type.featured_content
-    - paragraphs.paragraphs_type.featured_stallions
     - paragraphs.paragraphs_type.testimonial_item
   module:
     - entity_reference_revisions
@@ -16,7 +15,7 @@ field_name: field_feature_sections
 entity_type: node
 bundle: homepage
 label: 'Feature sections'
-description: 'Ordered homepage sections: featured stallions, feature cards, and testimonials.'
+description: 'Ordered homepage sections: feature cards, featured content, and testimonials.'
 required: false
 translatable: true
 default_value: {  }
@@ -25,7 +24,6 @@ settings:
   handler: 'default:paragraph'
   handler_settings:
     target_bundles:
-      featured_stallions: featured_stallions
       feature_card: feature_card
       testimonial_item: testimonial_item
       featured_content: featured_content
@@ -39,7 +37,7 @@ settings:
         enabled: true
       featured_stallions:
         weight: 0
-        enabled: true
+        enabled: false
       hero_slide:
         weight: 3
         enabled: false

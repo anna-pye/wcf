@@ -4,7 +4,7 @@
  * @file
  * Create Redirect module entries from legacy short aliases to Pathauto canonicals.
  *
- * Canonical for stallions: /stallions/* (pathauto.pattern.node_stallion).
+ * Canonical for stallions: /horses/* (pathauto.pattern.node_stallion).
  * Legacy short aliases (e.g. /vegas) are preserved as 301 sources only.
  *
  * Usage:
@@ -28,7 +28,7 @@ if ($default_langcode === '' || $default_langcode === NULL) {
   throw new \RuntimeException('Default language could not be resolved.');
 }
 
-$canonical_prefix = '/stallions/';
+$canonical_prefix = '/horses/';
 $nids = $database->query(
   'SELECT nid FROM {node_field_data} WHERE type = :type AND status = 1',
   [':type' => 'stallion']

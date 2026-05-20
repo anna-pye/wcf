@@ -46,7 +46,8 @@
 }
 
 @mixin profile-main-media {
-  img,
+  // Exclude sold overlay badge — it must stay a small thumbnail, not full-width.
+  img:not(.stallion-sold-badge__image),
   picture {
     display: block;
     width: 100%;
@@ -58,10 +59,11 @@
     object-fit: contain;
     background-color: $color-text-inverse;
     border: 1px solid $color-border;
+    border-radius: $radius-md;
   }
 
   @media (min-width: $breakpoint-md) {
-    img,
+    img:not(.stallion__sold-badge),
     picture {
       max-height: 31.25rem; // ~500px — D7 .group-left img
     }
@@ -105,15 +107,24 @@
 body.page-node-type-stallion,
 body.page-node-type-container-home {
   .site-main {
-    background-color: $listing-band-bg;
+    background-color: $color-background;
   }
 }
 
 .stallion,
-.container-home {
+.container-home,
+.showcase-page .showcase-story.stallion {
   max-width: $content-max-width;
   margin-inline: auto;
   padding: $spacing-md $spacing-sm $spacing-xl;
+  background-color: $color-surface;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+
+  @media (min-width: $breakpoint-md) {
+    margin-block: $spacing-lg;
+    padding-inline: $spacing-lg;
+  }
 }
 
 .stallion__header,
@@ -124,8 +135,20 @@ body.page-node-type-container-home {
 
   @media (min-width: $breakpoint-md) {
     grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
-    align-items: end;
     gap: $spacing-lg;
+  }
+}
+
+// Stallion: top-align image and intro copy; container home keeps bottom alignment.
+.stallion__header {
+  @media (min-width: $breakpoint-md) {
+    align-items: start;
+  }
+}
+
+.container-home__hero {
+  @media (min-width: $breakpoint-md) {
+    align-items: end;
   }
 }
 

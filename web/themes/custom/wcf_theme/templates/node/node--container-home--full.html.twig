@@ -5,6 +5,7 @@
  *
  * Fields (config/sync): body, field_main_image, field_gallery, field_sold,
  * field_category. Status label via preprocess (container_home_status_label).
+ * - wcf_ad_banners: Category-matched ad banner grid render array (full view only).
  */
 #}
 {%
@@ -58,4 +59,6 @@
       </section>
     {% endif %}
   </div>
+
+  {% include '@wcf_theme/components/wcf-ad-banners.html.twig' %}
 </article>

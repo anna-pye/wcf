@@ -1,4 +1,5 @@
 @use '../abstracts/variables' as *;
+@use 'buttons';
 
 .feature-cards-section__grid {
   display: grid;
@@ -15,11 +16,17 @@
 .feature-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  border-radius: 0.25rem;
+  border: 1px solid $color-border;
+  border-radius: $radius-lg;
   overflow: hidden;
-  background: #fff;
+  background: $color-surface;
   height: 100%;
+  box-shadow: $shadow-sm;
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: $shadow-md;
+  }
 }
 
 .feature-card__media {
@@ -59,23 +66,6 @@
   margin-top: $spacing-xs;
 
   a {
-    display: inline-block;
-    padding: 0.5rem 1rem;
-    background: $color-primary;
-    color: $color-text-inverse;
-    text-decoration: none;
-    border-radius: 0.25rem;
-    font-weight: 600;
-    font-size: 0.9375rem;
-
-    &:hover,
-    &:focus-visible {
-      background: $color-primary-hover;
-    }
-
-    &:focus-visible {
-      outline: 2px solid $color-primary;
-      outline-offset: 2px;
-    }
+    @include buttons.button-primary;
   }
 }

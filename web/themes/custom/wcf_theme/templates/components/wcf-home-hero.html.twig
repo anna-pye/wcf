@@ -1,0 +1,52 @@
+{#
+/**
+ * @file
+ * Homepage hero — logo, slogan, image with left-edge fade at panel boundary.
+ *
+ * Variables:
+ * - wcf_home_hero.heading_line_1, heading_line_2, intro, background, actions, logo_url
+ */
+#}
+{% if wcf_home_hero %}
+  <section class="wcf-home-hero" aria-labelledby="wcf-home-hero-heading">
+    <div class="wcf-home-hero__layout">
+      <div class="wcf-home-hero__panel">
+        <div class="wcf-home-hero__inner">
+          {% if wcf_home_hero.logo_url %}
+            <a class="wcf-home-hero__logo" href="{{ front_page }}" rel="home">
+              <img
+                class="wcf-home-hero__logo-image"
+                src="{{ wcf_home_hero.logo_url }}"
+                alt="{{ site_name }}"
+                width="163"
+                height="90"
+                loading="eager"
+                decoding="async"
+              >
+            </a>
+          {% endif %}
+          <h2 id="wcf-home-hero-heading" class="wcf-home-hero__heading">
+            <span class="wcf-home-hero__heading-line wcf-home-hero__heading-line--purple">{{ wcf_home_hero.heading_line_1 }}</span>
+            <span class="wcf-home-hero__heading-line wcf-home-hero__heading-line--coral">{{ wcf_home_hero.heading_line_2 }}</span>
+          </h2>
+          {% if wcf_home_hero.intro %}
+            <p class="wcf-home-hero__intro">{{ wcf_home_hero.intro }}</p>
+          {% endif %}
+          {% if wcf_home_hero.actions is not empty %}
+            <div class="wcf-home-hero__actions">
+              {% for action in wcf_home_hero.actions %}
+                {{ action }}
+              {% endfor %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      {% if wcf_home_hero.background %}
+        <div class="wcf-home-hero__media">
+          <div class="wcf-home-hero__media-fade" aria-hidden="true"></div>
+          {{ wcf_home_hero.background }}
+        </div>
+      {% endif %}
+    </div>
+  </section>
+{% endif %}

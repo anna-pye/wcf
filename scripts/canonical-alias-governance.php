@@ -5,7 +5,7 @@
  * Remove conflicting legacy short path aliases after canonical governance checks.
  *
  * Prerequisite: run scripts/canonical-redirect-remediation.php -- --apply so
- * Redirect module entries exist from legacy short alias → /stallions/* canonical.
+ * Redirect module entries exist from legacy short alias → /horses/* canonical.
  *
  * While a legacy short alias remains in path_alias, Drupal resolves it directly
  * to the node (HTTP 200). After safe removal, inbound /vegas requests fall through
@@ -34,7 +34,7 @@ if (empty($default_langcode)) {
   throw new \RuntimeException('Default language could not be resolved.');
 }
 
-$canonical_prefix = '/stallions/';
+$canonical_prefix = '/horses/';
 
 $nids = $database->query(
   'SELECT nid FROM {node_field_data} WHERE type = :type AND status = 1',

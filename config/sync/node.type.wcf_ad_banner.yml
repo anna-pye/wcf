@@ -1,0 +1,11 @@
+uuid: 2c0b25d5-8514-4758-84a7-bae564948fd3
+langcode: en
+status: true
+dependencies: {  }
+name: 'Ad Banner'
+type: wcf_ad_banner
+description: 'Reusable promotional banner for category-aware placement on stallion and container home pages.'
+help: 'Upload an image, set the click destination, and assign one or more categories. Up to four published banners appear per matching page, ordered by weight. Unpublished banners never appear on the public site.'
+new_revision: true
+preview_mode: 1
+display_submitted: false

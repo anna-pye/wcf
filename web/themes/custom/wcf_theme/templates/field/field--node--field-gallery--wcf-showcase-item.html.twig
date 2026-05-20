@@ -1,0 +1,17 @@
+{#
+/**
+ * @file
+ * Showcase gallery — same markup as stallion (stallion-gallery__* + GLightbox).
+ */
+#}
+{% if items %}
+  <ul class="stallion-gallery__grid" role="list" data-gallery-group="{{ showcase_gallery_group }}">
+    {% for item in items %}
+      <li class="stallion-gallery__item" role="listitem">
+        <div class="stallion-gallery__card">
+          {{ item.content }}
+        </div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}

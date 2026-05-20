@@ -11,17 +11,18 @@ id: search_active_filters
 name: 'Search active filters'
 facet_source_id: 'search_api:views_page__search_stallions__page_1'
 processor_configs:
+  hide_when_not_rendered:
+    processor_id: hide_when_not_rendered
+    weights:
+      build: '45'
+    settings: {  }
   reset_facets:
     processor_id: reset_facets
     weights:
       build: '30'
     settings:
       link_text: 'Clear all filters'
-  show_count:
-    processor_id: show_count
-    weights:
-      build: '5'
-    settings: {  }
+      position: before
 facets:
   stallion_status:
     checked: true

@@ -1,0 +1,22 @@
+{#
+/**
+ * @file
+ * Sold overlay badge on stallion imagery (cards + full profile).
+ *
+ * Variables:
+ * - sold_badge_image: Theme sold badge image URL.
+ */
+#}
+{% if sold_badge_image %}
+  <div class="stallion-sold-badge" role="img" aria-label="{{ 'Sold'|t }}">
+    <img
+      class="stallion-sold-badge__image"
+      src="{{ sold_badge_image }}"
+      alt=""
+      width="91"
+      height="91"
+      loading="lazy"
+      decoding="async"
+    >
+  </div>
+{% endif %}

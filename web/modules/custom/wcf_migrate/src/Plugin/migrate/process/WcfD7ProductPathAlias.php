@@ -14,7 +14,7 @@ use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Builds a unique /stallions/{alias} path from legacy product alias slugs.
+ * Builds a unique /horses/{alias} path from legacy product alias slugs.
  */
 #[MigrateProcess('wcf_d7_product_path_alias')]
 class WcfD7ProductPathAlias extends ProcessPluginBase implements ContainerFactoryPluginInterface {
@@ -83,7 +83,7 @@ class WcfD7ProductPathAlias extends ProcessPluginBase implements ContainerFactor
       $slug .= '-' . $id;
     }
 
-    return '/stallions/' . $slug;
+    return '/horses/' . $slug;
   }
 
 }

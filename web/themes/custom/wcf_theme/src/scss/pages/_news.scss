@@ -1,0 +1,126 @@
+// News / newsletter archive (/news) — D7 .news_sec, .news_bg, accordion parity.
+
+@use '../abstracts/variables' as *;
+
+body.path-news {
+  .site-main {
+    background-color: $color-background;
+  }
+
+  .wcf-news-page {
+    max-width: $content-max-width;
+    margin-inline: auto;
+    padding: $spacing-md $spacing-sm $spacing-xl;
+  }
+}
+
+.wcf-news-page__intro.news_sec {
+  margin: 0;
+  padding: 0 $spacing-md $spacing-lg;
+  text-align: center;
+
+  h2 {
+    color: $color-text;
+    font-family: $font-family-base;
+    font-size: clamp(1.35rem, 2.5vw, 1.875rem);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+    line-height: 1.45;
+    margin: 0 auto;
+    max-width: 52rem;
+    padding-bottom: $spacing-md;
+    border-bottom: 2px solid $color-border;
+
+    span {
+      color: $color-accent;
+    }
+  }
+}
+
+.wcf-news-page__subscribe {
+  margin: $spacing-lg auto $spacing-xl;
+  max-width: 40rem;
+  padding: $spacing-lg $spacing-md;
+  text-align: center;
+  background-color: $color-background-alt;
+
+  p {
+    margin: 0 0 $spacing-sm;
+    font-size: 1.05rem;
+    line-height: 1.5;
+  }
+}
+
+.wcf-news-page__subscribe-note {
+  font-size: 0.95rem;
+  color: $color-text-muted;
+}
+
+.wcf-news-page__archive {
+  padding: $spacing-lg $spacing-md $spacing-2xl;
+}
+
+.wcf-news-page__archive-inner {
+  max-width: $content-max-width;
+  margin: 0 auto;
+}
+
+.wcf-news-page__accordion {
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.wcf-news-page__year {
+  margin-bottom: $spacing-sm;
+}
+
+.wcf-news-page__year-summary {
+  cursor: pointer;
+  display: block;
+  padding: $spacing-md $spacing-md;
+  background: $color-surface;
+  border: 1px solid $color-border;
+  font-size: 1.125rem;
+  font-weight: 400;
+  list-style: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+
+  .fl span {
+    color: $color-accent;
+  }
+}
+
+.wcf-news-page__year-details[open] .wcf-news-page__year-summary {
+  border-bottom-color: transparent;
+}
+
+.wcf-news-page__year-panel {
+  border: 1px solid $color-border;
+  border-top: 0;
+  padding: $spacing-md $spacing-md $spacing-lg;
+
+  ul li {
+    margin: $spacing-sm 0;
+  }
+
+  a {
+    color: $color-primary;
+    text-decoration: underline;
+    font-size: 1rem;
+
+    &:hover {
+      color: $color-primary-hover;
+    }
+  }
+}
+
+.wcf-news-page__empty {
+  padding: $spacing-xl $spacing-md;
+  text-align: center;
+}

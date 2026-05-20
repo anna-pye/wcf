@@ -8,7 +8,7 @@
  * stallions or alter migration maps.
  *
  * Usage:
- *   ddev drush php:script scripts/wcf-governed-categories.php
+ *   ddev drush php:script scripts/wcf-ensure-legacy-categories.php
  *   ddev drush php:script scripts/wcf-map-product-categories.php
  *   ddev drush php:script scripts/wcf-map-product-categories.php -- --force
  *
@@ -30,7 +30,7 @@ $category_map = [
   1 => 'Foals',
   2 => 'For Sale',
   4 => 'Broodmares',
-  5 => 'Show Mares',
+  5 => 'Show mares',
   6 => 'Stallions',
   7 => 'ASB Stallions',
 ];
@@ -68,7 +68,8 @@ $summary = [
   'legacy_rows_checked' => 0,
   'nodes_found' => 0,
   'categories_set' => 0,
-  'already_populated' => 0,
+  'categories_corrected' => 0,
+  'already_correct' => 0,
   'missing_nodes' => 0,
   'missing_terms' => $missing_terms,
   'unmapped_category_ids' => (object) [],
@@ -81,7 +82,7 @@ $missing_node_ids = [];
 
 if ($missing_terms !== []) {
   $message = 'Required governed category terms are missing: ' . implode(', ', $missing_terms)
-    . '. Run scripts/wcf-governed-categories.php first.';
+    . '. Run scripts/wcf-ensure-legacy-categories.php first.';
   $logger->error($message);
   $summary['status'] = 'error';
   $summary['message'] = $message;
@@ -143,16 +144,32 @@ foreach ($rows as $product_id => $row) {
     continue;
   }
 
-  if (!$node->get('field_category')->isEmpty() && !$force) {
-    $summary['already_populated']++;
-    continue;
+  $expected_tid = $tid_by_d7_category[$category_id];
+  $current_tid = NULL;
+  if (!$node->get('field_category')->isEmpty()) {
+    $current_tid = (int) $node->get('field_category')->target_id;
+    $current_term = $term_storage->load($current_tid);
+    if (
+      !$force
+      && $current_term instanceof TermInterface
+      && $current_term->bundle() === 'categories'
+      && $current_tid === $expected_tid
+    ) {
+      $summary['already_correct']++;
+      continue;
+    }
   }
 
-  $tid = $tid_by_d7_category[$category_id];
-  $node->set('field_category', ['target_id' => $tid]);
+  $node->set('field_category', ['target_id' => $expected_tid]);
   $node->setNewRevision(FALSE);
   $node->save();
-  $summary['categories_set']++;
+
+  if ($current_tid === NULL) {
+    $summary['categories_set']++;
+  }
+  else {
+    $summary['categories_corrected']++;
+  }
 }
 
 if ($unmapped_counts !== []) {
@@ -176,7 +193,8 @@ $logger->info('Product category mapping complete. @summary', [
     'legacy_rows_checked' => $summary['legacy_rows_checked'],
     'nodes_found' => $summary['nodes_found'],
     'categories_set' => $summary['categories_set'],
-    'already_populated' => $summary['already_populated'],
+    'categories_corrected' => $summary['categories_corrected'],
+    'already_correct' => $summary['already_correct'],
     'missing_nodes' => is_int($summary['missing_nodes']) ? $summary['missing_nodes'] : count($summary['missing_node_ids'] ?? []),
     'skipped_no_category' => $summary['skipped_no_category'],
     'unmapped_rows' => $summary['unmapped_rows'],

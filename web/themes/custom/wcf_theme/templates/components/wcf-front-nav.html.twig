@@ -1,0 +1,35 @@
+{#
+/**
+ * @file
+ * Front-page primary navigation (mockup-aligned).
+ *
+ * Variables:
+ * - wcf_front_nav_links: list of title, url, optional children[]
+ */
+#}
+{% if wcf_front_nav_links is not empty %}
+  <nav class="wcf-front-nav" aria-label="{{ 'Main navigation'|t }}">
+    <ul class="wcf-front-nav__list">
+      {% for item in wcf_front_nav_links %}
+        <li class="wcf-front-nav__item{% if item.children is not empty %} wcf-front-nav__item--has-children{% endif %}">
+          {% if item.children is not empty %}
+            <details class="wcf-front-nav__dropdown">
+              <summary class="wcf-front-nav__link wcf-front-nav__summary">
+                <span>{{ item.title }}</span>
+              </summary>
+              <ul class="wcf-front-nav__sublist">
+                {% for child in item.children %}
+                  <li class="wcf-front-nav__subitem">
+                    <a class="wcf-front-nav__sublink" href="{{ child.url }}">{{ child.title }}</a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </details>
+          {% else %}
+            <a class="wcf-front-nav__link" href="{{ item.url }}">{{ item.title }}</a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </nav>
+{% endif %}
